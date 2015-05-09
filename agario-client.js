@@ -375,7 +375,7 @@ Client.prototype = {
     //eject some mass
     //mass will eject in direction that you have set with moveTo()
     eject: function() {
-        var buf = new Buffer([18]);
+        var buf = new Buffer([21]);
         this.send(buf);
     }
 };
