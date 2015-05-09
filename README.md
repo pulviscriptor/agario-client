@@ -28,7 +28,7 @@ Properties that you can change:
 - `client.inactive_destroy` time in ms for how long ball will live in memory after his last known action (if player exit from game or ball eaten outside our field of view, we will not know it since server sends action only about field that you see. Original code `destroy()` `Ball` when he `disappear` from field of view. You can do that in `client.on('ballDisppear')` if you want it for some reason). **Default: 5\*60\*1000** (5 minutes)
 - `client.inactive_check` time in ms for time interval that search and destroy inactive `Balls`. **Default: 10\*1000** (10 seconds)
 
-Properties that better not to change or you can brake something:
+Properties that better not to change or you can break something:
 
 - `client.balls` object with all `Balls` that `client` knows about. Access `Ball` like `client.balls[ball_id]`
 - `client.my_balls` array of alive `Ball`'s IDs that `client` owns and can control.
@@ -78,7 +78,7 @@ Properties that you can change:
 
 - None. But you can create properties that don't exists for your needs if you want
 
-Properties that better not to change or you can brake something:
+Properties that better not to change or you can break something:
 
 - `ball.id` ID of `Ball` (number)
 - `ball.name` nickname of player that own the `Ball`
