@@ -205,7 +205,7 @@ Client.prototype = {
                 }
 
                 var ball = client.balls[ball_id] || new Ball(client, ball_id);
-                ball.is_virus = is_virus;
+                ball.virus = is_virus;
                 ball.setCords(coordinate_x, coordinate_y);
                 ball.setSize(size);
                 if(nick) ball.setName(nick);
@@ -388,8 +388,17 @@ function Ball(client, id) {
     this.x = 0;
     this.y = 0;
     this.size = 0;
-    this.is_virus = false;
-    this.is_mine = false;
+    this.virus = false;
+    this.mine = false;
+
+    Object.defineProperty(this, "is_virus", { get: function () {
+        if(!client._is_mine_notified)
+            console.trace('agario-client: Client.is_virus is deprecated, use "Client.virus" instead.\n' +
+                'Please change your code, here is stack trace for you'); client._is_mine_notified = true; return this.virus; } });
+    Object.defineProperty(this, "is_mine", { get: function () {
+        if(!client._is_virus_notified)
+            console.trace('agario-client: Client.is_mine is deprecated, use "Client.mine" instead.\n' +
+                'Please change your code, here is stack trace for you'); client._is_virus_notified = true; return this.mine; } });
 
     this.client = client;
     this.destroyed = false;

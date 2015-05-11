@@ -86,8 +86,8 @@ Properties that better not to change or you can break something:
 - `ball.x` last known X coordinate of `Ball` (if `ball.visible` is `true` then its current coordinate)
 - `ball.y` last known Y coordinate of `Ball` (if `ball.visible` is `true` then its current coordinate)
 - `ball.size` last known size of `Ball` (if `ball.visible` is `true` then its current size)
-- `ball.is_virus` if `true` then ball is a virus (green thing that explode big balls)
-- `ball.is_mine` if `true` then we do own this `Ball`
+- `ball.virus` if `true` then ball is a virus (green thing that explode big balls)
+- `ball.mine` if `true` then we do own this `Ball`
 - `ball.client` `Client` that have know this `Ball` (if not `ball.destroyed`)
 - `ball.destroyed` if `true` then this `Ball` no more exists, forget about it
 - `ball.visible` if `true` then we see this `Ball` on our "screen" (field of view)
