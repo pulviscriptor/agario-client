@@ -42,7 +42,7 @@ client.on('lostMyBalls', function() { //when i lost all my balls
 client.on('somebodyAteSomething', function(eater_ball, eaten_ball) { //when some ball ate some ball
     var ball = client.balls[eater_ball]; //get eater ball
     if(!ball) return; //if we don't know than ball, we don't care
-    if(!ball.is_mine) return; //if it's not our ball, we don't care
+    if(!ball.mine) return; //if it's not our ball, we don't care
     client.log('I ate ' + eaten_ball + ', my new size is ' + ball.size);
 });
 
@@ -69,9 +69,9 @@ function recalculateTarget() { //this is all our example logic
 
     for(var ball_id in client.balls) { //we go true all balls we know about
         var ball = client.balls[ball_id];
-        if(ball.is_virus) continue; //if ball is a virus (green non edible thing) then we skip it
+        if(ball.virus) continue; //if ball is a virus (green non edible thing) then we skip it
         if(!ball.visible) continue; //if ball is not on our screen (field of view) then we skip it
-        if(ball.is_mine) continue; //if ball is our ball - then we skip it
+        if(ball.mine) continue; //if ball is our ball - then we skip it
         if(ball.size/my_ball.size > 0.5) continue; //if ball is bigger than 50% of our size - then we skip it
         var distance = getDistanceBetweenBalls(ball, my_ball); //we calculate distances between our ball and candidate
         if(candidate_ball && distance > candidate_distance) continue; //if we do have some candidate and distance to it smaller, than distance to this ball, we skip it
