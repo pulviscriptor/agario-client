@@ -111,7 +111,7 @@ In this list `on.eventName(param1, param2)` means you need to do `ball.on('event
 # Additional information #
 
 ## agario-devtools ##
-If you want record/repeat or watch in real time what your client doing true web browser, you might want to check [agario-devtools](https://github.com/pulviscriptor/agario-devtools)
+If you want record/repeat or watch in real time what your client doing through web browser, you might want to check [agario-devtools](https://github.com/pulviscriptor/agario-devtools)
 
 ## Ball destroy reasons list ##
 - `{'reason': 'reset'}` when `client` destroys everything (connection lost?)
