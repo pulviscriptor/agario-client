@@ -103,8 +103,9 @@ Client.prototype = {
     send: function(buff) {
         if(this.debug >= 4)
             this.log('SEND packet ID=' + buff[0] + ' LEN=' + buff.byteLength);
+
         if(this.debug >= 5)
-            this.log('dump: ' + this.packetToString(new DataView(buff)));
+            this.log('dump: ' + this.packetToString(buff));
 
         this.ws.send(buff);
     },
