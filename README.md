@@ -33,7 +33,8 @@ Properties that better not to change or you can break something:
 
 - `client.balls` object with all `Balls` that `client` knows about. Access `Ball` like `client.balls[ball_id]`
 - `client.my_balls` array of alive `Ball`'s IDs that `client` owns and can control.
-- `client.leaders` array of leader's `Balls` IDs. (player can have lots of `Balls`, but sever sends only one ID of one `Ball`)
+- `client.leaders` array of leader's `Balls` IDs in FFA mode. (player can have lots of `Balls`, but sever sends only one ID of one `Ball`)
+- `client.teams_scores` array of team's scores in teams mode
 - `client.client_name` name that you have set for `client` (not nickname)
 - `client.tick_counter` number of *tick* packets received (i call them ticks because they contains information about eating/movement/size/appear... of `Balls`)
 
@@ -55,7 +56,8 @@ In this list `on.eventName(param1, param2)` means you need to do `client.on('eve
 - `on.message(view)` new packet received from server
 - `on.myNewBall(ball_id)` my new `Ball` created (spawn/split/explode...)
 - `on.somebodyAteSomething(eater_id, eaten_id)` somebody ate something
-- `on.leaderBoardUpdate(old_array, new_array)` leaders update. Array of leader's `Ball`'s IDs (one ID per leader)
+- `on.leaderBoardUpdate(old_array, new_array)` leaders update in FFA mode. Array of leader's `Ball`'s IDs (one ID per leader)
+- `on.teamsScoresUpdate(old_scores, new_scores)` array of teams scores update in teams mode 
 - `on.mapSizeLoad(min_x, min_y, max_x, max_y)` map size update (after connect)
 - `on.reset()` when we delete all `Balls` and stop timers (connection lost?)
 - `on.winner(ball_id)` somebody won and server going for restart
@@ -86,6 +88,7 @@ Properties that better not to change or you can break something:
 - `ball.x` last known X coordinate of `Ball` (if `ball.visible` is `true` then its current coordinate)
 - `ball.y` last known Y coordinate of `Ball` (if `ball.visible` is `true` then its current coordinate)
 - `ball.size` last known size of `Ball` (if `ball.visible` is `true` then its current size)
+- `ball.color` string with color of `Ball`
 - `ball.virus` if `true` then ball is a virus (green thing that explode big balls)
 - `ball.mine` if `true` then we do own this `Ball`
 - `ball.client` `Client` that have know this `Ball` (if not `ball.destroyed`)
