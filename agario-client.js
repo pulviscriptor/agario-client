@@ -30,7 +30,8 @@ Client.prototype = {
     inactive_interval: 0, //ID of setInterval()
     balls: {},  //all balls
     my_balls: [], //IDs of my vall
-    leaders: [], //IDs of leaders
+    leaders: [], //IDs of leaders in FFA mode
+    teams_scores: [], //scores of teams in Teams mode
 
     connect: function(server) {
         var headers = {
@@ -115,6 +116,7 @@ Client.prototype = {
             this.log('reset()');
 
         this.leaders = [];
+        this.teams_scores = [];
         this.my_balls = [];
         clearInterval(this.inactive_interval);
         for(var k in this.balls) if(this.balls.hasOwnProperty(k)) this.balls[k].destroy({'reason':'reset'});
@@ -174,27 +176,40 @@ Client.prototype = {
                 var coordinate_x;
                 var coordinate_y;
                 var size;
-                var color_salt;
+                var color;
                 var nick = null;
 
                 ball_id = view.getUint32(pointer, true);
                 pointer += 4;
                 if(ball_id == 0) break;
-                coordinate_x = view.getFloat64(pointer, true);
-                pointer += 8;
-                coordinate_y = view.getFloat64(pointer, true);
-                pointer += 8;
-                size = view.getFloat64(pointer, true);
-                pointer += 8;
-                color_salt = view.getUint8(pointer);
-                pointer += 1;
+                coordinate_x = view.getFloat32(pointer, true);
+                pointer += 4;
+                coordinate_y = view.getFloat32(pointer, true);
+                pointer += 4;
+                size = view.getFloat32(pointer, true);
+                pointer += 4;
 
-                if(color_salt == 0) {
-                    is_virus = true;
-                }else if(color_salt == 255) {
-                    pointer += 3; //here we need to read RGB, but i dont want mess with colors
-                    is_virus = !!(view.getUint8(pointer) & 1);
-                    pointer += 1;
+                var color_R = view.getUint8(pointer);
+                pointer += 1;
+                var color_B = view.getUint8(pointer);
+                pointer += 1;
+                var color_G = view.getUint8(pointer);
+                pointer += 1;
+                color = (color_R << 16 | color_G << 8 | color_B).toString(16);
+                color = '#' + ('000000' + color).substr(-6);
+
+                //reserved for future use?
+                var opt = view.getUint8(pointer);
+                pointer += 1;
+                is_virus = !!(opt & 1);
+                if (opt & 2) {
+                    pointer += 4;
+                }
+                if (opt & 4) {
+                    pointer += 8;
+                }
+                if (opt & 8) {
+                    pointer += 16;
                 }
 
                 while(1) {
@@ -271,7 +286,7 @@ Client.prototype = {
             client.emitEvent('myNewBall', ball_id);
         },
 
-        //leaderboard update
+        //leaderboard update in FFA mode
         '49': function(client, view) {
             var pointer = 1;
             var users = [];
@@ -307,6 +322,29 @@ Client.prototype = {
             client.emitEvent('leaderBoardUpdate', old_leaders, users);
         },
 
+        //teams scored update in teams mode
+        '50': function(client, view) {
+            var pointer = 1;
+            var teams_count = view.getUint32(pointer, true);
+            pointer += 4;
+            var teams_scores = [];
+
+            for (var i=0;i<teams_count;++i) {
+                teams_scores.push(view.getFloat32(pointer, true));
+                pointer += 4;
+            }
+
+            if(JSON.stringify(client.teams_scores) == JSON.stringify(teams_scores)) return;
+            var old_scores = client.teams_scores;
+
+            if(client.debug >= 2)
+                client.log('teams scores update: ' + JSON.stringify(teams_scores));
+
+            client.teams_scores = teams_scores;
+
+            client.emitEvent('teamsScoresUpdate', old_scores, teams_scores);
+        },
+
         //map size load
         '64': function(client, view) {
             var min_x = view.getFloat64(1, true);
@@ -318,6 +356,11 @@ Client.prototype = {
                 client.log('map size: ' + [min_x, min_y, max_x, max_y].join(','));
 
             client.emitEvent('mapSizeLoad', min_x, min_y, max_x, max_y);
+        },
+
+        //another unknown backet
+        '72': function() {
+            //packet is sent by server but not used in original code
         },
 
         //somebody won, end of the game (server restart)
