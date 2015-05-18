@@ -1,15 +1,8 @@
 //this is example of API usage
-//first - to run this example, you need to set server address
-//easiest way to obtain address is to go to http://m.agar.io/
-//and copy firs IP with 443 port and add "ws://" to it
-//after you do this, put that address here:
-var server_address = 'ws://1.1.1.1:443';
 
-//then you will be able to run example with "node example.js"
-//if it works then you can look what this script does
-//basically it just searches for nearest balls that smaller than 50% of your size and eats them
+var region = 'EU-London'; //server region to request
 
-
+var http = require('http');
 var Client = require('./agario-client.js'); //require agario-client lib
 
 var client = new Client('worker'); //create new client and call it "worker" (not nickname)
@@ -89,4 +82,50 @@ function getDistanceBetweenBalls(ball_1, ball_2) { //this calculates distance be
     return Math.sqrt( Math.pow( ball_1.x - ball_2.x, 2) + Math.pow( ball_2.y - ball_1.y, 2) );
 }
 
-client.connect(server_address); //finally we can connect to server and start work
+function getAgarioServer(cb) {
+    var options = {
+        host: 'm.agar.io',
+        port: 80,
+        path: '/',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': region.length,
+            'Origin': 'http://agar.io',
+            'Referer': 'http://agar.io/'
+        }
+    };
+
+    var req = http.request(options, function(res) {
+        var server = '';
+        if(res.statusCode != 200) {
+            console.log('HTTP request status code: ' + res.statusCode);
+            return cb();
+        }
+        res.setEncoding('utf8');
+
+        res.on('data', function (chunk) {
+            server += chunk;
+        });
+        res.on('end', function() {
+            console.log('HTTP request answer: ' + server);
+            cb('ws://' + server);
+        });
+    });
+
+    req.on('error', function(e) {
+        console.log('HTTP request error: ' + e.message);
+        return cb();
+    });
+
+    req.write('EU-London');
+    req.end();
+}
+
+console.log('Requesting server in region ' + region);
+getAgarioServer(function(server) {
+    if(!server) return console.log('No server to connect');
+    console.log('Connecting to ' + server);
+    client.connect(server);
+});
+
