@@ -1,3 +1,6 @@
+## 18.05.2015 ##
+Now `example.js` will automatically request server and connect to it.
+
 ## 12.05.2015 ##
 Protocol changes:
 
