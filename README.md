@@ -3,7 +3,7 @@ Node.js client for [agar.io](http://agar.io) with API.
 This is my first GitHub project so i may did lots of stuff wrong. Also my English is bad.
 
 ## Instructions ##
-You need [Node.js](https://nodejs.org/) (i used **v0.10.21** so anything higher should work). Create some folder and put there `agario-client.js` and `example.js`. Also you need [ws](https://www.npmjs.com/package/ws "ws") and [buffer-dataview](https://www.npmjs.com/package/buffer-dataview) lib. You can install them using `npm install ws` and `npm install buffer-dataview`. If you see error about python, its okay, its optional dependency. Then `node example.js` should work after you set server in it (see instructions inside `example.js`)
+You need [Node.js](https://nodejs.org/) (i used **v0.10.21** so anything higher should work). Create some folder and put there `agario-client.js` and `example.js`. Also you need [ws](https://www.npmjs.com/package/ws "ws") and [buffer-dataview](https://www.npmjs.com/package/buffer-dataview) lib. You can install them using `npm install ws` and `npm install buffer-dataview`. If you see error about python, its okay, its optional dependency. Then `node example.js` should work.
 
 # API #
 There are two types of object that have API:
