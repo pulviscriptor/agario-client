@@ -1,3 +1,11 @@
+## 01.06.2015 ##
+Protocol changes:
+
+- `ball` coordinates changed from 32bit float to 16bit signed integer
+- `ball` size changed from 32bit float to 16bit signed integer
+- packet ID 16 part 3 changed from list of visible balls to list of destroyed balls
+- two bits between 2 and 3 part of packet 16 is not sent anymore
+
 ## 18.05.2015 ##
 Now `example.js` will automatically request server and connect to it.
 
