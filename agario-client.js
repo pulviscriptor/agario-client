@@ -182,12 +182,12 @@ Client.prototype = {
                 ball_id = view.getUint32(pointer, true);
                 pointer += 4;
                 if(ball_id == 0) break;
-                coordinate_x = view.getFloat32(pointer, true);
-                pointer += 4;
-                coordinate_y = view.getFloat32(pointer, true);
-                pointer += 4;
-                size = view.getFloat32(pointer, true);
-                pointer += 4;
+                coordinate_x = view.getInt16(pointer, true);
+                pointer += 2;
+                coordinate_y = view.getInt16(pointer, true);
+                pointer += 2;
+                size = view.getInt16(pointer, true);
+                pointer += 2;
 
                 var color_R = view.getUint8(pointer);
                 pointer += 1;
@@ -235,14 +235,10 @@ Client.prototype = {
                 client.emitEvent('ballAction', ball_id, coordinate_x, coordinate_y, size, is_virus, nick);
             }
 
-            //looks like this 2 bytes allways 00 00 and not used
-            //view.getUint16(pointer, true);
-            pointer += 2;
-
             var balls_on_screen_count = view.getUint32(pointer, true);
             pointer += 4;
 
-            //update events
+            //disappear events
             for(i=0;i<balls_on_screen_count;i++) {
                 ball_id = view.getUint32(pointer, true);
                 pointer += 4;
@@ -250,21 +246,7 @@ Client.prototype = {
                 ball = client.balls[ball_id] || new Ball(client, ball_id);
                 ball.update_tick = client.tick_counter;
                 ball.update();
-            }
-
-            for(ball_id in client.balls) {
-                if(!client.balls.hasOwnProperty(ball_id)) continue;
-                ball = client.balls[ball_id];
-                if(!ball.visible) continue;
-                if(ball.update_tick == client.tick_counter) continue;
-
-                ball.update();
-                if(ball.mine) {
-                    ball.destroy({reason: 'merge'});
-                    client.emitEvent('merge', ball.id);
-                }else{
-                    ball.disappear();
-                }
+                ball.disappear();
             }
         },
 
