@@ -528,7 +528,7 @@ Ball.prototype = {
     },
 
     toString: function() {
-        if(this.name) return this.id + '(' + this.name + '}';
+        if(this.name) return this.id + '(' + this.name + ')';
         return this.id.toString();
     }
 };
