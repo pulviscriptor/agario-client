@@ -1,0 +1,33 @@
+{
+  "name": "agario-client",
+  "description": "Node.js client for agar.io with API",
+  "version": "0.0.1",
+  "keywords": [
+    "agario",
+    "sockets"
+  ],
+  "maintainers": [
+    {
+      "name": "pulviscriptor",
+      "email": "pulviscriptor@users.noreply.github.com",
+      "web": "https://github.com/pulviscriptor"
+    }
+  ],
+  "engines": {
+    "node": ">=v0.10"
+  },
+  "demos": [
+    "example.js"
+  ],
+  "dependencies": {
+    "buffer-dataview": "0.0.2",
+    "ws": "^0.7.2"
+  },
+  "bugs": {
+    "url": "https://github.com/pulviscriptor/agario-client/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pulviscriptor"
+  }
+}

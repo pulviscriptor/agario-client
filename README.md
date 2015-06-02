@@ -3,7 +3,10 @@ Node.js client for [agar.io](http://agar.io) with API.
 This is my first GitHub project so i may did lots of stuff wrong. Also my English is bad.
 
 ## Instructions ##
-You need [Node.js](https://nodejs.org/) (i used **v0.10.21** so anything higher should work). Create some folder and put there `agario-client.js` and `example.js`. Also you need [ws](https://www.npmjs.com/package/ws "ws") and [buffer-dataview](https://www.npmjs.com/package/buffer-dataview) lib. You can install them using `npm install ws` and `npm install buffer-dataview`. If you see error about python, its okay, its optional dependency. Then `node example.js` should work.
+- Clone the git repository
+- Install [Node.js](https://nodejs.org/)
+- Install dependency using `npm install`
+- Run `node example.js`
 
 # API #
 There are two types of object that have API:
@@ -57,7 +60,7 @@ In this list `on.eventName(param1, param2)` means you need to do `client.on('eve
 - `on.myNewBall(ball_id)` my new `Ball` created (spawn/split/explode...)
 - `on.somebodyAteSomething(eater_id, eaten_id)` somebody ate something
 - `on.leaderBoardUpdate(old_array, new_array)` leaders update in FFA mode. Array of leader's `Ball`'s IDs (one ID per leader)
-- `on.teamsScoresUpdate(old_scores, new_scores)` array of teams scores update in teams mode 
+- `on.teamsScoresUpdate(old_scores, new_scores)` array of teams scores update in teams mode
 - `on.mapSizeLoad(min_x, min_y, max_x, max_y)` map size update (after connect)
 - `on.reset()` when we delete all `Balls` and stop timers (connection lost?)
 - `on.winner(ball_id)` somebody won and server going for restart
