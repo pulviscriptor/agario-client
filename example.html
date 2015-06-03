@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>agario-client browser example</title>
+    <script src="https://cdn.rawgit.com/Wolfy87/EventEmitter/8c0c76d8f04ed73ee09e61271440a38012192063/EventEmitter.js"></script>
+    <script src="https://cdn.rawgit.com/anodynos/node2web_buffer/44f2813c8818bfb7aa6af585d5d51250d9555131/buffer.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.6/pixi.min.js"></script>
+    <script src="agario-client.js"></script>
+</head>
+
+<body>
+    <script>
+        //this is example of API usage
+
+        var region = 'EU-London'; //server region to request
+        var interval_id = 0; //here we will store setInterval's ID
+
+        var client = new Client('worker'); //create new client and call it "worker" (not nickname)
+
+        client.once('leaderBoardUpdate', function(old, leaders) { //when we receive leaders list. Fire only once
+            var name_array = leaders.map(function(ball_id) { //converting leader's IDs to leader's names
+                return client.balls[ball_id].name || 'unnamed'
+            });
+
+            client.log('leaders on server: ' + name_array.join(', '));
+        });
+
+        client.on('mineBallDestroy', function(ball_id, reason) { //when my ball destroyed
+            if (reason.by) {
+                console.log(client.balls[reason.by] + ' ate my ball');
+            }
+            console.log('i lost my ball ' + ball_id + ', ' + client.my_balls.length + ' balls left');
+        });
+
+        client.on('myNewBall', function(ball_id) { //when i got new ball
+            client.log('my new ball ' + ball_id + ', total ' + client.my_balls.length);
+        });
+
+        client.on('lostMyBalls', function() { //when i lost all my balls
+            client.log('lost all my balls, respawning');
+            client.spawn('i_dev_things'); //spawning new ball with nickname "agario-client"
+        });
+
+        client.on('somebodyAteSomething', function(eater_ball, eaten_ball) { //when some ball ate some ball
+            var ball = client.balls[eater_ball]; //get eater ball
+            if (!ball) return; //if we don't know than ball, we don't care
+            if (!ball.mine) return; //if it's not our ball, we don't care
+            client.log('I ate ' + eaten_ball + ', my new size is ' + ball.size);
+        });
+
+        client.on('connected', function() { //when we connected to server
+            client.log('spawning');
+            client.spawn('agario-client'); //spawning new ball
+            interval_id = setInterval(recalculateTarget, 100); //we will search for target to eat every 100ms
+        });
+
+        client.on('connectionError', function(e) {
+            client.log('Connection failed with reason: ' + e);
+            client.log('Server address set to: ' + server_address + ' please check if this is correct and working address');
+        });
+
+        client.on('reset', function() { //when client clears everything (connection lost?)
+            clearInterval(interval_id);
+        });
+
+        function recalculateTarget() { //this is all our example logic
+            var candidate_ball = null; //first we don't have candidate to eat
+            var candidate_distance = 0;
+            var my_ball = client.balls[client.my_balls[0]]; //we get our first ball. We don't care if there more then one, its just example.
+            if (!my_ball) return; //if our ball not spawned yet then we abort. We will come back here in 100ms later
+
+            for (var ball_id in client.balls) { //we go true all balls we know about
+                var ball = client.balls[ball_id];
+                if (ball.virus) continue; //if ball is a virus (green non edible thing) then we skip it
+                if (!ball.visible) continue; //if ball is not on our screen (field of view) then we skip it
+                if (ball.mine) continue; //if ball is our ball - then we skip it
+                if (ball.size / my_ball.size > 0.5) continue; //if ball is bigger than 50% of our size - then we skip it
+                var distance = getDistanceBetweenBalls(ball, my_ball); //we calculate distances between our ball and candidate
+                if (candidate_ball && distance > candidate_distance) continue; //if we do have some candidate and distance to it smaller, than distance to this ball, we skip it
+
+                candidate_ball = ball; //we found new candidate and we record him
+                candidate_distance = getDistanceBetweenBalls(ball, my_ball); //we record distance to him to compare it with other balls
+            }
+            if (!candidate_ball) return; //if we didn't find any candidate, we abort. We will come back here in 100ms later
+
+            client.log('closest ' + candidate_ball + ', distance ' + candidate_distance);
+            client.moveTo(candidate_ball.x, candidate_ball.y); //we send move command to move to food's coordinates
+        }
+
+        function getDistanceBetweenBalls(ball_1, ball_2) { //this calculates distance between 2 balls
+            return Math.sqrt(Math.pow(ball_1.x - ball_2.x, 2) + Math.pow(ball_2.y - ball_1.y, 2));
+        }
+
+        // Rendering
+        function BallView(main, ball) {
+            this.main = main;
+            this.ball = ball;
+            this.graphic = new PIXI.Graphics();
+            this.draw();
+            this.main.stage.addChild(this.graphic);
+
+            var _this = this;
+            this.ball.once('disappear', function() {
+                _this.erase();
+            });
+            this.ball.once('destroy', function() {
+                _this.erase();
+            });
+            this.ball.on('move', function() {
+                _this.move();
+            });
+            this.ball.on('resize', function() {
+                _this.shape();
+            });
+        }
+
+        BallView.prototype = {
+            draw: function() {
+                this.shape();
+                this.move();
+            },
+            shape: function() {
+                this.graphic.clear();
+                this.graphic.beginFill(this.ball.color.replace('#', '0x'), 1);
+                this.graphic.drawCircle(0, 0, this.ball.size * this.main.scale);
+                this.graphic.endFill();
+            },
+            move: function() {
+                this.graphic.position.x = this.ball.x * this.main.scale;
+                this.graphic.position.y = this.ball.y * this.main.scale;
+            },
+            erase: function() {
+                this.graphic.clear();
+                this.main.stage.removeChild(this.graphic);
+            }
+        };
+
+
+        function View(client) {
+            this.client = client;
+
+            _this = this;
+            client.once('mapSizeLoad', function(min_x, min_y, max_x, max_y) {
+                _this.gameWidth = max_x;
+                _this.gameHeight = max_y;
+                _this.calculateScale();
+                _this.addRenderer();
+                _this.initStage();
+                _this.addListners();
+                _this.animate();
+            });
+        }
+
+        var MARGIN = 20;
+
+        View.prototype = {
+            calculateScale: function() {
+                allowedX = window.innerWidth - MARGIN;
+                allowedY = window.innerHeight - MARGIN;
+                scaleX = allowedX / this.gameWidth;
+                scaleY = allowedY / this.gameHeight;
+                this.scale = Math.min(scaleX, scaleY);
+            },
+            addRenderer: function() {
+                this.width = Math.ceil(this.gameWidth * this.scale);
+                this.height = Math.ceil(this.gameHeight * this.scale);
+                this.renderer = PIXI.autoDetectRenderer(this.width, this.height, {
+                    antialias: true
+                });
+                document.body.appendChild(this.renderer.view);
+            },
+            initStage: function() {
+                this.stage = new PIXI.Container();
+                this.stage.interactive = true;
+            },
+            addListners: function() {
+                var _this = this;
+                this.client.on('ballAppear', function(id) {
+                    new BallView(_this, client.balls[id]);
+                });
+            },
+            animate: function() {
+                this.renderer.render(this.stage);
+                var _this = this;
+                requestAnimationFrame(function() {
+                    _this.animate();
+                });
+            }
+        };
+
+        var view = new View(client);
+
+        client.connect("ws://127.0.0.1:9158");
+    </script>
+</body>
+
+</html>
