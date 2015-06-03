@@ -9,12 +9,16 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.6/pixi.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
     <script src="agario-client.js"></script>
+    <style>
+        body,
+        canvas {
+            margin: 0;
+        }
+    </style>
 </head>
 
 <body>
     <script>
-        var client = new Client('worker'); //create new client and call it "worker" (not nickname)
-
         // Rendering
         function BallView(main, ball) {
             this.main = main;
@@ -45,13 +49,14 @@
             },
             shape: function() {
                 this.graphic.clear();
-                this.graphic.beginFill(this.ball.color.replace('#', '0x'), 1);
-                this.graphic.drawCircle(0, 0, this.ball.size * this.main.scale);
+                var opacity = this.ball.virus ? 0.5 : 0.9
+                this.graphic.beginFill(this.ball.color.replace('#', '0x'), opacity);
+                this.graphic.drawCircle(0, 0, this.ball.size);
                 this.graphic.endFill();
             },
             move: function() {
-                this.graphic.position.x = this.ball.x * this.main.scale;
-                this.graphic.position.y = this.ball.y * this.main.scale;
+                this.graphic.position.x = this.ball.x;
+                this.graphic.position.y = this.ball.y;
             },
             erase: function() {
                 this.graphic.clear();
@@ -65,26 +70,25 @@
 
             _this = this;
             client.once('mapSizeLoad', function(min_x, min_y, max_x, max_y) {
+                _this.initStage();
                 _this.gameWidth = max_x;
                 _this.gameHeight = max_y;
                 _this.calculateScale();
                 _this.addRenderer();
-                _this.initStage();
                 _this.addListners();
                 _this.animate();
                 _this.emit('launched')
             });
         }
 
-        var MARGIN = 20;
-
         Viewer.prototype = {
             calculateScale: function() {
-                allowedX = window.innerWidth - MARGIN;
-                allowedY = window.innerHeight - MARGIN;
+                allowedX = window.innerWidth;
+                allowedY = window.innerHeight;
                 scaleX = allowedX / this.gameWidth;
                 scaleY = allowedY / this.gameHeight;
                 this.scale = Math.min(scaleX, scaleY);
+                this.stage.scale.x = this.stage.scale.y = this.scale
             },
             addRenderer: function() {
                 this.width = Math.ceil(this.gameWidth * this.scale);
@@ -139,18 +143,18 @@
         function Controller(client) {
             this.client = client;
 
-            this.nick = 'agario-client';
-            this.autoRespawn = false;
             this.server = {
                 region: 'EU-London',
                 ip: '127.0.0.1',
                 port: 9158
             }
+            this.nick = 'agario-client';
+            this.autoRespawn = false;
 
             this.gui = new dat.GUI();
 
             this.servgui = this.gui.addFolder('Server');
-            this.servgui.add(this.server, 'region')
+            this.servgui.add(this.server, 'region', ['US-Fremont', 'US-Atlanta', 'BR-Brazil', 'EU-London', 'RU-Russia', 'JP-Tokyo', 'CN-China', 'SG-Singapore', 'TK-Turkey'])
             this.servgui.add(this, 'findServer')
             this.servgui.add(this.server, 'ip')
             this.servgui.add(this.server, 'port')
@@ -165,21 +169,22 @@
 
             this.leadergui = this.gui.addFolder('Leaderboard');
             this.leaders = {};
+            this.resetLeader();
             for (var i = 1; i <= 10; i++) {
-                this.leaders[i] = '---';
                 this.leadergui.add(this.leaders, i);
             }
 
             var _this = this;
             client.on('connected', function() {
-                _this.servgui.close()
-                _this.cellgui.open()
-                _this.leadergui.open()
+                _this.servgui.close();
+                _this.cellgui.open();
+                _this.leadergui.open();
             });
             client.on('reset', function() {
-                _this.servgui.open()
-                _this.cellgui.close()
-                _this.leadergui.close()
+                _this.servgui.open();
+                _this.cellgui.close();
+                _this.leadergui.close();
+                _this.resetLeader();
             });
             client.on('lostMyBalls', function() {
                 if (_this.autoRespawn) {
@@ -193,23 +198,21 @@
                     for (var i in _this.leadergui.__controllers) {
                         _this.leadergui.__controllers[i].updateDisplay();
                     }
-
                 }
             });
         }
 
         Controller.prototype = {
             findServer: function() {
-                // TODO Dummy
-                // Anyway, due to connection being blocked on any official server,
-                // this will likely never work
+                // Because of SOP, this will never work
                 x = new XMLHttpRequest()
                 x.open('POST', 'http://m.agar.io', false);
                 x.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                // x.setRequestHeader('Content-Length', region.length);
-                x.setRequestHeader('Origin', 'http://agar.io');
-                x.setRequestHeader('Referer', 'http://agar.io/');
+                x.setRequestHeader('Content-Length', this.server.region.length);
+                // x.setRequestHeader('Origin', 'http://agar.io');
+                // x.setRequestHeader('Referer', 'http://agar.io/');
                 x.send(this.server.region);
+                console.log('AA', x.responseText);
                 s = x.responseText.split(':')
                 this.server.ip = s[0];
                 this.server.port = s[1];
@@ -227,15 +230,96 @@
             spawn: function() {
                 this.client.spawn(this.nick)
             },
+            resetLeader: function() {
+                for (var i = 1; i <= 10; i++) {
+                    this.leaders[i] = '---';
+                }
+            }
         }
 
+        function IA(client) {
+            this.client = client;
+            this.begin();
+        }
+
+        IA.prototype = {
+            begin: function() {
+                var _this = this;
+                this.interval = setInterval(function() {
+                    _this.decide();
+                }, 100);
+            },
+            end: function() {
+                clearInterval(this.interval_id);
+            },
+            getDistanceBetweenBalls: function(ball_1, ball_2) { //this calculates distance between 2 balls
+                return Math.sqrt(Math.pow(ball_1.x - ball_2.x, 2) + Math.pow(ball_2.y - ball_1.y, 2));
+            },
+            getAngleBetweenBalls: function(b1, b2) { // output in rad
+                dX = b2.x - b1.x
+                dY = b2.y - b1.y
+                return Math.tan(dY / dX)
+            },
+            decide: function() {
+                var my_ball = this.client.balls[this.client.my_balls[0]]; // TODO Handle more balls
+                if (!my_ball) return
+                var candidates = [];
+
+                for (var ball_id in this.client.balls) {
+                    var ball = this.client.balls[ball_id];
+                    if (!ball.visible) continue;
+
+                    var score = 0;
+                    if (ball.mine) {
+                        score = 1;
+                    } else {
+                        if (ball.virus) {
+                            if (ball.size > my_ball.size) {
+                                score = -5;
+                            } else {
+                                score = 5
+                            }
+                        } else {
+                            score = Math.max(1000 - this.getDistanceBetweenBalls(ball, my_ball) - ball.size - my_ball.size, 0);
+                            if (ball.size < my_ball.size) {
+                                score = score;
+                            } else {
+                                score = -score * 5;
+                            }
+                        }
+                    }
+
+                    candidates.push({
+                        x: ball.x - my_ball.x,
+                        y: ball.y - my_ball.y,
+                        score: score
+                    })
+                }
+
+                var x = y = p = 0;
+                for (var candidate_id in candidates) {
+                    var candidate = candidates[candidate_id];
+                    // console.log(candidate.x, candidate.y, candidate.score)
+                    x += candidate.x * candidate.score;
+                    y += candidate.y * candidate.score;
+                    p += candidate.score;
+                }
+                this.client.moveTo(my_ball.x + x / p, my_ball.y + y / p);
+            }
+        }
+
+        var client = new Client('worker');
         var viewer = new Viewer(client);
         var controller = new Controller(client);
-        var pointer = new Pointer(viewer);
+        // var pointer = new Pointer(viewer);
+        var ia = new IA(client);
 
         // client.connect("ws://127.0.0.1:9158");
     </script>
 
 </body>
+
+<div id="viewer">
+</div>
 
 </html>
