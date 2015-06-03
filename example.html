@@ -4,94 +4,16 @@
 <head>
     <meta charset=utf-8 />
     <title>agario-client browser example</title>
-    <script src="https://cdn.rawgit.com/Wolfy87/EventEmitter/8c0c76d8f04ed73ee09e61271440a38012192063/EventEmitter.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/4.2.11/EventEmitter.min.js"></script>
     <script src="https://cdn.rawgit.com/anodynos/node2web_buffer/44f2813c8818bfb7aa6af585d5d51250d9555131/buffer.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.6/pixi.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
     <script src="agario-client.js"></script>
 </head>
 
 <body>
     <script>
-        //this is example of API usage
-
-        var region = 'EU-London'; //server region to request
-        var interval_id = 0; //here we will store setInterval's ID
-
         var client = new Client('worker'); //create new client and call it "worker" (not nickname)
-
-        client.once('leaderBoardUpdate', function(old, leaders) { //when we receive leaders list. Fire only once
-            var name_array = leaders.map(function(ball_id) { //converting leader's IDs to leader's names
-                return client.balls[ball_id].name || 'unnamed'
-            });
-
-            client.log('leaders on server: ' + name_array.join(', '));
-        });
-
-        client.on('mineBallDestroy', function(ball_id, reason) { //when my ball destroyed
-            if (reason.by) {
-                console.log(client.balls[reason.by] + ' ate my ball');
-            }
-            console.log('i lost my ball ' + ball_id + ', ' + client.my_balls.length + ' balls left');
-        });
-
-        client.on('myNewBall', function(ball_id) { //when i got new ball
-            client.log('my new ball ' + ball_id + ', total ' + client.my_balls.length);
-        });
-
-        client.on('lostMyBalls', function() { //when i lost all my balls
-            client.log('lost all my balls, respawning');
-            client.spawn('i_dev_things'); //spawning new ball with nickname "agario-client"
-        });
-
-        client.on('somebodyAteSomething', function(eater_ball, eaten_ball) { //when some ball ate some ball
-            var ball = client.balls[eater_ball]; //get eater ball
-            if (!ball) return; //if we don't know than ball, we don't care
-            if (!ball.mine) return; //if it's not our ball, we don't care
-            client.log('I ate ' + eaten_ball + ', my new size is ' + ball.size);
-        });
-
-        client.on('connected', function() { //when we connected to server
-            client.log('spawning');
-            client.spawn('agario-client'); //spawning new ball
-            interval_id = setInterval(recalculateTarget, 100); //we will search for target to eat every 100ms
-        });
-
-        client.on('connectionError', function(e) {
-            client.log('Connection failed with reason: ' + e);
-            client.log('Server address set to: ' + server_address + ' please check if this is correct and working address');
-        });
-
-        client.on('reset', function() { //when client clears everything (connection lost?)
-            clearInterval(interval_id);
-        });
-
-        function recalculateTarget() { //this is all our example logic
-            var candidate_ball = null; //first we don't have candidate to eat
-            var candidate_distance = 0;
-            var my_ball = client.balls[client.my_balls[0]]; //we get our first ball. We don't care if there more then one, its just example.
-            if (!my_ball) return; //if our ball not spawned yet then we abort. We will come back here in 100ms later
-
-            for (var ball_id in client.balls) { //we go true all balls we know about
-                var ball = client.balls[ball_id];
-                if (ball.virus) continue; //if ball is a virus (green non edible thing) then we skip it
-                if (!ball.visible) continue; //if ball is not on our screen (field of view) then we skip it
-                if (ball.mine) continue; //if ball is our ball - then we skip it
-                if (ball.size / my_ball.size > 0.5) continue; //if ball is bigger than 50% of our size - then we skip it
-                var distance = getDistanceBetweenBalls(ball, my_ball); //we calculate distances between our ball and candidate
-                if (candidate_ball && distance > candidate_distance) continue; //if we do have some candidate and distance to it smaller, than distance to this ball, we skip it
-
-                candidate_ball = ball; //we found new candidate and we record him
-                candidate_distance = getDistanceBetweenBalls(ball, my_ball); //we record distance to him to compare it with other balls
-            }
-            if (!candidate_ball) return; //if we didn't find any candidate, we abort. We will come back here in 100ms later
-
-            client.log('closest ' + candidate_ball + ', distance ' + candidate_distance);
-            client.moveTo(candidate_ball.x, candidate_ball.y); //we send move command to move to food's coordinates
-        }
-
-        function getDistanceBetweenBalls(ball_1, ball_2) { //this calculates distance between 2 balls
-            return Math.sqrt(Math.pow(ball_1.x - ball_2.x, 2) + Math.pow(ball_2.y - ball_1.y, 2));
-        }
 
         // Rendering
         function BallView(main, ball) {
@@ -138,7 +60,7 @@
         };
 
 
-        function View(client) {
+        function Viewer(client) {
             this.client = client;
 
             _this = this;
@@ -150,12 +72,13 @@
                 _this.initStage();
                 _this.addListners();
                 _this.animate();
+                _this.emit('launched')
             });
         }
 
         var MARGIN = 20;
 
-        View.prototype = {
+        Viewer.prototype = {
             calculateScale: function() {
                 allowedX = window.innerWidth - MARGIN;
                 allowedY = window.innerHeight - MARGIN;
@@ -190,10 +113,122 @@
             }
         };
 
-        var view = new View(client);
+        // Inherit from EventEmitter
+        for (key in EventEmitter.prototype) {
+            Viewer.prototype[key] = EventEmitter.prototype[key];
+        }
 
-        client.connect("ws://127.0.0.1:9158");
+        function Pointer(viewer) {
+            this.viewer = viewer;
+            this.client = this.viewer.client;
+            var _this = this;
+            this.viewer.once('launched', function() {
+                _this.viewer.renderer.view.addEventListener('mousemove', function(e) {
+                    _this.client.moveTo(e.offsetX / _this.viewer.scale, e.offsetY / _this.viewer.scale)
+                })
+            })
+        }
+
+        function Controller(client) {
+            this.client = client;
+
+            this.nick = 'agario-client';
+            this.autoRespawn = false;
+            this.server = {
+                region: 'EU-London',
+                ip: '127.0.0.1',
+                port: 9158
+            }
+
+            this.gui = new dat.GUI();
+
+            this.servgui = this.gui.addFolder('Server');
+            this.servgui.add(this.server, 'region')
+            this.servgui.add(this, 'findServer')
+            this.servgui.add(this.server, 'ip')
+            this.servgui.add(this.server, 'port')
+            this.servgui.add(this, 'connect')
+            this.servgui.add(this, 'disconnect')
+            this.servgui.open()
+
+            this.cellgui = this.gui.addFolder('Cell');
+            this.cellgui.add(this, 'nick');
+            this.cellgui.add(this, 'spawn');
+            this.cellgui.add(this, 'autoRespawn');
+
+            this.leadergui = this.gui.addFolder('Leaderboard');
+            this.leaders = {};
+            for (var i = 1; i <= 10; i++) {
+                this.leaders[i] = '---';
+                this.leadergui.add(this.leaders, i);
+            }
+
+            var _this = this;
+            client.on('connected', function() {
+                _this.servgui.close()
+                _this.cellgui.open()
+                _this.leadergui.open()
+            });
+            client.on('reset', function() {
+                _this.servgui.open()
+                _this.cellgui.close()
+                _this.leadergui.close()
+            });
+            client.on('lostMyBalls', function() {
+                if (_this.autoRespawn) {
+                    _this.spawn();
+                }
+            })
+            client.on('leaderBoardUpdate', function(old, leaders) {
+                for (var i in leaders) {
+                    var rank = parseInt(i) + 1;
+                    _this.leaders[rank] = this.balls[leaders[i]].name || 'An unnamed cell';
+                    for (var i in _this.leadergui.__controllers) {
+                        _this.leadergui.__controllers[i].updateDisplay();
+                    }
+
+                }
+            });
+        }
+
+        Controller.prototype = {
+            findServer: function() {
+                // TODO Dummy
+                // Anyway, due to connection being blocked on any official server,
+                // this will likely never work
+                x = new XMLHttpRequest()
+                x.open('POST', 'http://m.agar.io', false);
+                x.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                // x.setRequestHeader('Content-Length', region.length);
+                x.setRequestHeader('Origin', 'http://agar.io');
+                x.setRequestHeader('Referer', 'http://agar.io/');
+                x.send(this.server.region);
+                s = x.responseText.split(':')
+                this.server.ip = s[0];
+                this.server.port = s[1];
+
+                for (var i in this.servgui.__controllers) {
+                    this.servgui.__controllers[i].updateDisplay();
+                }
+            },
+            connect: function() {
+                this.client.connect('ws://' + this.server.ip + ':' + this.server.port)
+            },
+            disconnect: function() {
+                this.client.disconnect();
+            },
+            spawn: function() {
+                this.client.spawn(this.nick)
+            },
+        }
+
+        var viewer = new Viewer(client);
+        var controller = new Controller(client);
+        var pointer = new Pointer(viewer);
+
+        // client.connect("ws://127.0.0.1:9158");
     </script>
+
 </body>
 
 </html>
