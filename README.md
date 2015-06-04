@@ -14,13 +14,14 @@ There are two types of object that have API:
 - **Client** - thing that connects to [agar.io](http://agar.io) server and talks to it. If you want to spawn and control your `Ball`, you need to talk with `Client`
 - **Ball** - thing that `Client` creates. Everything in game is `Balls` (viruses/food/players...). You can't control `Balls` objects, only observe what they do.
 
-Both objects have same methods for events:
+Both objects have same methods for events from [events.EventEmitter](https://nodejs.org/api/events.html):
 
 - `.on('eventName', callback)` attach listener to event
 - `.once('eventName', callback)` attach listener to event but execute only once
-- `.off('eventName', callback)` remove listener from event
-- `.offAll('eventName')` remove all listeners from event
+- `.removeListener('eventName', callback)` remove listener from event
+- `.removeAllListeners('eventName')` remove all listeners from event
 - `.emit('eventName', p1, p2...)` emit your own event
+- check more in [documentation](https://nodejs.org/api/events.html)
 
 # Client API #
 `var client = new Client(client_name);` *client_name* is string for client that will be used for logging (if you enable it). It's not your ball name.
