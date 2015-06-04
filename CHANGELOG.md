@@ -1,3 +1,14 @@
+## 04.06.2015 ##
+Code changes:
+
+- `Ball.color` is now working (fixed by [GeoffreyFrogeye](https://github.com/GeoffreyFrogeye))
+- New events methods (improved by [GeoffreyFrogeye](https://github.com/GeoffreyFrogeye))
+- Deprecated property `Ball.is_virus` completely removed
+- Deprecated property `Ball.is_mine` completely removed
+- `.off()` marked as deprecated and replaced with `.removeListener()`
+- `.offAll()` marked as deprecated and replaced with `.removeAllListeners()`
+- `.emitEvent()` marked as deprecated and replaced with `.emit()`
+
 ## 01.06.2015 ##
 Protocol changes:
 
