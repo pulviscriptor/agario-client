@@ -20,7 +20,7 @@
             this.draw();
             this.main.stage.addChild(this.graphic);
 
-            var _this = this;
+            var _this = this; // TODO Better handle appear / disappear / destroy
             this.ball.once('disappear', function() {
                 _this.erase();
             });
@@ -71,18 +71,28 @@
                 _this.addListners();
                 _this.addStats();
                 _this.animate();
-                _this.emit('launched')
+                _this.emit('launched');
+                window.addEventListener('resize', function() {
+                    _this.updateSize();
+                });
             });
         }
 
         Viewer.prototype = {
-            addRenderer: function() {
+            getSize: function() {
                 this.width = window.innerWidth;
                 this.height = window.innerHeight;
+            },
+            addRenderer: function() {
+                this.getSize();
                 this.renderer = PIXI.autoDetectRenderer(this.width, this.height, {
                     antialias: true
                 });
                 this.container.appendChild(this.renderer.view);
+            },
+            updateSize: function() {
+                this.getSize();
+                this.renderer.resize(this.width, this.height)
             },
             initStage: function() {
                 this.stage = new PIXI.Container();
@@ -113,14 +123,14 @@
                     this.cam.x = my_ball.x
                     this.cam.y = my_ball.y
                     this.cam.s = 0.5 // Scale
-                }
-                this.stage.scale.x = this.stage.scale.y = this.cam.s
-                this.stage.position.x = -this.cam.x * this.cam.s + this.width / 2
-                this.stage.position.y = -this.cam.y * this.cam.s + this.height / 2
+                } // else: don't move the camera
             },
             animate: function() {
                 this.stats.begin()
                 this.posCamera();
+                this.stage.scale.x = this.stage.scale.y = this.cam.s
+                this.stage.position.x = -this.cam.x * this.cam.s + this.width / 2
+                this.stage.position.y = -this.cam.y * this.cam.s + this.height / 2
                 this.renderer.render(this.stage);
                 this.stats.end();
                 this.emit('animate');
@@ -147,7 +157,10 @@
             this.viewer.once('launched', function() {
                 _this.viewer.stage.interactive = true;
                 _this.viewer.stage.on('mousemove', function(e) {
-                    _this.mousemove(e);
+                    _this.pointermove(e);
+                });
+                _this.viewer.stage.on('touchmove', function(e) {
+                    _this.pointermove(e);
                 });
                 _this.viewer.on('animate', function(e) {
                     _this.move();
@@ -166,7 +179,7 @@
             move: function() {
                 this.client.moveTo(this.viewer.cam.x + this.dest.x, this.viewer.cam.y + this.dest.y);
             },
-            mousemove: function(e) {
+            pointermove: function(e) {
                 var gamePos = e.data.getLocalPosition(this.viewer.stage);
                 this.dest = {
                     x: gamePos.x - this.viewer.cam.x,
@@ -251,7 +264,6 @@
                 // x.setRequestHeader('Origin', 'http://agar.io');
                 // x.setRequestHeader('Referer', 'http://agar.io/');
                 x.send(this.server.region);
-                console.log('AA', x.responseText);
                 s = x.responseText.split(':')
                 this.server.ip = s[0];
                 this.server.port = s[1];
@@ -371,14 +383,13 @@
             }
         }
 
+        var d = {}; // DEBUG Allow access from console
         window.onload = function() {
-            console.log('WIN');
-            var client = new Client('worker');
-            console.log(document.getElementById('viewer'));
-            var viewer = new Viewer(client, document.getElementById('viewer'));
-            var controller = new Controller(client);
-            var pointer = new Pointer(viewer);
-            // var ia = new IA(client);
+            d.client = new Client('worker');
+            d.viewer = new Viewer(d.client, document.getElementById('viewer'));
+            d.controller = new Controller(d.client);
+            d.pointer = new Pointer(d.viewer);
+            // var d.ia = new IA(d.client);
         };
     </script>
     <style>
