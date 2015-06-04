@@ -8,16 +8,9 @@
     <script src="https://cdn.rawgit.com/anodynos/node2web_buffer/44f2813c8818bfb7aa6af585d5d51250d9555131/buffer.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.6/pixi.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/stats.js/r11/Stats.js"></script>
     <script src="agario-client.js"></script>
-    <style>
-        body,
-        canvas {
-            margin: 0;
-        }
-    </style>
-</head>
 
-<body>
     <script>
         // Rendering
         function BallView(main, ball) {
@@ -65,51 +58,72 @@
         };
 
 
-        function Viewer(client) {
+        function Viewer(client, container) {
             this.client = client;
+            this.container = container;
 
             _this = this;
             client.once('mapSizeLoad', function(min_x, min_y, max_x, max_y) {
-                _this.initStage();
                 _this.gameWidth = max_x;
                 _this.gameHeight = max_y;
-                _this.calculateScale();
+                _this.initStage();
                 _this.addRenderer();
                 _this.addListners();
+                _this.addStats();
                 _this.animate();
                 _this.emit('launched')
             });
         }
 
         Viewer.prototype = {
-            calculateScale: function() {
-                allowedX = window.innerWidth;
-                allowedY = window.innerHeight;
-                scaleX = allowedX / this.gameWidth;
-                scaleY = allowedY / this.gameHeight;
-                this.scale = Math.min(scaleX, scaleY);
-                this.stage.scale.x = this.stage.scale.y = this.scale
-            },
             addRenderer: function() {
-                this.width = Math.ceil(this.gameWidth * this.scale);
-                this.height = Math.ceil(this.gameHeight * this.scale);
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
                 this.renderer = PIXI.autoDetectRenderer(this.width, this.height, {
                     antialias: true
                 });
-                document.body.appendChild(this.renderer.view);
+                this.container.appendChild(this.renderer.view);
             },
             initStage: function() {
                 this.stage = new PIXI.Container();
-                this.stage.interactive = true;
+                this.cam = { // Camera
+                    x: this.gameWidth / 2,
+                    y: this.gameHeight / 2,
+                    s: 0.5
+                };
             },
             addListners: function() {
                 var _this = this;
                 this.client.on('ballAppear', function(id) {
-                    new BallView(_this, client.balls[id]);
+                    new BallView(_this, this.balls[id]);
                 });
             },
+            addStats: function() {
+                _this.stats = new Stats();
+                _this.stats.setMode(1);
+                _this.stats.domElement.style.position = 'absolute';
+                _this.stats.domElement.style.left = '0px';
+                _this.stats.domElement.style.top = '0px';
+                document.body.appendChild(_this.stats.domElement);
+            },
+            posCamera: function() {
+                my_ball = this.client.balls[this.client.my_balls[0]]
+                if (my_ball) {
+                    // TODO
+                    this.cam.x = my_ball.x
+                    this.cam.y = my_ball.y
+                    this.cam.s = 0.5 // Scale
+                }
+                this.stage.scale.x = this.stage.scale.y = this.cam.s
+                this.stage.position.x = -this.cam.x * this.cam.s + this.width / 2
+                this.stage.position.y = -this.cam.y * this.cam.s + this.height / 2
+            },
             animate: function() {
+                this.stats.begin()
+                this.posCamera();
                 this.renderer.render(this.stage);
+                this.stats.end();
+                this.emit('animate');
                 var _this = this;
                 requestAnimationFrame(function() {
                     _this.animate();
@@ -125,12 +139,20 @@
         function Pointer(viewer) {
             this.viewer = viewer;
             this.client = this.viewer.client;
+            this.dest = { // Destination, relative to camera center
+                x: 0,
+                y: 0
+            }
             var _this = this;
             this.viewer.once('launched', function() {
-                _this.viewer.renderer.view.addEventListener('mousemove', function(e) {
-                    _this.client.moveTo(e.offsetX / _this.viewer.scale, e.offsetY / _this.viewer.scale)
+                _this.viewer.stage.interactive = true;
+                _this.viewer.stage.on('mousemove', function(e) {
+                    _this.mousemove(e);
+                });
+                _this.viewer.on('animate', function(e) {
+                    _this.move();
                 })
-            })
+            });
             window.addEventListener('keydown', function(e) {
                 if (e.keyCode == 87) {
                     _this.client.eject();
@@ -138,6 +160,20 @@
                     _this.client.split();
                 }
             });
+        }
+
+        Pointer.prototype = {
+            move: function() {
+                this.client.moveTo(this.viewer.cam.x + this.dest.x, this.viewer.cam.y + this.dest.y);
+            },
+            mousemove: function(e) {
+                var gamePos = e.data.getLocalPosition(this.viewer.stage);
+                this.dest = {
+                    x: gamePos.x - this.viewer.cam.x,
+                    y: gamePos.y - this.viewer.cam.y
+                }
+                this.move();
+            }
         }
 
         function Controller(client) {
@@ -179,6 +215,9 @@
                 _this.servgui.close();
                 _this.cellgui.open();
                 _this.leadergui.open();
+                if (_this.autoRespawn) {
+                    _this.spawn();
+                }
             });
             client.on('reset', function() {
                 _this.servgui.open();
@@ -246,7 +285,8 @@
             begin: function() {
                 var _this = this;
                 this.interval = setInterval(function() {
-                    _this.decide();
+                    _this.food();
+                    // _this.decide();
                 }, 100);
             },
             end: function() {
@@ -259,6 +299,29 @@
                 dX = b2.x - b1.x
                 dY = b2.y - b1.y
                 return Math.tan(dY / dX)
+            },
+            food: function() {
+                var candidate_ball = null; //first we don't have candidate to eat
+                var candidate_distance = 0;
+                var my_ball = this.client.balls[this.client.my_balls[0]]; //we get our first ball. We don't care if there more then one, its just example.
+                if (!my_ball) return; //if our ball not spawned yet then we abort. We will come back here in 100ms later
+
+                for (var ball_id in this.client.balls) { //we go true all balls we know about
+                    var ball = this.client.balls[ball_id];
+                    if (ball.virus) continue; //if ball is a virus (green non edible thing) then we skip it
+                    if (!ball.visible) continue; //if ball is not on our screen (field of view) then we skip it
+                    if (ball.mine) continue; //if ball is our ball - then we skip it
+                    if (ball.size / my_ball.size > 0.5) continue; //if ball is bigger than 50% of our size - then we skip it
+                    var distance = this.getDistanceBetweenBalls(ball, my_ball); //we calculate distances between our ball and candidate
+                    if (candidate_ball && distance > candidate_distance) continue; //if we do have some candidate and distance to it smaller, than distance to this ball, we skip it
+
+                    candidate_ball = ball; //we found new candidate and we record him
+                    candidate_distance = this.getDistanceBetweenBalls(ball, my_ball); //we record distance to him to compare it with other balls
+                }
+                if (!candidate_ball) return; //if we didn't find any candidate, we abort. We will come back here in 100ms later
+
+                this.client.log('closest ' + candidate_ball + ', distance ' + candidate_distance);
+                this.client.moveTo(candidate_ball.x, candidate_ball.y); //we send move command to move to food's coordinates
             },
             decide: function() {
                 var my_ball = this.client.balls[this.client.my_balls[0]]; // TODO Handle more balls
@@ -308,18 +371,34 @@
             }
         }
 
-        var client = new Client('worker');
-        var viewer = new Viewer(client);
-        var controller = new Controller(client);
-        // var pointer = new Pointer(viewer);
-        var ia = new IA(client);
-
-        // client.connect("ws://127.0.0.1:9158");
+        window.onload = function() {
+            console.log('WIN');
+            var client = new Client('worker');
+            console.log(document.getElementById('viewer'));
+            var viewer = new Viewer(client, document.getElementById('viewer'));
+            var controller = new Controller(client);
+            var pointer = new Pointer(viewer);
+            // var ia = new IA(client);
+        };
     </script>
+    <style>
+        body,
+        #viewer,
+        canvas {
+            margin: 0;
+        }
+        
+        body {
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="viewer">
+    </div>
 
 </body>
-
-<div id="viewer">
-</div>
 
 </html>
