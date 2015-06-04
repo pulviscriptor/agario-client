@@ -1,7 +1,7 @@
 {
   "name": "agario-client",
   "description": "Node.js client for agar.io with API",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "keywords": [
     "agario",
     "sockets"
