@@ -410,15 +410,6 @@ function Ball(client, id) {
     this.virus = false;
     this.mine = false;
 
-    Object.defineProperty(this, "is_virus", { get: function () {
-        if(!client._is_mine_notified)
-            console.trace('agario-client: Client.is_virus is deprecated, use "Client.virus" instead.\n' +
-                'Please change your code, here is stack trace for you'); client._is_mine_notified = true; return this.virus; } });
-    Object.defineProperty(this, "is_mine", { get: function () {
-        if(!client._is_virus_notified)
-            console.trace('agario-client: Client.is_mine is deprecated, use "Client.mine" instead.\n' +
-                'Please change your code, here is stack trace for you'); client._is_virus_notified = true; return this.mine; } });
-
     this.client = client;
     this.destroyed = false;
     this.visible = false;
@@ -506,5 +497,31 @@ Ball.prototype = {
 for (key in EventEmitter.prototype) {
     Client.prototype[key] = Ball.prototype[key] = EventEmitter.prototype[key];
 }
+
+//deprecated methods on 04.06.2015
+Client.prototype.off = Ball.prototype.off = function() {
+    if(!this._off_notified)  {
+        console.trace('agario-client: .off() is deprecated, use ".removeListener()" instead.\n' +
+            'Please change your code, here is stack trace for you');
+        this._off_notified=true;
+    }
+    this.removeListener.apply(this, arguments);
+};
+Client.prototype.offAll = Ball.prototype.offAll = function() {
+    if(!this._offAll_notified)  {
+        console.trace('agario-client: .offAll() is deprecated, use ".removeAllListeners()" instead.\n' +
+            'Please change your code, here is stack trace for you');
+        this._offAll_notified=true;
+    }
+    this.removeAllListeners.apply(this, arguments);
+};
+Client.prototype.emitEvent = Ball.prototype.emitEvent = function() {
+    if(!this._emitEvent_notified)  {
+        console.trace('agario-client: .emitEvent() is deprecated, use ".emit()" instead.\n' +
+            'Please change your code, here is stack trace for you');
+        this._emitEvent_notified=true;
+    }
+    this.emit.apply(this, arguments);
+};
 
 module.exports = Client;
