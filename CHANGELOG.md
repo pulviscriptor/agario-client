@@ -8,6 +8,7 @@ Code changes:
 - `.off()` marked as deprecated and replaced with `.removeListener()`
 - `.offAll()` marked as deprecated and replaced with `.removeAllListeners()`
 - `.emitEvent()` marked as deprecated and replaced with `.emit()`
+- `Client.server` added
 
 ## 01.06.2015 ##
 Protocol changes:

@@ -47,7 +47,7 @@ client.on('connected', function() { //when we connected to server
 
 client.on('connectionError', function(e) {
     client.log('Connection failed with reason: ' + e);
-    client.log('Server address set to: ' + server_address + ' please check if this is correct and working address');
+    client.log('Server address set to: ' + client.server + ' please check if this is correct and working address');
 });
 
 client.on('reset', function() { //when client clears everything (connection lost?)

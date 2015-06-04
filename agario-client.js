@@ -36,6 +36,7 @@ Client.prototype = {
         this.ws.onmessage = this.onMessage.bind(this);
         this.ws.onclose = this.onDisconnect.bind(this);
         this.ws.onerror = this.onError.bind(this);
+        this.server = server;
 
         if(this.debug >= 1)
             this.log('connecting...');

@@ -30,6 +30,7 @@ Both objects have same methods for events from [events.EventEmitter](https://nod
 Properties that you can change:
 
 - `client.debug` debug level. 0-5. 0 is completely silent. 5 is super verbose. **Default: 1**
+- `client.server` address that was used in `client.connect()` call
 - `client.inactive_destroy` time in ms for how long ball will live in memory after his last known action (if player exit from game or ball eaten outside our field of view, we will not know it since server sends action only about field that you see. Original code `destroy()` `Ball` when he `disappear` from field of view. You can do that in `client.on('ballDisppear')` if you want it for some reason). **Default: 5\*60\*1000** (5 minutes)
 - `client.inactive_check` time in ms for time interval that search and destroy inactive `Balls`. **Default: 10\*1000** (10 seconds)
 
