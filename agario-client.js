@@ -494,7 +494,8 @@ Ball.prototype = {
 };
 
 // Inherit from EventEmitter
-for (key in EventEmitter.prototype) {
+for (var key in EventEmitter.prototype) {
+    if(!EventEmitter.prototype.hasOwnProperty(key)) continue;
     Client.prototype[key] = Ball.prototype[key] = EventEmitter.prototype[key];
 }
 
