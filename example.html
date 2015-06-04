@@ -62,19 +62,20 @@
             this.client = client;
             this.container = container;
 
-            _this = this;
+            this.addRenderer();
+            this.addStats();
+            var _this = this;
             client.once('mapSizeLoad', function(min_x, min_y, max_x, max_y) {
                 _this.gameWidth = max_x;
                 _this.gameHeight = max_y;
                 _this.initStage();
-                _this.addRenderer();
                 _this.addListners();
-                _this.addStats();
+                _this.addBorders();
                 _this.animate();
                 _this.emit('launched');
-                window.addEventListener('resize', function() {
-                    _this.updateSize();
-                });
+            });
+            window.addEventListener('resize', function() {
+                _this.updateSize();
             });
         }
 
@@ -101,6 +102,9 @@
                     y: this.gameHeight / 2,
                     s: 0.5
                 };
+                // DEBUG
+                this.d = new PIXI.Graphics();
+                this.stage.addChild(this.d);
             },
             addListners: function() {
                 var _this = this;
@@ -108,21 +112,34 @@
                     new BallView(_this, this.balls[id]);
                 });
             },
+            addBorders: function() {
+                this.borders = new PIXI.Graphics();
+                this.borders.lineStyle(5, 0xFF3300, 1);
+                this.borders.drawRect(0, 0, this.gameWidth, this.gameHeight);
+                this.stage.addChild(this.borders);
+            },
             addStats: function() {
-                _this.stats = new Stats();
-                _this.stats.setMode(1);
-                _this.stats.domElement.style.position = 'absolute';
-                _this.stats.domElement.style.left = '0px';
-                _this.stats.domElement.style.top = '0px';
-                document.body.appendChild(_this.stats.domElement);
+                this.stats = new Stats();
+                this.stats.setMode(1);
+                this.stats.domElement.style.position = 'absolute';
+                this.stats.domElement.style.left = '0px';
+                this.stats.domElement.style.top = '0px';
+                document.body.appendChild(this.stats.domElement);
             },
             posCamera: function() {
-                my_ball = this.client.balls[this.client.my_balls[0]]
-                if (my_ball) {
-                    // TODO
-                    this.cam.x = my_ball.x
-                    this.cam.y = my_ball.y
-                    this.cam.s = 0.5 // Scale
+                var x = y = p = 0;
+                for (var ball_id in this.client.my_balls) {
+                    var ball = this.client.balls[this.client.my_balls[ball_id]];
+                    if (!ball.visible) continue;
+                    x += ball.x * ball.size;
+                    y += ball.y * ball.size;
+                    p += ball.size;
+                }
+                if (p > 0) { // if we have visible ball(s)
+                    this.cam.x = x / p;
+                    this.cam.y = y / p;
+                    this.cam.s = 0.04 * this.width / p // Scale
+                        // TODO Better scale calculation
                 } // else: don't move the camera
             },
             animate: function() {
