@@ -183,9 +183,9 @@ Client.prototype = {
 
                 var color_R = view.getUint8(pointer);
                 pointer += 1;
-                var color_B = view.getUint8(pointer);
-                pointer += 1;
                 var color_G = view.getUint8(pointer);
+                pointer += 1;
+                var color_B = view.getUint8(pointer);
                 pointer += 1;
                 color = (color_R << 16 | color_G << 8 | color_B).toString(16);
                 color = '#' + ('000000' + color).substr(-6);
@@ -213,6 +213,7 @@ Client.prototype = {
                 }
 
                 var ball = client.balls[ball_id] || new Ball(client, ball_id);
+                ball.color = color;
                 ball.virus = is_virus;
                 ball.setCords(coordinate_x, coordinate_y);
                 ball.setSize(size);
