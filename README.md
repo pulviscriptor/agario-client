@@ -5,7 +5,7 @@ This is my first GitHub project so i may did lots of stuff wrong. Also my Englis
 ## Instructions ##
 - Clone the git repository
 - Install [Node.js](https://nodejs.org/)
-- Install dependency using `npm install`
+- Install dependency using `npm install` (ignore `python` errors)
 - Run `node example.js`
 
 # API #
