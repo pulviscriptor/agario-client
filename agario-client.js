@@ -79,7 +79,13 @@ Client.prototype = {
     },
 
     onMessage: function(buff) {
-        var view = new BufferDataview(buff.data);
+        var view;
+        if((typeof Buffer) != 'undefined' && buff.data instanceof Buffer) {
+            view = new BufferDataview(buff.data);
+        }else{
+            view = new DataView(buff.data);
+        }
+
         var packet_id = view.getUint8(0);
         var processor = this.processors[packet_id];
         if(!processor) return this.log('warning: unknown packet ID(' + packet_id + '): ' + this.packetToString(view));
