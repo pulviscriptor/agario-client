@@ -19,14 +19,6 @@ Client.prototype = {
 
     //don't change things below if you don't understand what you're doing
 
-    on: EventEmitter.prototype.addListener,
-    once: EventEmitter.prototype.once,
-    off: EventEmitter.prototype.removeListener,
-    offAll: EventEmitter.prototype.removeAllListeners,
-    emitEvent: EventEmitter.prototype.emit,
-    removeListener: EventEmitter.prototype.removeListener,
-    removeAllListeners: EventEmitter.prototype.removeAllListeners,
-
     inactive_interval: 0, //ID of setInterval()
     balls: {},  //all balls
     my_balls: [], //IDs of my vall
@@ -48,7 +40,7 @@ Client.prototype = {
         if(this.debug >= 1)
             this.log('connecting...');
 
-        this.emitEvent('connecting');
+        this.emit('connecting');
     },
 
     disconnect: function() {
@@ -67,14 +59,14 @@ Client.prototype = {
         var data = new Buffer([255, 0, 0, 0, 0]);
         this.send(data);
 
-        this.emitEvent('connected');
+        this.emit('connected');
     },
 
     onError: function(e) {
         if(this.debug >= 1)
             this.log('connection error: ' + e);
 
-        this.emitEvent('connectionError', e);
+        this.emit('connectionError', e);
         this.reset();
     },
 
@@ -82,7 +74,7 @@ Client.prototype = {
         if(this.debug >= 1)
             this.log('disconnected');
 
-        this.emitEvent('disconnect');
+        this.emit('disconnect');
         this.reset();
     },
 
@@ -97,7 +89,7 @@ Client.prototype = {
         if(this.debug >= 5)
             this.log('dump: ' + this.packetToString(view));
 
-        this.emitEvent('message', view);
+        this.emit('message', view);
         processor(this, view);
     },
 
@@ -120,7 +112,7 @@ Client.prototype = {
         this.my_balls = [];
         clearInterval(this.inactive_interval);
         for(var k in this.balls) if(this.balls.hasOwnProperty(k)) this.balls[k].destroy({'reason':'reset'});
-        this.emitEvent('reset');
+        this.emit('reset');
     },
 
     detsroyInactive: function() {
@@ -165,7 +157,7 @@ Client.prototype = {
                 client.balls[eater_id].update();
                 if(client.balls[eaten_id]) client.balls[eaten_id].destroy({'reason':'eaten', 'by':eater_id});
 
-                client.emitEvent('somebodyAteSomething', eater_id, eaten_id);
+                client.emit('somebodyAteSomething', eater_id, eaten_id);
             }
 
 
@@ -191,9 +183,9 @@ Client.prototype = {
 
                 var color_R = view.getUint8(pointer);
                 pointer += 1;
-                var color_B = view.getUint8(pointer);
-                pointer += 1;
                 var color_G = view.getUint8(pointer);
+                pointer += 1;
+                var color_B = view.getUint8(pointer);
                 pointer += 1;
                 color = (color_R << 16 | color_G << 8 | color_B).toString(16);
                 color = '#' + ('000000' + color).substr(-6);
@@ -221,6 +213,7 @@ Client.prototype = {
                 }
 
                 var ball = client.balls[ball_id] || new Ball(client, ball_id);
+                ball.color = color;
                 ball.virus = is_virus;
                 ball.setCords(coordinate_x, coordinate_y);
                 ball.setSize(size);
@@ -232,7 +225,7 @@ Client.prototype = {
                 if(client.debug >= 4)
                     client.log('action: ball_id=' + ball_id + ' coordinate_x=' + coordinate_x + ' coordinate_y=' + coordinate_y + ' size=' + size + ' is_virus=' + is_virus + ' nick=' + nick);
 
-                client.emitEvent('ballAction', ball_id, coordinate_x, coordinate_y, size, is_virus, nick);
+                client.emit('ballAction', ball_id, coordinate_x, coordinate_y, size, is_virus, nick);
             }
 
             var balls_on_screen_count = view.getUint32(pointer, true);
@@ -265,7 +258,7 @@ Client.prototype = {
             if(client.debug >= 2)
                 client.log('my new ball: ' + ball_id);
 
-            client.emitEvent('myNewBall', ball_id);
+            client.emit('myNewBall', ball_id);
         },
 
         //leaderboard update in FFA mode
@@ -301,7 +294,7 @@ Client.prototype = {
             if(client.debug >= 2)
                 client.log('leaders update: ' + JSON.stringify(users));
 
-            client.emitEvent('leaderBoardUpdate', old_leaders, users);
+            client.emit('leaderBoardUpdate', old_leaders, users);
         },
 
         //teams scored update in teams mode
@@ -324,7 +317,7 @@ Client.prototype = {
 
             client.teams_scores = teams_scores;
 
-            client.emitEvent('teamsScoresUpdate', old_scores, teams_scores);
+            client.emit('teamsScoresUpdate', old_scores, teams_scores);
         },
 
         //map size load
@@ -337,7 +330,7 @@ Client.prototype = {
             if(client.debug >= 2)
                 client.log('map size: ' + [min_x, min_y, max_x, max_y].join(','));
 
-            client.emitEvent('mapSizeLoad', min_x, min_y, max_x, max_y);
+            client.emit('mapSizeLoad', min_x, min_y, max_x, max_y);
         },
 
         //another unknown backet
@@ -350,7 +343,7 @@ Client.prototype = {
             if(client.debug >= 1)
                 client.log(client.balls[client.leaders[0]] + ' WON THE GAME! Server going for restart');
 
-            client.emitEvent('winner', client.leaders[0]);
+            client.emit('winner', client.leaders[0]);
         }
     },
 
@@ -436,24 +429,18 @@ function Ball(client, id) {
     return this;
 }
 Ball.prototype = {
-    on: EventEmitter.prototype.addListener,
-    once: EventEmitter.prototype.once,
-    off: EventEmitter.prototype.removeListener,
-    offAll: EventEmitter.prototype.removeAllListeners,
-    emitEvent: EventEmitter.prototype.emit,
-
     destroy: function(reason) {
         this.destroyed = reason;
         delete this.client.balls[this.id];
         var mine_ball_index = this.client.my_balls.indexOf(this.id);
         if(mine_ball_index > -1) {
             this.client.my_balls.splice(mine_ball_index, 1);
-            this.client.emitEvent('mineBallDestroy', this.id, reason);
-            if(!this.client.my_balls.length) this.client.emitEvent('lostMyBalls');
+            this.client.emit('mineBallDestroy', this.id, reason);
+            if(!this.client.my_balls.length) this.client.emit('lostMyBalls');
         }
 
-        this.emitEvent('destroy', reason);
-        this.client.emitEvent('ballDestroy', this.id, reason);
+        this.emit('destroy', reason);
+        this.client.emit('ballDestroy', this.id, reason);
     },
 
     setCords: function(new_x, new_y) {
@@ -464,8 +451,8 @@ Ball.prototype = {
         this.y = new_y;
 
         if(!old_x && !old_y) return;
-        this.emitEvent('move', old_x, old_y, new_x, new_y);
-        this.client.emitEvent('ballMove', this.id, old_x, old_y, new_x, new_y);
+        this.emit('move', old_x, old_y, new_x, new_y);
+        this.client.emit('ballMove', this.id, old_x, old_y, new_x, new_y);
     },
 
     setSize: function(new_size) {
@@ -474,8 +461,8 @@ Ball.prototype = {
         this.size = new_size;
 
         if(!old_size) return;
-        this.emitEvent('resize', old_size, new_size);
-        this.client.emitEvent('ballResize', this.id, old_size, new_size);
+        this.emit('resize', old_size, new_size);
+        this.client.emit('ballResize', this.id, old_size, new_size);
     },
 
     setName: function(name) {
@@ -483,30 +470,30 @@ Ball.prototype = {
         var old_name = this.name;
         this.name = name;
 
-        this.emitEvent('rename', old_name, name);
-        this.client.emitEvent('ballRename', this.id, old_name, name);
+        this.emit('rename', old_name, name);
+        this.client.emit('ballRename', this.id, old_name, name);
     },
 
     update: function() {
         var old_time = this.last_update;
         this.last_update = (+new Date);
 
-        this.emitEvent('update', old_time, this.last_update);
-        this.client.emitEvent('ballUpdate', this.id, old_time, this.last_update);
+        this.emit('update', old_time, this.last_update);
+        this.client.emit('ballUpdate', this.id, old_time, this.last_update);
     },
 
     appear: function() {
         if(this.visible) return;
         this.visible = true;
-        this.emitEvent('appear');
-        this.client.emitEvent('ballAppear', this.id);
+        this.emit('appear');
+        this.client.emit('ballAppear', this.id);
     },
 
     disappear: function() {
         if(!this.visible) return;
         this.visible = false;
-        this.emitEvent('disappear');
-        this.client.emitEvent('ballDisppear', this.id);
+        this.emit('disappear');
+        this.client.emit('ballDisppear', this.id);
     },
 
     toString: function() {
@@ -514,5 +501,10 @@ Ball.prototype = {
         return this.id.toString();
     }
 };
+
+// Inherit from EventEmitter
+for (key in EventEmitter.prototype) {
+    Client.prototype[key] = Ball.prototype[key] = EventEmitter.prototype[key];
+}
 
 module.exports = Client;

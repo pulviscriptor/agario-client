@@ -20,7 +20,7 @@ Both objects have same methods for events:
 - `.once('eventName', callback)` attach listener to event but execute only once
 - `.off('eventName', callback)` remove listener from event
 - `.offAll('eventName')` remove all listeners from event
-- `.emitEvent('eventName', p1, p2...)` emit your own event
+- `.emit('eventName', p1, p2...)` emit your own event
 
 # Client API #
 `var client = new Client(client_name);` *client_name* is string for client that will be used for logging (if you enable it). It's not your ball name.
