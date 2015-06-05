@@ -22,6 +22,7 @@ Client.prototype = {
     inactive_interval: 0, //ID of setInterval()
     balls: {},  //all balls
     my_balls: [], //IDs of my vall
+    score: 0, //my score
     leaders: [], //IDs of leaders in FFA mode
     teams_scores: [], //scores of teams in Teams mode
 
@@ -265,6 +266,9 @@ Client.prototype = {
             if(client.debug >= 2)
                 client.log('my new ball: ' + ball_id);
 
+            ball.once('appear', function() {
+                client.updateScore();
+            });
             client.emit('myNewBall', ball_id);
         },
 
@@ -366,6 +370,27 @@ Client.prototype = {
         return out;
     },
 
+    updateScore: function() {
+        var potential_score = 0;
+        for (var my_ball_offset in this.my_balls) {
+            potential_score += Math.pow(this.balls[this.my_balls[my_ball_offset]].size, 2);
+        }
+        var new_score = Math.max(this.score, Math.floor(potential_score / 100));
+        if (this.score != new_score) {
+            this.emit('scoreUpdate', this.score, new_score);
+            this.score = new_score;
+
+            if(this.debug >= 2)
+                console.log('score: ' + new_score);
+        }
+    },
+
+    ballResizeHandler: function(ball_id, old_size, new_size) {
+        if (this.my_balls.indexOf(ball_id) != -1) {
+            this.updateScore();
+        }
+    },
+
     log: function(msg) {
         console.log(this.client_name + ': ' + msg);
     },
@@ -380,6 +405,11 @@ Client.prototype = {
             buf.writeUInt16LE(name.charCodeAt(i), 1 + i*2);
         }
         this.send(buf);
+        this.score = 0;
+        this.on('ballResize', this.ballResizeHandler);
+        this.once('lostMyBalls', function() {
+            this.removeListener('ballResize', this.ballResizeHandler);
+        });
     },
 
     moveTo: function(x, y) {
