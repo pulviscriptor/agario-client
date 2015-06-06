@@ -20,7 +20,7 @@
     "example.js"
   ],
   "dependencies": {
-    "buffer-dataview": "0.0.2",
+    "buffer-dataview": "0.0.3",
     "ws": "^0.7.2"
   },
   "bugs": {

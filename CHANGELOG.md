@@ -1,3 +1,9 @@
+## 06.06.2015 ##
+Code changes:
+
+- `Client.score` added (by [GeoffreyFrogeye](https://github.com/GeoffreyFrogeye))
+- `Client.on.scoreUpdate(old_score, new_score)` added (by [GeoffreyFrogeye](https://github.com/GeoffreyFrogeye))
+
 ## 04.06.2015 ##
 Code changes:
 
