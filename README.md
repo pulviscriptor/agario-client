@@ -38,6 +38,7 @@ Properties that better not to change or you can break something:
 
 - `client.balls` object with all `Balls` that `client` knows about. Access `Ball` like `client.balls[ball_id]`
 - `client.my_balls` array of alive `Ball`'s IDs that `client` owns and can control.
+- `client.score` personal score since respawn
 - `client.leaders` array of leader's `Balls` IDs in FFA mode. (player can have lots of `Balls`, but sever sends only one ID of one `Ball`)
 - `client.teams_scores` array of team's scores in teams mode
 - `client.client_name` name that you have set for `client` (not nickname)
@@ -61,6 +62,7 @@ In this list `on.eventName(param1, param2)` means you need to do `client.on('eve
 - `on.message(view)` new packet received from server
 - `on.myNewBall(ball_id)` my new `Ball` created (spawn/split/explode...)
 - `on.somebodyAteSomething(eater_id, eaten_id)` somebody ate something
+- `on.scoreUpdate(old_score, new_score)` personal score updated
 - `on.leaderBoardUpdate(old_array, new_array)` leaders update in FFA mode. Array of leader's `Ball`'s IDs (one ID per leader)
 - `on.teamsScoresUpdate(old_scores, new_scores)` array of teams scores update in teams mode
 - `on.mapSizeLoad(min_x, min_y, max_x, max_y)` map size update (after connect)
