@@ -21,7 +21,7 @@ Client.prototype = {
 
     inactive_interval: 0, //ID of setInterval()
     balls: {},  //all balls
-    my_balls: [], //IDs of my vall
+    my_balls: [], //IDs of my balls
     score: 0, //my score
     leaders: [], //IDs of leaders in FFA mode
     teams_scores: [], //scores of teams in Teams mode
