@@ -261,14 +261,12 @@ Client.prototype = {
             var ball_id = view.getUint32(1, true);
             var ball = client.balls[ball_id] || new Ball(client, ball_id);
             ball.mine = true;
+            if(!client.my_balls.length) client.score = 0;
             client.my_balls.push(ball_id);
 
             if(client.debug >= 2)
                 client.log('my new ball: ' + ball_id);
 
-            ball.once('appear', function() {
-                client.updateScore();
-            });
             client.emit('myNewBall', ball_id);
         },
 
@@ -372,23 +370,21 @@ Client.prototype = {
 
     updateScore: function() {
         var potential_score = 0;
-        for (var my_ball_offset in this.my_balls) {
-            potential_score += Math.pow(this.balls[this.my_balls[my_ball_offset]].size, 2);
+        for (var i=0;i<this.my_balls.length;i++) {
+            var ball_id = this.my_balls[i];
+            var ball = this.balls[ball_id];
+            potential_score += Math.pow(ball.size, 2);
         }
+        var old_score = this.score;
         var new_score = Math.max(this.score, Math.floor(potential_score / 100));
-        if (this.score != new_score) {
-            this.emit('scoreUpdate', this.score, new_score);
-            this.score = new_score;
 
-            if(this.debug >= 2)
-                console.log('score: ' + new_score);
-        }
-    },
+        if (this.score == new_score) return;
+        this.score = new_score;
+        this.emit('scoreUpdate', old_score, new_score);
 
-    ballResizeHandler: function(ball_id, old_size, new_size) {
-        if (this.my_balls.indexOf(ball_id) != -1) {
-            this.updateScore();
-        }
+        if(this.debug >= 2)
+            console.log('score: ' + new_score);
+
     },
 
     log: function(msg) {
@@ -405,11 +401,6 @@ Client.prototype = {
             buf.writeUInt16LE(name.charCodeAt(i), 1 + i*2);
         }
         this.send(buf);
-        this.score = 0;
-        this.on('ballResize', this.ballResizeHandler);
-        this.once('lostMyBalls', function() {
-            this.removeListener('ballResize', this.ballResizeHandler);
-        });
     },
 
     moveTo: function(x, y) {
@@ -491,6 +482,7 @@ Ball.prototype = {
         if(!old_size) return;
         this.emit('resize', old_size, new_size);
         this.client.emit('ballResize', this.id, old_size, new_size);
+        if(this.mine) this.client.updateScore();
     },
 
     setName: function(name) {
@@ -515,6 +507,8 @@ Ball.prototype = {
         this.visible = true;
         this.emit('appear');
         this.client.emit('ballAppear', this.id);
+
+        if(this.mine) this.client.updateScore();
     },
 
     disappear: function() {
