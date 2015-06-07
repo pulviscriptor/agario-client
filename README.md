@@ -3,10 +3,10 @@ Node.js client for [agar.io](http://agar.io) with API.
 This is my first GitHub project so i may did lots of stuff wrong. Also my English is bad.
 
 ## Instructions ##
-- Clone the git repository
 - Install [Node.js](https://nodejs.org/)
-- Install dependency using `npm install` (ignore `python` errors)
-- Run `node example.js`
+- Install client using `npm install agario-client` (ignore `python` errors)
+- Run `node ./node_modules/agario-client/example.js` (for testing purpose)
+- If it works, you ready to look at API and code
 
 # API #
 There are two types of object that have API:
@@ -24,7 +24,9 @@ Both objects have same methods for events from [events.EventEmitter](https://nod
 - check more in [documentation](https://nodejs.org/api/events.html)
 
 # Client API #
-`var client = new Client(client_name);` *client_name* is string for client that will be used for logging (if you enable it). It's not your ball name.
+    var AgarioClient = require('agario-client');
+    var client = new AgarioClient(client_name); 
+*client_name* is string for client that will be used for logging (if you enable it). It's not your ball name.
 
 ## Client properties ##
 Properties that you can change:
@@ -98,7 +100,7 @@ Properties that better not to change or you can break something:
 - `ball.color` string with color of `Ball`
 - `ball.virus` if `true` then ball is a virus (green thing that explode big balls)
 - `ball.mine` if `true` then we do own this `Ball`
-- `ball.client` `Client` that have know this `Ball` (if not `ball.destroyed`)
+- `ball.client` `client` that have know this `Ball` (if not `ball.destroyed`)
 - `ball.destroyed` if `true` then this `Ball` no more exists, forget about it
 - `ball.visible` if `true` then we see this `Ball` on our "screen" (field of view)
 - `ball.last_update` timestamp when we last saw this `Ball`

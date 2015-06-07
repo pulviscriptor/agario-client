@@ -1,3 +1,6 @@
+## 07.06.2015 ##
+`agario-client` added to [NPM](https://www.npmjs.com/package/agario-client)
+
 ## 06.06.2015 ##
 Code changes:
 
