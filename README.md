@@ -6,7 +6,7 @@ This is my first GitHub project so i may did lots of stuff wrong. Also my Englis
 - Install [Node.js](https://nodejs.org/)
 - Install client using `npm install agario-client` (ignore `python` errors)
 - Run `node ./node_modules/agario-client/example.js` (for testing purpose)
-- If it works, you ready to look at API and code
+- If it works, you're ready to look at API and code
 
 # API #
 There are two types of object that have API:
