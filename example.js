@@ -8,6 +8,8 @@ var Client = require('./agario-client.js'); //require agario-client lib
 var client = new Client('worker'); //create new client and call it "worker" (not nickname)
 var interval_id = 0; //here we will store setInterval's ID
 
+client.debug = 1; //setting debug to 1 (avaialble 0-5)
+
 client.once('leaderBoardUpdate', function(old, leaders) { //when we receive leaders list. Fire only once
     var name_array = leaders.map(function(ball_id) { //converting leader's IDs to leader's names
         return client.balls[ball_id].name || 'unnamed'
