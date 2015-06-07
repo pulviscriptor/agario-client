@@ -3,9 +3,9 @@
 var region = 'EU-London'; //server region to request
 
 var http = require('http');
-var Client = require('./agario-client.js'); //require agario-client lib
+var AgarioClient = require('./agario-client.js'); //in your code you should do require('agario-client')
 
-var client = new Client('worker'); //create new client and call it "worker" (not nickname)
+var client = new AgarioClient('worker'); //create new client and call it "worker" (not nickname)
 var interval_id = 0; //here we will store setInterval's ID
 
 client.debug = 1; //setting debug to 1 (avaialble 0-5)
