@@ -1,33 +1,31 @@
 {
   "name": "agario-client",
-  "description": "Node.js client for agar.io with API",
-  "version": "0.0.2",
-  "keywords": [
-    "agario",
-    "sockets"
-  ],
-  "maintainers": [
-    {
-      "name": "pulviscriptor",
-      "email": "pulviscriptor@users.noreply.github.com",
-      "web": "https://github.com/pulviscriptor"
-    }
-  ],
-  "engines": {
-    "node": ">=v0.10"
+  "version": "0.0.4",
+  "description": "Node.js agar.io client implementation",
+  "main": "agario-client.js",
+  "dependencies": {
+    "ws": "^0.7.1",
+    "buffer-dataview": "^0.0.2"
   },
-  "demos": [
+  "devDependencies": {},
+  "files": [
+    "agario-client.js",
     "example.js"
   ],
-  "dependencies": {
-    "buffer-dataview": "0.0.3",
-    "ws": "^0.7.2"
-  },
-  "bugs": {
-    "url": "https://github.com/pulviscriptor/agario-client/issues"
+  "scripts": {
+    "test": "node example.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/pulviscriptor"
-  }
+    "url": "https://github.com/pulviscriptor/agario-client.git"
+  },
+  "keywords": [
+    "agar.io"
+  ],
+  "author": "pulviscriptor",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pulviscriptor/agario-client/issues"
+  },
+  "homepage": "https://github.com/pulviscriptor/agario-client"
 }
