@@ -100,7 +100,7 @@ Properties that better not to change or you can break something:
 - `ball.color` string with color of `Ball`
 - `ball.virus` if `true` then ball is a virus (green thing that explode big balls)
 - `ball.mine` if `true` then we do own this `Ball`
-- `ball.client` `client` that have know this `Ball` (if not `ball.destroyed`)
+- `ball.client` `Client` that knows this `Ball` (if not `ball.destroyed`)
 - `ball.destroyed` if `true` then this `Ball` no more exists, forget about it
 - `ball.visible` if `true` then we see this `Ball` on our "screen" (field of view)
 - `ball.last_update` timestamp when we last saw this `Ball`
