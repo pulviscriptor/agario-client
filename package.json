@@ -1,16 +1,16 @@
 {
   "name": "agario-client",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Node.js agar.io client implementation",
   "main": "agario-client.js",
   "dependencies": {
-    "ws": "^0.7.1",
-    "buffer-dataview": "^0.0.2"
+    "ws": "^0.7.1"
   },
   "devDependencies": {},
   "files": [
     "agario-client.js",
-    "example.js"
+    "example.js",
+    "packet.js"
   ],
   "scripts": {
     "test": "node example.js"

@@ -1,3 +1,13 @@
+## 08.06.2015 ##
+Protocol changes:
+
+- New packet id 240 that moves offset (why, agar? what for?)
+
+Code changes:
+
+- New packet management architecture
+- [buffer-dataview](https://github.com/TooTallNate/node-buffer-dataview) not used anymore
+
 ## 07.06.2015 ##
 `agario-client` added to [NPM](https://www.npmjs.com/package/agario-client)
 

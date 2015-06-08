@@ -61,7 +61,7 @@ In this list `on.eventName(param1, param2)` means you need to do `client.on('eve
 - `on.connected()` connected to server
 - `on.connectionError(err)` connection error
 - `on.disconnect()` disconnected
-- `on.message(view)` new packet received from server
+- `on.message(packet)` new packet received from server (check `packet.js`)
 - `on.myNewBall(ball_id)` my new `Ball` created (spawn/split/explode...)
 - `on.somebodyAteSomething(eater_id, eaten_id)` somebody ate something
 - `on.scoreUpdate(old_score, new_score)` personal score updated

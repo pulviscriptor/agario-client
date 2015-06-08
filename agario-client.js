@@ -1,5 +1,5 @@
 var WebSocket = require('ws');
-var BufferDataview = require('buffer-dataview');
+var Packet = require('./packet.js');
 var EventEmitter = require('events').EventEmitter;
 
 function Client(client_name) {
@@ -58,8 +58,8 @@ Client.prototype = {
 
         this.inactive_interval = setInterval(this.detsroyInactive.bind(this), this.inactive_check);
 
-        var data = new Buffer([255, 0, 0, 0, 0]);
-        this.send(data);
+        var buf = new Buffer([255, 0, 0, 0, 0]);
+        this.send(buf);
 
         this.emit('connected');
     },
@@ -80,35 +80,29 @@ Client.prototype = {
         this.reset();
     },
 
-    onMessage: function(buff) {
-        var view;
-        if((typeof Buffer) != 'undefined' && buff.data instanceof Buffer) {
-            view = new BufferDataview(buff.data);
-        }else{
-            view = new DataView(buff.data);
-        }
-
-        var packet_id = view.getUint8(0);
+    onMessage: function(e) {
+        var packet = new Packet(e);
+        var packet_id = packet.readUInt8();
         var processor = this.processors[packet_id];
-        if(!processor) return this.log('warning: unknown packet ID(' + packet_id + '): ' + this.packetToString(view));
+        if(!processor) return this.log('warning: unknown packet ID(' + packet_id + '): ' + packet.toString());
 
         if(this.debug >= 4)
-            this.log('ACK packet ID=' + packet_id + ' LEN=' + view.byteLength);
+            this.log('ACK packet ID=' + packet_id + ' LEN=' + packet.length);
         if(this.debug >= 5)
-            this.log('dump: ' + this.packetToString(view));
+            this.log('dump: ' + packet.toString());
 
-        this.emit('message', view);
-        processor(this, view);
+        this.emit('message', packet);
+        processor(this, packet);
     },
 
-    send: function(buff) {
+    send: function(buf) {
         if(this.debug >= 4)
-            this.log('SEND packet ID=' + buff[0] + ' LEN=' + buff.length);
+            this.log('SEND packet ID=' + buf.readUInt8(0) + ' LEN=' + buf.length);
 
         if(this.debug >= 5)
-            this.log('dump: ' + this.packetToString(buff));
+            this.log('dump: ' + (new Packet(buf).toString()));
 
-        this.ws.send(buff);
+        this.ws.send(buf);
     },
 
     reset: function() {
@@ -144,19 +138,15 @@ Client.prototype = {
 
     processors: {
         //tick
-        '16': function(client, view) {
-            var pointer = 1;
-            var eaters_count = view.getUint16(pointer, true);
-            pointer += 2;
+        '16': function(client, packet) {
+            var eaters_count = packet.readUInt16LE();
 
             client.tick_counter++;
 
             //reading eat events
             for(var i=0;i<eaters_count;i++) {
-                var eater_id = view.getUint32(pointer, true);
-                pointer += 4;
-                var eaten_id = view.getUint32(pointer, true);
-                pointer += 4;
+                var eater_id = packet.readUInt32LE();
+                var eaten_id = packet.readUInt32LE();
 
                 if(client.debug >= 4)
                     client.log(eater_id + ' ate ' + eaten_id + ' (' + client.balls[eater_id] + '>' + client.balls[eaten_id] + ')');
@@ -179,42 +169,35 @@ Client.prototype = {
                 var color;
                 var nick = null;
 
-                ball_id = view.getUint32(pointer, true);
-                pointer += 4;
+                ball_id = packet.readUInt32LE();
                 if(ball_id == 0) break;
-                coordinate_x = view.getInt16(pointer, true);
-                pointer += 2;
-                coordinate_y = view.getInt16(pointer, true);
-                pointer += 2;
-                size = view.getInt16(pointer, true);
-                pointer += 2;
+                coordinate_x = packet.readSInt16LE();
+                coordinate_y = packet.readSInt16LE();
+                size = packet.readSInt16LE();
 
-                var color_R = view.getUint8(pointer);
-                pointer += 1;
-                var color_G = view.getUint8(pointer);
-                pointer += 1;
-                var color_B = view.getUint8(pointer);
-                pointer += 1;
+                var color_R = packet.readUInt8();
+                var color_G = packet.readUInt8();
+                var color_B = packet.readUInt8();
+
                 color = (color_R << 16 | color_G << 8 | color_B).toString(16);
                 color = '#' + ('000000' + color).substr(-6);
 
-                //reserved for future use?
-                var opt = view.getUint8(pointer);
-                pointer += 1;
+                var opt = packet.readUInt8();
                 is_virus = !!(opt & 1);
+
+                //reserved for future use?
                 if (opt & 2) {
-                    pointer += 4;
+                    packet.offset += 4;
                 }
                 if (opt & 4) {
-                    pointer += 8;
+                    packet.offset += 8;
                 }
                 if (opt & 8) {
-                    pointer += 16;
+                    packet.offset += 16;
                 }
 
                 while(1) {
-                    var char = view.getUint16(pointer, true);
-                    pointer += 2;
+                    var char = packet.readUInt16LE();
                     if(char == 0) break;
                     if(!nick) nick = '';
                     nick += String.fromCharCode(char);
@@ -236,13 +219,11 @@ Client.prototype = {
                 client.emit('ballAction', ball_id, coordinate_x, coordinate_y, size, is_virus, nick);
             }
 
-            var balls_on_screen_count = view.getUint32(pointer, true);
-            pointer += 4;
+            var balls_on_screen_count = packet.readUInt32LE();
 
             //disappear events
             for(i=0;i<balls_on_screen_count;i++) {
-                ball_id = view.getUint32(pointer, true);
-                pointer += 4;
+                ball_id = packet.readUInt32LE();
 
                 ball = client.balls[ball_id] || new Ball(client, ball_id);
                 ball.update_tick = client.tick_counter;
@@ -257,8 +238,8 @@ Client.prototype = {
         },
 
         //new ID of your ball (when you join or press space)
-        '32': function(client, view) {
-            var ball_id = view.getUint32(1, true);
+        '32': function(client, packet) {
+            var ball_id = packet.readUInt32LE();
             var ball = client.balls[ball_id] || new Ball(client, ball_id);
             ball.mine = true;
             if(!client.my_balls.length) client.score = 0;
@@ -271,21 +252,17 @@ Client.prototype = {
         },
 
         //leaderboard update in FFA mode
-        '49': function(client, view) {
-            var pointer = 1;
+        '49': function(client, packet) {
             var users = [];
 
-            var count = view.getUint32(pointer, true);
-            pointer += 4;
+            var count = packet.readUInt32LE();
 
             for(var i=0;i<count;i++) {
-                var id = view.getUint32(pointer, true);
-                pointer = pointer + 4;
+                var id = packet.readUInt32LE();
 
                 var name = '';
                 while(1) {
-                    var char = view.getUint16(pointer, true);
-                    pointer += 2;
+                    var char = packet.readUInt16LE();
                     if(char == 0) break;
                     name += String.fromCharCode(char);
                 }
@@ -307,15 +284,12 @@ Client.prototype = {
         },
 
         //teams scored update in teams mode
-        '50': function(client, view) {
-            var pointer = 1;
-            var teams_count = view.getUint32(pointer, true);
-            pointer += 4;
+        '50': function(client, packet) {
+            var teams_count = packet.readUInt32LE();
             var teams_scores = [];
 
             for (var i=0;i<teams_count;++i) {
-                teams_scores.push(view.getFloat32(pointer, true));
-                pointer += 4;
+                teams_scores.push(packet.readFloat32LE());
             }
 
             if(JSON.stringify(client.teams_scores) == JSON.stringify(teams_scores)) return;
@@ -330,11 +304,11 @@ Client.prototype = {
         },
 
         //map size load
-        '64': function(client, view) {
-            var min_x = view.getFloat64(1, true);
-            var min_y = view.getFloat64(9, true);
-            var max_x = view.getFloat64(17, true);
-            var max_y = view.getFloat64(25, true);
+        '64': function(client, packet) {
+            var min_x = packet.readFloat64LE();
+            var min_y = packet.readFloat64LE();
+            var max_x = packet.readFloat64LE();
+            var max_y = packet.readFloat64LE();
 
             if(client.debug >= 2)
                 client.log('map size: ' + [min_x, min_y, max_x, max_y].join(','));
@@ -347,6 +321,14 @@ Client.prototype = {
             //packet is sent by server but not used in original code
         },
 
+        '240': function(client, packet) {
+            packet.offset += 4;
+            var packet_id = packet.readUInt8();
+            var processor = client.processors[packet_id];
+            if(!processor) return client.log('warning: unknown packet ID(240->' + packet_id + '): ' + packet.toString());
+            processor(client, packet);
+        },
+
         //somebody won, end of the game (server restart)
         '254': function(client) {
             if(client.debug >= 1)
@@ -354,18 +336,6 @@ Client.prototype = {
 
             client.emit('winner', client.leaders[0]);
         }
-    },
-
-    packetToString: function(view) {
-        var out = '';
-        for(var i=0;i<view.byteLength;i++) {
-            if(out) out += ' ';
-            var char = view.getUint8(i).toString(16);
-            if(char.length == 1) out += '0';
-            out += char;
-        }
-
-        return out;
     },
 
     updateScore: function() {
