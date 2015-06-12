@@ -233,7 +233,7 @@ Client.prototype = {
         },
 
         '17': function() {
-            //i don't know what this is, it keeps showing up in "spectate" mode
+            //view update in "spectate" mode, gives new x, y and zoom window values
         },
 
         '20': function() {
