@@ -22,7 +22,12 @@ client.on('mineBallDestroy', function(ball_id, reason) { //when my ball destroye
     if(reason.by) {
         console.log(client.balls[reason.by] + ' ate my ball');
     }
-    console.log('i lost my ball ' + ball_id + ', ' + client.my_balls.length + ' balls left');
+
+    if(reason.reason == 'merge') {
+        console.log('my ball ' + ball_id + ' merged with my other ball, now i have ' + client.my_balls.length + ' balls');
+    }else{
+        console.log('i lost my ball ' + ball_id + ', ' + client.my_balls.length + ' balls left');
+    }
 });
 
 client.on('myNewBall', function(ball_id) { //when i got new ball
