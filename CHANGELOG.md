@@ -1,3 +1,9 @@
+## 13.06.2015 ##
+Code changes:
+
+- `Client.spectate()` added (by [RouxRC](https://github.com/RouxRC))
+- `Client.on.spectateFieldUpdate(cord_x, cord_y, zoom_level)` added
+
 ## 08.06.2015 ##
 Protocol changes:
 

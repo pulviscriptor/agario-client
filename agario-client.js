@@ -232,8 +232,16 @@ Client.prototype = {
             }
         },
 
-        '17': function() {
-            //view update in "spectate" mode, gives new x, y and zoom window values
+        //update spectating coordinates in "spectate" mode
+        '17': function(client, packet) {
+            var x = packet.readFloat32LE();
+            var y = packet.readFloat32LE();
+            var zoom = packet.readFloat32LE();
+
+            if(client.debug >= 4)
+                client.log('spectate FOV update: x=' + x + ' y=' + y + ' zoom=' + zoom);
+
+            client.emit('spectateFieldUpdate', x, y, zoom);
         },
 
         '20': function() {
@@ -377,6 +385,12 @@ Client.prototype = {
         this.send(buf);
     },
 
+    //activate spectate mode
+    spectate: function() {
+        var buf = new Buffer([1]);
+        this.send(buf);
+    },
+
     moveTo: function(x, y) {
         var buf = new Buffer(21);
         buf.writeUInt8(16, 0);
@@ -390,13 +404,6 @@ Client.prototype = {
     //they will split in direction that you have set with moveTo()
     split: function() {
         var buf = new Buffer([17]);
-        this.send(buf);
-    },
-
-    //activate spectate mode
-    spectate: function() {
-        var buf = new Buffer([1]);
-        buf.writeUInt8(1, 0);
         this.send(buf);
     },
 
