@@ -82,6 +82,7 @@ In this list `on.eventName(param1, param2)` means you need to do `client.on('eve
 - `on.ballResize(ball_id, old_size, new_size)` `Ball` resize
 - `on.ballRename(ball_id, old_name, new_name)` `Ball` set name/change name/we discover name
 - `on.ballUpdate(ball_id, old_update_time, new_update_time)` new data about ball received
+- `on.spectateFieldUpdate(cord_x, cord_y, zoom_level)` coordinates of field of view in `client.spectate()` mode
 
 # Ball API #
 `var ball = client.balls[ball_id];` *ball_id* is number that you can get from events
