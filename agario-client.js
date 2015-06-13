@@ -228,7 +228,12 @@ Client.prototype = {
                 ball = client.balls[ball_id] || new Ball(client, ball_id);
                 ball.update_tick = client.tick_counter;
                 ball.update();
-                ball.disappear();
+                if(ball.mine) {
+                    ball.destroy({reason: 'merge'});
+                    client.emit('merge', ball.id);
+                }else{
+                    ball.disappear();
+                }
             }
         },
 
