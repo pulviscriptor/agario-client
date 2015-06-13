@@ -232,8 +232,12 @@ Client.prototype = {
             }
         },
 
+        '17': function() {
+            //view update in "spectate" mode, gives new x, y and zoom window values
+        },
+
         '20': function() {
-            //i dont know what is this
+            //i dont know what this is
             //in original code it clears our balls array, but i never saw this packet
         },
 
@@ -386,6 +390,13 @@ Client.prototype = {
     //they will split in direction that you have set with moveTo()
     split: function() {
         var buf = new Buffer([17]);
+        this.send(buf);
+    },
+
+    //activate spectate mode
+    spectate: function() {
+        var buf = new Buffer([1]);
+        buf.writeUInt8(1, 0);
         this.send(buf);
     },
 
