@@ -10,6 +10,7 @@ Code changes:
 - `Client.connect(server)` changed to `Client.connect(server, key)`
 - Initial packet id 255 changed to simulate original code
 - Initial packets 254 and 80 added
+- `connected` event is now calling with 2000ms delay otherwise server will ignore spawn packet
 
 ## 13.06.2015 ##
 Code changes:

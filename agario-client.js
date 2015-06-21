@@ -57,8 +57,10 @@ Client.prototype = {
     },
 
     onConnect: function() {
+        var client = this;
+
         if(this.debug >= 1)
-            this.log('connected');
+            this.log('connected to server');
 
         this.inactive_interval = setInterval(this.detsroyInactive.bind(this), this.inactive_check);
 
@@ -72,16 +74,19 @@ Client.prototype = {
         buf.writeUInt32LE(673720361, 1);
         this.send(buf);
 
-        if(!this.key) return this.emit('connected');
-
-        buf = new Buffer(1 + this.key.length);
-        buf.writeUInt8(80, 0);
-        for (var i=1;i<=this.key.length;++i) {
-            buf.writeUInt8(this.key.charCodeAt(i-1), i);
+        if(this.key) {
+            buf = new Buffer(1 + this.key.length);
+            buf.writeUInt8(80, 0);
+            for (var i=1;i<=this.key.length;++i) {
+                buf.writeUInt8(this.key.charCodeAt(i-1), i);
+            }
+            this.send(buf);
         }
-        this.send(buf);
-
-        this.emit('connected');
+        setTimeout(function() {
+            if(client.debug >= 2)
+                client.log('emit connected event');
+            client.emit('connected');
+        }, 2000);
     },
 
     onError: function(e) {

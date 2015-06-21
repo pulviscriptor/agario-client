@@ -60,7 +60,7 @@ Properties that better not to change or you can break something:
 In this list `on.eventName(param1, param2)` means you need to do `client.on('eventName', function(param1, param2) { ... })`
 
 - `on.connecting()` connecting to server
-- `on.connected()` connected to server
+- `on.connected()` connected to server and ready to spawn
 - `on.connectionError(err)` connection error
 - `on.disconnect()` disconnected
 - `on.message(packet)` new packet received from server (check `packet.js`)
