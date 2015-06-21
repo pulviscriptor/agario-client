@@ -1,3 +1,16 @@
+## 21.06.2015 ##
+<sub><sup><sub><sup>Today is a bad day</sup></sub></sup></sub>
+Protocol changes:
+
+- Now website sends server and server's key without which you will not be accepted by server
+- New packet id 80 that used for sending server's key to server
+
+Code changes:
+
+- `Client.connect(server)` changed to `Client.connect(server, key)`
+- Initial packet id 255 changed to simulate original code
+- Initial packets 254 and 80 added
+
 ## 13.06.2015 ##
 Code changes:
 

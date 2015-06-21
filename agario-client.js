@@ -26,7 +26,7 @@ Client.prototype = {
     leaders: [], //IDs of leaders in FFA mode
     teams_scores: [], //scores of teams in Teams mode
 
-    connect: function(server) {
+    connect: function(server, key) {
         var headers = {
             'Origin': 'http://agar.io'
         };
@@ -38,9 +38,13 @@ Client.prototype = {
         this.ws.onclose = this.onDisconnect.bind(this);
         this.ws.onerror = this.onError.bind(this);
         this.server = server;
+        this.key = key;
 
-        if(this.debug >= 1)
+        if(this.debug >= 1) {
+            if(!key) this.log('[warning] You did not specified "key" for Client.connect(server, key)' +
+                '          If server will not accept you, this may be the problem');
             this.log('connecting...');
+        }
 
         this.emit('connecting');
     },
@@ -58,7 +62,23 @@ Client.prototype = {
 
         this.inactive_interval = setInterval(this.detsroyInactive.bind(this), this.inactive_check);
 
-        var buf = new Buffer([255, 0, 0, 0, 0]);
+        var buf = new Buffer(5);
+        buf.writeUInt8(254, 0);
+        buf.writeUInt32LE(4, 1);
+        this.send(buf);
+
+        buf = new Buffer(5);
+        buf.writeUInt8(255, 0);
+        buf.writeUInt32LE(673720361, 1);
+        this.send(buf);
+
+        if(!this.key) return this.emit('connected');
+
+        buf = new Buffer(1 + this.key.length);
+        buf.writeUInt8(80, 0);
+        for (var i=1;i<=this.key.length;++i) {
+            buf.writeUInt8(this.key.charCodeAt(i-1), i);
+        }
         this.send(buf);
 
         this.emit('connected');

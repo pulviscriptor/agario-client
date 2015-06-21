@@ -33,6 +33,7 @@ Properties that you can change:
 
 - `client.debug` debug level. 0-5. 0 is completely silent. 5 is super verbose. **Default: 1**
 - `client.server` address that was used in `client.connect()` call
+- `client.key` key that was used in `client.connect()` call
 - `client.inactive_destroy` time in ms for how long ball will live in memory after his last known action (if player exit from game or ball eaten outside our field of view, we will not know it since server sends action only about field that you see. Original code `destroy()` `Ball` when he `disappear` from field of view. You can do that in `client.on('ballDisppear')` if you want it for some reason). **Default: 5\*60\*1000** (5 minutes)
 - `client.inactive_check` time in ms for time interval that search and destroy inactive `Balls`. **Default: 10\*1000** (10 seconds)
 
@@ -47,7 +48,7 @@ Properties that better not to change or you can break something:
 - `client.tick_counter` number of *tick* packets received (i call them ticks because they contains information about eating/movement/size/appear... of `Balls`)
 
 ## Client methods ##
-- `client.connect(server)` connect to [agar.io](http://agar.io) server. You can get server address by looking in web browser's console while selecting region. You can call it again after `client` disconnected from server. **Example:** `client.connect('ws://1.2.3.4:443')` **ProTip:** each server have few rooms, so you may need reconnect few times before you will get in room that you want. You can look `client.once('leaderBoardUpdate')` to know if you're connected to correct room
+- `client.connect(server, key)` connect to [agar.io](http://agar.io) server. (You need to look at `POST http://m.agar.io/` request in your browser to get both server and key). You can call it again after `client` disconnected from server. **Example:** `client.connect('ws://1.2.3.4:443','Y3hUlH3B')` **ProTip:** each server have few rooms, so you may need connect few times before you will get in room that you want (you may need new key each time). You can look `client.once('leaderBoardUpdate')` to know if you're connected to correct room
 - `client.disconnect()` disconnect from server
 - `client.spawn(name)` will spawn `Ball` with nickname. `client.on('myNewBall')` will be called when server sends our `Ball` info
 - `client.spectate()` will activate spectating mode. Look at `client.on('spectateFieldUpdate')` for FOV updates
