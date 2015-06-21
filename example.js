@@ -116,7 +116,8 @@ function getAgarioServer(cb) {
         });
         res.on('end', function() {
             console.log('HTTP request answer: ' + server);
-            cb('ws://' + server.split('\n')[0]);
+            var data = server.split('\n');
+            cb('ws://' + data[0], data[1]);
         });
     });
 
@@ -130,9 +131,9 @@ function getAgarioServer(cb) {
 }
 
 console.log('Requesting server in region ' + region);
-getAgarioServer(function(server) {
+getAgarioServer(function(server, key) {
     if(!server) return console.log('No server to connect');
     console.log('Connecting to ' + server);
-    client.connect(server);
+    client.connect(server, key);
 });
 
