@@ -125,7 +125,7 @@ function getAgarioServer(cb) {
         return cb();
     });
 
-    req.write('EU-London');
+    req.write(region);
     req.end();
 }
 
