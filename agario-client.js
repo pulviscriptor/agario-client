@@ -16,6 +16,7 @@ Client.prototype = {
     debug: 1, //debug level, 0-5 (5 will output extremely lot of data)
     inactive_destroy: 5*60*1000, //time in ms when to destroy inactive balls
     inactive_check: 10*1000, //time in ms when to search inactive balls
+    timer_emit_connected: null, //timer for emitting "connected" event
 
     //don't change things below if you don't understand what you're doing
 
@@ -82,7 +83,8 @@ Client.prototype = {
             }
             this.send(buf);
         }
-        setTimeout(function() {
+        this.timer_emit_connected = setTimeout(function() {
+            client.timer_emit_connected = null;
             if(client.debug >= 2)
                 client.log('emit connected event');
             client.emit('connected');
@@ -138,6 +140,7 @@ Client.prototype = {
         this.teams_scores = [];
         this.my_balls = [];
         clearInterval(this.inactive_interval);
+        if(this.timer_emit_connected) clearTimeout(this.timer_emit_connected);
         for(var k in this.balls) if(this.balls.hasOwnProperty(k)) this.balls[k].destroy({'reason':'reset'});
         this.emit('reset');
     },
