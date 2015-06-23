@@ -16,11 +16,11 @@ Client.prototype = {
     debug: 1, //debug level, 0-5 (5 will output extremely lot of data)
     inactive_destroy: 5*60*1000, //time in ms when to destroy inactive balls
     inactive_check: 10*1000, //time in ms when to search inactive balls
-    timer_emit_connected: null, //timer for emitting "connected" event
 
     //don't change things below if you don't understand what you're doing
 
     inactive_interval: 0, //ID of setInterval()
+    timer_emit_connected: null, //timer for emitting "connected" event
     balls: {},  //all balls
     my_balls: [], //IDs of my balls
     score: 0, //my score
