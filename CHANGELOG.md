@@ -1,3 +1,9 @@
+## 24.06.2015 ##
+Protocol changes:
+
+- Initial packet id 255 changed from `0xFF33189283` to `0xFF23123809`
+- Server will disconnect you if you send old packet
+
 ## 23.06.2015 ##
 Protocol changes:
 

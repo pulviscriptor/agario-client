@@ -72,7 +72,7 @@ Client.prototype = {
 
         buf = new Buffer(5);
         buf.writeUInt8(255, 0);
-        buf.writeUInt32LE(2207389747, 1);
+        buf.writeUInt32LE(154669603, 1);
         this.send(buf);
 
         if(this.key) {
