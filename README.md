@@ -1,6 +1,5 @@
 # agario-client
 Node.js client for [agar.io](http://agar.io) with API.
-This is my first GitHub project so i may did lots of stuff wrong. Also my English is bad.
 
 ## Instructions ##
 - Install [Node.js](https://nodejs.org/)
@@ -41,14 +40,14 @@ Properties that better not to change or you can break something:
 
 - `client.balls` object with all `Balls` that `client` knows about. Access `Ball` like `client.balls[ball_id]`
 - `client.my_balls` array of alive `Ball`'s IDs that `client` owns and can control.
-- `client.score` personal score since respawn
+- `client.score` personal score since spawn
 - `client.leaders` array of leader's `Balls` IDs in FFA mode. (player can have lots of `Balls`, but sever sends only one ID of one `Ball`)
 - `client.teams_scores` array of team's scores in teams mode
 - `client.client_name` name that you have set for `client` (not nickname)
-- `client.tick_counter` number of *tick* packets received (i call them ticks because they contains information about eating/movement/size/appear... of `Balls`)
+- `client.tick_counter` number of *tick* packets received (i call them ticks because they contains information about eating/movement/size/disappear... of `Balls`)
 
 ## Client methods ##
-- `client.connect(server, key)` connect to [agar.io](http://agar.io) server. (You need to look at `POST http://m.agar.io/` request in your browser to get both server and key). You can call it again after `client` disconnected from server. **Example:** `client.connect('ws://1.2.3.4:443','Y3hUlH3B')` **ProTip:** each server have few rooms, so you may need connect few times before you will get in room that you want (you may need new key each time). You can look `client.once('leaderBoardUpdate')` to know if you're connected to correct room
+- `client.connect(server, key)` connect to [agar.io](http://agar.io) server. (You need to request `POST http://m.agar.io/` to get both server and key, look how browser do it). You can call it again after `client` disconnected from server. **Example:** `client.connect('ws://1.2.3.4:443','Y3hUlH3B')` **ProTip:** each server have few rooms, so you may need connect few times before you will get in room that you want (but you need new key each time). You can look `client.once('leaderBoardUpdate')` to know if you're connected to correct room
 - `client.disconnect()` disconnect from server
 - `client.spawn(name)` will spawn `Ball` with nickname. `client.on('myNewBall')` will be called when server sends our `Ball` info
 - `client.spectate()` will activate spectating mode. Look at `client.on('spectateFieldUpdate')` for FOV updates
@@ -134,3 +133,6 @@ If you want record/repeat or watch in real time what your client doing through w
 - `{'reason': 'inactive'}` when we didn't saw `Ball` for `client.inactive_destroy` ms
 - `{'reason': 'eaten', 'by': ball_id}` when `Ball` got eaten
 - `{'reason': 'merge'}` when our `Ball` merges with our other `Ball`
+
+## License ##
+MIT
