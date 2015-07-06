@@ -3,30 +3,28 @@ var Packet = require('./packet.js');
 var EventEmitter = require('events').EventEmitter;
 
 function Client(client_name) {
-    //name used for log
-    this.client_name = client_name;
+    //you can change this values
+    this.client_name = client_name;     //name used for log
+    this.debug = 1;                     //debug level, 0-5 (5 will output extremely lot of data)
+    this.inactive_destroy = 5*60*1000;  //time in ms when to destroy inactive balls
+    this.inactive_check = 10*1000;      //time in ms when to search inactive balls
+
+    //don't change things below if you don't understand what you're doing
+
     this.tick_counter = 0;
+    this.inactive_interval = 0; //ID of setInterval()
+    this.timer_emit_connected = null; //timer for emitting "connected" event
+    this.balls = {};            //all balls
+    this.my_balls = [];         //IDs of my balls
+    this.score = 0;             //my score
+    this.leaders = [];          //IDs of leaders in FFA mode
+    this.teams_scores = [];     //scores of teams in Teams mode
 
     if(this.debug >= 1)
         this.log('client created');
 }
 
 Client.prototype = {
-    //you can change this values
-    debug: 1, //debug level, 0-5 (5 will output extremely lot of data)
-    inactive_destroy: 5*60*1000, //time in ms when to destroy inactive balls
-    inactive_check: 10*1000, //time in ms when to search inactive balls
-
-    //don't change things below if you don't understand what you're doing
-
-    inactive_interval: 0, //ID of setInterval()
-    timer_emit_connected: null, //timer for emitting "connected" event
-    balls: {},  //all balls
-    my_balls: [], //IDs of my balls
-    score: 0, //my score
-    leaders: [], //IDs of leaders in FFA mode
-    teams_scores: [], //scores of teams in Teams mode
-
     connect: function(server, key) {
         var headers = {
             'Origin': 'http://agar.io'
