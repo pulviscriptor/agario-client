@@ -396,7 +396,7 @@ Client.prototype = {
         this.emit('scoreUpdate', old_score, new_score);
 
         if(this.debug >= 2)
-            console.log('score: ' + new_score);
+            this.log('score: ' + new_score);
 
     },
 
