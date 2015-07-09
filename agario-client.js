@@ -40,7 +40,7 @@ Client.prototype = {
         this.key = key;
 
         if(this.debug >= 1) {
-            if(!key) this.log('[warning] You did not specified "key" for Client.connect(server, key)' +
+            if(!key) this.log('[warning] You did not specified "key" for Client.connect(server, key)\n' +
                 '          If server will not accept you, this may be the problem');
             this.log('connecting...');
         }
