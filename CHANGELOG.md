@@ -1,3 +1,9 @@
+## 17.07.2015 ##
+Code changes:
+
+- `Client.facebook_key` added to login with facebook key
+- `Client.on.experienceUpdate(level, current_exp, need_exp)` experience information update (if logined)
+
 ## 24.06.2015 ##
 Protocol changes:
 

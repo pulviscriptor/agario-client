@@ -33,6 +33,7 @@ Properties that you can change:
 - `client.debug` debug level. 0-5. 0 is completely silent. 5 is super verbose. **Default: 1**
 - `client.server` address that was used in `client.connect()` call
 - `client.key` key that was used in `client.connect()` call
+- `client.facebook_key` key to login. You can get it on [agar.io](http://agar.io) by writing in console `JSON.parse(localStorage.loginCache).fa;`
 - `client.inactive_destroy` time in ms for how long ball will live in memory after his last known action (if player exit from game or ball eaten outside our field of view, we will not know it since server sends action only about field that you see. Original code `destroy()` `Ball` when he `disappear` from field of view. You can do that in `client.on('ballDisppear')` if you want it for some reason). **Default: 5\*60\*1000** (5 minutes)
 - `client.inactive_check` time in ms for time interval that search and destroy inactive `Balls`. **Default: 10\*1000** (10 seconds)
 
@@ -83,6 +84,7 @@ In this list `on.eventName(param1, param2)` means you need to do `client.on('eve
 - `on.ballRename(ball_id, old_name, new_name)` `Ball` set name/change name/we discover name
 - `on.ballUpdate(ball_id, old_update_time, new_update_time)` new data about ball received
 - `on.spectateFieldUpdate(cord_x, cord_y, zoom_level)` coordinates of field of view in `client.spectate()` mode
+- `Client.on.experienceUpdate(level, current_exp, need_exp)` experience information update (if logined with `Client.facebook_key`)
 
 # Ball API #
 `var ball = client.balls[ball_id];` *ball_id* is number that you can get from events

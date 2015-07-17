@@ -9,6 +9,7 @@ var client = new AgarioClient('worker'); //create new client and call it "worker
 var interval_id = 0; //here we will store setInterval's ID
 
 client.debug = 1; //setting debug to 1 (avaialble 0-5)
+client.facebook_key = ''; //you can put here your facebook key. Check in README.md how to get it
 
 client.once('leaderBoardUpdate', function(old, leaders) { //when we receive leaders list. Fire only once
     var name_array = leaders.map(function(ball_id) { //converting leader's IDs to leader's names

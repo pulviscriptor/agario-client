@@ -19,6 +19,7 @@ function Client(client_name) {
     this.score = 0;             //my score
     this.leaders = [];          //IDs of leaders in FFA mode
     this.teams_scores = [];     //scores of teams in Teams mode
+    this.facebook_key = null;   //facebook key. Check README.md how to get it
 
     if(this.debug >= 1)
         this.log('client created');
@@ -78,6 +79,14 @@ Client.prototype = {
             buf.writeUInt8(80, 0);
             for (var i=1;i<=this.key.length;++i) {
                 buf.writeUInt8(this.key.charCodeAt(i-1), i);
+            }
+            this.send(buf);
+        }
+        if(this.facebook_key) {
+            buf = new Buffer(1 + this.facebook_key.length);
+            buf.writeUInt8(81, 0);
+            for (i=1;i<=this.facebook_key.length;++i) {
+                buf.writeUInt8(this.facebook_key.charCodeAt(i-1), i);
             }
             this.send(buf);
         }
@@ -362,6 +371,17 @@ Client.prototype = {
         //another unknown backet
         '72': function() {
             //packet is sent by server but not used in original code
+        },
+
+        '81': function(client, packet) {
+            var level = packet.readUInt32LE();
+            var curernt_exp = packet.readUInt32LE();
+            var need_exp = packet.readUInt32LE();
+
+            if(client.debug >= 2)
+                client.log('experience update: ' + [level, curernt_exp, need_exp].join(','));
+
+            client.emit('experienceUpdate', level, curernt_exp, need_exp);
         },
 
         '240': function(client, packet) {
