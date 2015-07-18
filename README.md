@@ -136,5 +136,8 @@ If you want record/repeat or watch in real time what your client doing through w
 - `{'reason': 'eaten', 'by': ball_id}` when `Ball` got eaten
 - `{'reason': 'merge'}` when our `Ball` merges with our other `Ball`
 
+## Feedback ##
+If something is broken, please [email me](mailto:pulviscriptor@gmail.com) or [create issue](https://github.com/pulviscriptor/agario-client/issues/new). I will not know that something is broken until somebody will tell me that.
+
 ## License ##
 MIT

@@ -1,6 +1,6 @@
 {
   "name": "agario-client",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Node.js agar.io client implementation",
   "main": "agario-client.js",
   "dependencies": {
