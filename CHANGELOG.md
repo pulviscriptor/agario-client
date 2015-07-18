@@ -1,3 +1,9 @@
+## 18.07.2015 ##
+Protocol changes:
+
+- Initial packet id `254` sends `05` instead `04` which forces server to use new protocol
+- Tick packet id `16` part 2 now uses `SInt32LE` for coordinates
+
 ## 17.07.2015 ##
 Code changes:
 

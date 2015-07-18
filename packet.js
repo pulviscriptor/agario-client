@@ -94,6 +94,32 @@ Packet.prototype = {
         return ret;
     },
 
+    readSInt32LE: function(p) {
+        var offset = p || this.offset;
+        var ret;
+        if(this.data.getInt32) {
+            ret = this.data.getInt32(offset, true);
+        }else{
+            ret = this.data.readInt32LE(offset);
+        }
+        if(p === undefined) this.offset += 4;
+
+        return ret;
+    },
+
+    readSInt32BE: function(p) {
+        var offset = p || this.offset;
+        var ret;
+        if(this.data.getInt32) {
+            ret = this.data.getInt32(offset, false);
+        }else{
+            ret = this.data.readInt32BE(offset);
+        }
+        if(p === undefined) this.offset += 4;
+
+        return ret;
+    },
+
     readFloat32LE: function(p) {
         var offset = p || this.offset;
         var ret;
