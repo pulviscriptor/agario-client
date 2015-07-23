@@ -90,51 +90,9 @@ function getDistanceBetweenBalls(ball_1, ball_2) { //this calculates distance be
     return Math.sqrt( Math.pow( ball_1.x - ball_2.x, 2) + Math.pow( ball_2.y - ball_1.y, 2) );
 }
 
-function getAgarioServer(cb) {
-    var options = {
-        host: 'm.agar.io',
-        port: 80,
-        path: '/',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': region.length,
-            'Origin': 'http://agar.io',
-            'Referer': 'http://agar.io/'
-        }
-    };
-
-    var req = http.request(options, function(res) {
-        var server = '';
-        if(res.statusCode != 200) {
-            console.log('HTTP request status code: ' + res.statusCode);
-            return cb();
-        }
-        res.setEncoding('utf8');
-
-        res.on('data', function (chunk) {
-            server += chunk;
-        });
-        res.on('end', function() {
-            console.log('HTTP request answer: ' + server);
-            var data = server.split('\n');
-            cb('ws://' + data[0], data[1]);
-        });
-    });
-
-    req.on('error', function(e) {
-        console.log('HTTP request error: ' + e.message);
-        return cb();
-    });
-
-    req.write(region);
-    req.end();
-}
-
 console.log('Requesting server in region ' + region);
-getAgarioServer(function(server, key) {
-    if(!server) return console.log('No server to connect');
-    console.log('Connecting to ' + server);
-    client.connect(server, key);
+AgarioClient.misc.getFFAServer({region: region}, function(srv) { //requesting FFA server
+    if(!srv.server) return console.log('Failed to request server (' + srv.error + ':' + srv.error_source + ')');
+    console.log('Connecting to ' + srv.server + ' with key ' + srv.key);
+    client.connect('ws://' + srv.server, srv.key); //do not forget to add ws://
 });
-
