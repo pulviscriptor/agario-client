@@ -10,7 +10,8 @@
   "files": [
     "agario-client.js",
     "example.js",
-    "packet.js"
+    "packet.js",
+    "misc.js"
   ],
   "scripts": {
     "test": "node example.js"
