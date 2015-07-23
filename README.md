@@ -125,10 +125,51 @@ In this list `on.eventName(param1, param2)` means you need to do `ball.on('event
  - `on.appear()` `Ball` appear on "screen" (field of view)
  - `on.disappear()` `Ball` disappear from "screen" (field of view)
 
+# Servers #
+When you do `var AgarioClient = require('agario-client');` you can access `AgarioClient.servers` 
+Functions need `opt` as options object and `cb` as callback function. 
+
+## Options ##
+
+- `servers.getFFAServer(opt, cb)` to request FFA server.  
+  Needs `opt.region`
+- `servers.getTeamsServer(opt, cb)` to request teams server.  
+  Needs `opt.region`
+- `servers.getExperimentalServer(opt, cb)` to request experimental server.  
+  Needs `opt.region`  
+  **Use at your own risk!** Support of experimental servers are not guaranteed by agario-client!
+- `servers.getPartyServer(opt, cb)` to request party server.  
+  Needs `opt.party_key`
+- `servers.createParty(opt, cb)` to request party server.  
+  Needs `opt.region`
+
+Check region list below in this file.
+
+## Callbacks ##
+
+Callback will be called with single object that can contain:
+- `server` - server's IP:PORT
+- `key` - server's key
+- `error` - error code (**WRONG_HTTP_CODE**/**WRONG_DATA_FORMAT**/**REQUEST_ERROR**)
+- `error_source` - error object passed from `req.on.error` when available (for example when **WRONG_HTTP_CODE** happens)
+- `res` - response object when available (for example when **WRONG_HTTP_CODE** happens)
+- `data` - response data string when available (for example when **WRONG_DATA_FORMAT** happens)
+
 # Additional information #
 
 ## agario-devtools ##
 If you want record/repeat or watch in real time what your client doing through web browser, you might want to check [agario-devtools](https://github.com/pulviscriptor/agario-devtools)
+
+## Regions list ##
+
+- BR-Brazil
+- CN-China
+- EU-London
+- JP-Tokyo
+- RU-Russia
+- SG-Singapore
+- TK-Turkey
+- US-Atlanta
 
 ## Ball destroy reasons list ##
 - `{'reason': 'reset'}` when `client` destroys everything (connection lost?)
