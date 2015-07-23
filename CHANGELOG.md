@@ -1,14 +1,14 @@
 ## 23.07.2015 ##
 Code changes:
 
-`var AgarioClient = require('agatio-client');`
+`var AgarioClient = require('agario-client');`
 
-- `AgarioClient.misc.getFFAServer` added
-- `AgarioClient.misc.getTeamsServer` added
-- `AgarioClient.misc.getExperimentalServer` added
-- `AgarioClient.misc.getPartyServer` added
-- `AgarioClient.misc.createParty` added
-- `example.js` is now using `AgarioClient.misc.getFFAServer`
+- `AgarioClient.servers.getFFAServer` added
+- `AgarioClient.servers.getTeamsServer` added
+- `AgarioClient.servers.getExperimentalServer` added
+- `AgarioClient.servers.getPartyServer` added
+- `AgarioClient.servers.createParty` added
+- `example.js` is now using `AgarioClient.servers.getFFAServer`
 
 ## 18.07.2015 ##
 Protocol changes:

@@ -11,7 +11,7 @@
     "agario-client.js",
     "example.js",
     "packet.js",
-    "misc.js"
+    "servers.js"
   ],
   "scripts": {
     "test": "node example.js"
