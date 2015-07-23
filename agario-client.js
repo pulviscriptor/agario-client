@@ -1,5 +1,6 @@
 var WebSocket = require('ws');
 var Packet = require('./packet.js');
+var misc = require('./misc.js');
 var EventEmitter = require('events').EventEmitter;
 
 function Client(client_name) {
@@ -24,6 +25,8 @@ function Client(client_name) {
     if(this.debug >= 1)
         this.log('client created');
 }
+
+Client.misc = misc;
 
 Client.prototype = {
     connect: function(server, key) {
