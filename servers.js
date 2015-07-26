@@ -40,7 +40,7 @@ var servers = {
                     ret.error = 'WRONG_HTTP_CODE';
                     ret.res = res;
                     ret.data = server;
-                }else if(data.length != (opt.res_data_len || 3)) {
+                }else if(!data[opt.res_data_index || 1]) {
                     ret.error = 'WRONG_DATA_FORMAT';
                     ret.res = res;
                     ret.data = server;
@@ -106,7 +106,7 @@ var servers = {
         var post_opt = {
             url: '/getToken',
             data: opt.party_key,
-            res_data_len: 2
+            res_data_index: 0
         };
         servers.postRequest(post_opt, function(res) {
             if(!res.server) return cb(res);
