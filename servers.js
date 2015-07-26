@@ -40,7 +40,7 @@ var servers = {
                     ret.error = 'WRONG_HTTP_CODE';
                     ret.res = res;
                     ret.data = server;
-                }else if(!data[opt.res_data_index || 1]) {
+                }else if(!data[ opt.res_data_index===undefined?1:opt.res_data_index ]) {
                     ret.error = 'WRONG_DATA_FORMAT';
                     ret.res = res;
                     ret.data = server;
