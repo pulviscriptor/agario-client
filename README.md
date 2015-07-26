@@ -151,7 +151,7 @@ Callback will be called with single object that can contain:
 - `server` - server's IP:PORT
 - `key` - server's key
 - `error` - error code (**WRONG_HTTP_CODE**/**WRONG_DATA_FORMAT**/**REQUEST_ERROR**)
-- `error_source` - error object passed from `req.on.error` when available (for example when **WRONG_HTTP_CODE** happens)
+- `error_source` - error object passed from `req.on.error` when available (for example when **REQUEST_ERROR** happens)
 - `res` - response object when available (for example when **WRONG_HTTP_CODE** happens)
 - `data` - response data string when available (for example when **WRONG_DATA_FORMAT** happens)
 
