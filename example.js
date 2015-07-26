@@ -92,7 +92,7 @@ function getDistanceBetweenBalls(ball_1, ball_2) { //this calculates distance be
 
 console.log('Requesting server in region ' + region);
 AgarioClient.servers.getFFAServer({region: region}, function(srv) { //requesting FFA server
-    if(!srv.server) return console.log('Failed to request server (' + srv.error + ':' + srv.error_source + ')');
+    if(!srv.server) return console.log('Failed to request server (error=' + srv.error + ', error_source=' + srv.error_source + ')');
     console.log('Connecting to ' + srv.server + ' with key ' + srv.key);
     client.connect('ws://' + srv.server, srv.key); //do not forget to add ws://
 });
