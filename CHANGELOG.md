@@ -1,3 +1,11 @@
+## 31.07.2015 ##
+Code changes:
+Deprecated on `04.06.2015` functions removed:
+
+- function `Client.off` removed
+- function `Client.offAll` removed
+- function `Client.emitEvent` removed
+
 ## 23.07.2015 ##
 Code changes:
 
