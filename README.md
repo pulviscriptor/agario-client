@@ -48,7 +48,7 @@ Properties that better not to change or you can break something:
 - `client.tick_counter` number of *tick* packets received (i call them ticks because they contains information about eating/movement/size/disappear... of `Balls`)
 
 ## Client methods ##
-- `client.connect(server, key)` connect to [agar.io](http://agar.io) server. (You need to request `POST http://m.agar.io/` to get both server and key, look how browser do it). You can call it again after `client` disconnected from server. **Example:** `client.connect('ws://1.2.3.4:443','Y3hUlH3B')` **ProTip:** each server have few rooms, so you may need connect few times before you will get in room that you want (but you need new key each time). You can look `client.once('leaderBoardUpdate')` to know if you're connected to correct room
+- `client.connect(server, key)` connect to [agar.io](http://agar.io) server. Check [Servers](#servers) part in this readme to see how to get server IP and key. **ProTip:** each server have few rooms (if it is not party), so you may need connect few times before you will get in room that you want (but you need new key each time and [agar.io](http://agar.io) can ban your IP for flooding with requests). You can look `client.once('leaderBoardUpdate')` to know if you're connected to correct room
 - `client.disconnect()` disconnect from server
 - `client.spawn(name)` will spawn `Ball` with nickname. `client.on('myNewBall')` will be called when server sends our `Ball` info
 - `client.spectate()` will activate spectating mode. Look at `client.on('spectateFieldUpdate')` for FOV updates
@@ -75,7 +75,7 @@ In this list `on.eventName(param1, param2)` means you need to do `client.on('eve
 - `on.ballAction(ball_id, coordinate_x, coordinate_y, size, is_virus, nick)` some action about some `Ball`
 - `on.ballAppear(ball_id)` `Ball` appear on "screen" (field of view)
 - `on.ballDisppear(ball_id)` `Ball` disappear from "screen" (field of view)
-- `on.ballDestroy(ball_id, reason)` `Ball` deleted (check reasons at the bottom of this document)
+- `on.ballDestroy(ball_id, reason)` `Ball` deleted (check [reasons](#ball-destroy-reasons-list) at the bottom of this document)
 - `on.mineBallDestroy(ball_id, reason)` mine (your) `Ball` deleted (check reasons at the bottom of this document)
 - `on.lostMyBalls()` all mine `Balls` destroyed/eaten
 - `on.merge(destroyed_ball_id)` mine two `Balls` connects into one
@@ -117,7 +117,7 @@ Properties that better not to change or you can break something:
 ## Ball events ##
 In this list `on.eventName(param1, param2)` means you need to do `ball.on('eventName', function(param1, param2) { ... })`
 
- - `on.destroy(reason)` `Ball` deleted (check reasons at the bottom of this document)
+ - `on.destroy(reason)` `Ball` deleted (check [reasons](#ball-destroy-reasons-list) at the bottom of this document)
  - `on.move(old_x, old_y, new_x, new_y)` `Ball` move
  - `on.resize(old_size, new_size)` `Ball` resize
  - `on.update(old_time, new_time)` new data about `Ball` received
@@ -143,17 +143,19 @@ Functions need `opt` as options object and `cb` as callback function.
 - `servers.createParty(opt, cb)` to request party server.  
   Needs `opt.region`
 
-Check region list below in this file.
+Check [region list](#regions-list) below in this file.
 
 ## Callbacks ##
 
 Callback will be called with single object that can contain:
-- `server` - server's IP:PORT
+- `server` - server's IP:PORT (**add `ws://` before passing to connect()**)
 - `key` - server's key
-- `error` - error code (**WRONG_HTTP_CODE**/**WRONG_DATA_FORMAT**/**REQUEST_ERROR**)
-- `error_source` - error object passed from `req.on.error` when available (for example when **REQUEST_ERROR** happens)
-- `res` - response object when available (for example when **WRONG_HTTP_CODE** happens)
-- `data` - response data string when available (for example when **WRONG_DATA_FORMAT** happens)
+- `error` - error code (`WRONG_HTTP_CODE`/`WRONG_DATA_FORMAT`/`REQUEST_ERROR`)
+- `error_source` - error object passed from `req.on.error` when available (for example when `REQUEST_ERROR` happens)
+- `res` - response object when available (for example when `WRONG_HTTP_CODE` happens)
+- `data` - response data string when available (for example when `WRONG_DATA_FORMAT` happens)
+
+You can check how `example.js` uses this.
 
 # Additional information #
 
