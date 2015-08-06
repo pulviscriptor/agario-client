@@ -17,7 +17,7 @@ function Packet(e) {
 
 Packet.prototype = {
     readUInt8: function(p) {
-        var offset = p || this.offset;
+        var offset = (typeof p) == 'number' ? p : this.offset;
         var ret;
         if(this.data.getUint8) {
             ret = this.data.getUint8(offset);
@@ -30,7 +30,7 @@ Packet.prototype = {
     },
 
     readUInt16BE: function(p) {
-        var offset = p || this.offset;
+        var offset = (typeof p) == 'number' ? p : this.offset;
         var ret;
         if(this.data.getUint16) {
             ret = this.data.getUint16(offset, false);
@@ -43,7 +43,7 @@ Packet.prototype = {
     },
 
     readUInt16LE: function(p) {
-        var offset = p || this.offset;
+        var offset = (typeof p) == 'number' ? p : this.offset;
         var ret;
         if(this.data.getUint16) {
             ret = this.data.getUint16(offset, true);
@@ -56,7 +56,7 @@ Packet.prototype = {
     },
 
     readSInt16LE: function(p) {
-        var offset = p || this.offset;
+        var offset = (typeof p) == 'number' ? p : this.offset;
         var ret;
         if(this.data.getInt16) {
             ret = this.data.getInt16(offset, true);
@@ -69,7 +69,7 @@ Packet.prototype = {
     },
 
     readUInt32LE: function(p) {
-        var offset = p || this.offset;
+        var offset = (typeof p) == 'number' ? p : this.offset;
         var ret;
         if(this.data.getUint32) {
             ret = this.data.getUint32(offset, true);
@@ -82,7 +82,7 @@ Packet.prototype = {
     },
 
     readUInt32BE: function(p) {
-        var offset = p || this.offset;
+        var offset = (typeof p) == 'number' ? p : this.offset;
         var ret;
         if(this.data.getUint32) {
             ret = this.data.getUint32(offset, false);
@@ -95,7 +95,7 @@ Packet.prototype = {
     },
 
     readSInt32LE: function(p) {
-        var offset = p || this.offset;
+        var offset = (typeof p) == 'number' ? p : this.offset;
         var ret;
         if(this.data.getInt32) {
             ret = this.data.getInt32(offset, true);
@@ -108,7 +108,7 @@ Packet.prototype = {
     },
 
     readSInt32BE: function(p) {
-        var offset = p || this.offset;
+        var offset = (typeof p) == 'number' ? p : this.offset;
         var ret;
         if(this.data.getInt32) {
             ret = this.data.getInt32(offset, false);
@@ -121,7 +121,7 @@ Packet.prototype = {
     },
 
     readFloat32LE: function(p) {
-        var offset = p || this.offset;
+        var offset = (typeof p) == 'number' ? p : this.offset;
         var ret;
         if(this.data.getFloat32) {
             ret = this.data.getFloat32(offset, true);
@@ -134,7 +134,7 @@ Packet.prototype = {
     },
 
     readFloat32BE: function(p) {
-        var offset = p || this.offset;
+        var offset = (typeof p) == 'number' ? p : this.offset;
         var ret;
         if(this.data.getFloat32) {
             ret = this.data.getFloat32(offset, false);
@@ -147,7 +147,7 @@ Packet.prototype = {
     },
 
     readFloat64LE: function(p) {
-        var offset = p || this.offset;
+        var offset = (typeof p) == 'number' ? p : this.offset;
         var ret;
         if(this.data.getFloat64) {
             ret = this.data.getFloat64(offset, true);
@@ -160,7 +160,7 @@ Packet.prototype = {
     },
 
     readFloat64BE: function(p) {
-        var offset = p || this.offset;
+        var offset = (typeof p) == 'number' ? p : this.offset;
         var ret;
         if(this.data.getFloat64) {
             ret = this.data.getFloat64(offset, false);
