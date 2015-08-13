@@ -446,11 +446,11 @@ Client.prototype = {
     },
 
     moveTo: function(x, y) {
-        var buf = new Buffer(21);
+        var buf = new Buffer(13);
         buf.writeUInt8(16, 0);
-        buf.writeDoubleLE(x, 1);
-        buf.writeDoubleLE(y, 9);
-        buf.writeUInt32LE(0, 17);
+        buf.writeInt32LE(Math.round(x), 1);
+        buf.writeInt32LE(Math.round(y), 5);
+        buf.writeUInt32LE(0, 9);
         this.send(buf);
     },
 
