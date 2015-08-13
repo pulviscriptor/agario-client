@@ -1,3 +1,8 @@
+## 13.08.2015 ##
+Protocol changes:
+
+- Move packet id `16` coordinates changed from `DoubleLE` to `Int32LE`
+
 ## 31.07.2015 ##
 Code changes:
 Deprecated on `04.06.2015` functions removed:
