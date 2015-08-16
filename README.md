@@ -52,7 +52,7 @@ Properties that better not to change or you can break something:
 - `client.disconnect()` disconnect from server
 - `client.spawn(name)` will spawn `Ball` with nickname. `client.on('myNewBall')` will be called when server sends our `Ball` info
 - `client.spectate()` will activate spectating mode. Look at `client.on('spectateFieldUpdate')` for FOV updates
-- `client.moveTo(x,y)` send move command. `x` and `y` is 64bit float numbers where you want to move. Coordinates (size) of map you can get in `client.on('mapSizeLoad')`. Your `Balls` will move to coordinates you specified until you send new coordinates to move. Original source code do this every **100ms** (10 times in second) and before split and eject
+- `client.moveTo(x,y)` send move command. `x` and `y` is numbers where you want to move. Coordinates (size) of map you can get in `client.on('mapSizeLoad')`. Your `Balls` will move to coordinates you specified until you send new coordinates to move. Original source code do this every **100ms** (10 times in second) and before split and eject
 - `client.split()` will split your `Balls` in two. `Ball` will be ejected in last direction that you sent with `client.moveTo()`. `client.on('myNewBall')` will be called when server sends our `Balls` info
 - `client.eject()` will eject some mass from your `Balls`. Mass will be ejected in last direction that you sent with `client.moveTo()`. Ejected mass is `Ball` too (but we don't own them). So `client.on('ballAppear')` will be called when server sends ejected mass `Balls` info.
 
