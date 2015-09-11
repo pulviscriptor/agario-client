@@ -101,6 +101,7 @@ Properties that better not to change or you can break something:
 - `ball.x` last known X coordinate of `Ball` (if `ball.visible` is `true` then its current coordinate)
 - `ball.y` last known Y coordinate of `Ball` (if `ball.visible` is `true` then its current coordinate)
 - `ball.size` last known size of `Ball` (if `ball.visible` is `true` then its current size)
+- `ball.mass` mass of ball calculated from `ball.size`
 - `ball.color` string with color of `Ball`
 - `ball.virus` if `true` then ball is a virus (green thing that explode big balls)
 - `ball.mine` if `true` then we do own this `Ball`
