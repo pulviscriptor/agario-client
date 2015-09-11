@@ -477,6 +477,7 @@ function Ball(client, id) {
     this.x = 0;
     this.y = 0;
     this.size = 0;
+    this.mass = 0;
     this.virus = false;
     this.mine = false;
 
@@ -520,6 +521,7 @@ Ball.prototype = {
         if(this.size == new_size) return;
         var old_size = this.size;
         this.size = new_size;
+        this.mass = parseInt(Math.pow(new_size/10, 2));
 
         if(!old_size) return;
         this.emit('resize', old_size, new_size);
