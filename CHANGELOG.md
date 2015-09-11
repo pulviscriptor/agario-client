@@ -1,3 +1,8 @@
+## 09.11.2015 ##
+Code changes:
+
+- `ball.mass` added
+
 ## 13.08.2015 ##
 Protocol changes:
 
