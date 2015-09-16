@@ -103,14 +103,17 @@ var servers = {
 
     getPartyServer: function(opt, cb) {
         if(!opt.party_key) throw new Error('getPartyServer wants opt.party_key');
+        var party_key = (opt.party_key.indexOf('#') >= 0) 
+            ? opt.party_key.substr(opt.party_key.indexOf('#')+1) 
+            : opt.party_key;
         var post_opt = {
             url: '/getToken',
-            data: opt.party_key,
+            data: party_key,
             res_data_index: 0
         };
         servers.postRequest(post_opt, function(res) {
             if(!res.server) return cb(res);
-            res.key = opt.party_key;
+            res.key = party_key;
             cb(res);
         });
     }
