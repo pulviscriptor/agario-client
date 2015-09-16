@@ -153,6 +153,7 @@ Client.prototype = {
         this.spawn_attempt = 0;
         clearInterval(this.inactive_interval);
         clearInterval(this.spawn_interval_id);
+        this.spawn_interval_id = 0;
 
         for(var k in this.balls) if(this.balls.hasOwnProperty(k)) this.balls[k].destroy({'reason':'reset'});
         this.emit('reset');
@@ -311,6 +312,7 @@ Client.prototype = {
                     client.log('detected new ball, disabling spawn() interval');
                 client.spawn_attempt = 0;
                 clearInterval(client.spawn_interval_id);
+                client.spawn_interval_id = 0;
             }
                     
             client.emit('myNewBall', ball_id);
@@ -467,6 +469,7 @@ Client.prototype = {
                         that.log('spawn() interval gave up! Disconnecting from server!');
                     that.spawn_attempt = 0;
                     clearInterval(that.spawn_interval_id);
+                    that.spawn_interval_id = 0;
                     that.disconnect();
                     return;
                 }
