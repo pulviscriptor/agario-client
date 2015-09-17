@@ -96,3 +96,4 @@ AgarioClient.servers.getFFAServer({region: region}, function(srv) { //requesting
     console.log('Connecting to ' + srv.server + ' with key ' + srv.key);
     client.connect('ws://' + srv.server, srv.key); //do not forget to add ws://
 });
+
