@@ -29,8 +29,6 @@ function Client(client_name) {
         this.log('client created');
 }
 
-Client.servers = servers;
-
 Client.prototype = {
     connect: function(server, key) {
         var headers = {
@@ -613,5 +611,7 @@ for (var key in EventEmitter.prototype) {
     Client.prototype[key] = Ball.prototype[key] = EventEmitter.prototype[key];
 }
 
+Client.servers = servers;
+Client.Ball    = Ball;
 module.exports = Client;
 
