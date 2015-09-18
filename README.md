@@ -36,6 +36,8 @@ Properties that you can change:
 - `client.facebook_key` key to login. You can get it on [agar.io](http://agar.io) by log-in through Facebook and writing in console `JSON.parse(localStorage.loginCache).ha`
 - `client.inactive_destroy` time in ms for how long ball will live in memory after his last known action (if player exit from game or ball eaten outside our field of view, we will not know it since server sends action only about field that you see. Original code `destroy()` `Ball` when he `disappear` from field of view. You can do that in `client.on('ballDisppear')` if you want it for some reason). **Default: 5\*60\*1000** (5 minutes)
 - `client.inactive_check` time in ms for time interval that search and destroy inactive `Balls`. **Default: 10\*1000** (10 seconds)
+- `client.spawn_attempts` how much we need try spawn before disconnect (made for unstable spawn on official servers). **Default: 25** 
+- `client.spawn_interval` time in ms between spawn attempts. **Default: 200** 
 
 Properties that better not to change or you can break something:
 
@@ -179,6 +181,30 @@ If you want record/repeat or watch in real time what your client doing through w
 - `{'reason': 'inactive'}` when we didn't saw `Ball` for `client.inactive_destroy` ms
 - `{'reason': 'eaten', 'by': ball_id}` when `Ball` got eaten
 - `{'reason': 'merge'}` when our `Ball` merges with our other `Ball`
+
+## Adding properties/events ##
+You can add your own properties/events to clients/balls. 
+`var AgarioClient = require('agario-client');`
+- Prototype of `Client` is located at `AgarioClient.prototype.` 
+- Prototype of `Ball` is located at `AgarioClient.Ball.prototype.` 
+
+For example: 
+
+    AgarioClient.Ball.prototype.isMyFriend = function() { ... };  //to call ball.isMyFriend()
+    AgarioClient.prototype.addFriend = function(ball_id) { ... }; //to call client.addFriend(1234) 
+
+Events:
+
+    client.on('somebodyAteSomething', function(eater_id, eaten_id) {  #eat event
+        if(client.balls[eaten_id].isMyFriend()) { //if this is my friend
+            client.emit('friendEaten', eater_id, eaten_id); //emit custom event
+        }
+    });
+    client.on('friendEaten', function(eater_id, friend_id) { //on friend eaten
+        client.log('My friend got eaten!');
+    });
+
+Check full example in `example.js`
 
 ## Feedback ##
 If something is broken, please [email me](mailto:pulviscriptor@gmail.com) or [create issue](https://github.com/pulviscriptor/agario-client/issues/new). I will not know that something is broken until somebody will tell me that.

@@ -11,6 +11,39 @@ var interval_id = 0; //here we will store setInterval's ID
 client.debug = 1; //setting debug to 1 (avaialble 0-5)
 client.facebook_key = ''; //you can put here your facebook key. Check in README.md how to get it
 
+//here adding custom properties/events example shown
+AgarioClient.prototype.addFriend = function(ball_id) { //adding client.addFriend(ball_id) function
+    var ball = client.balls[ball_id];
+    ball.is_friend = true; //set ball.is_friend to true
+    ball.on('destroy', function() { //when this friend will be destroyed
+        client.emit('friendLost', ball); //emit friendEaten event
+    });
+    client.emit('friendAdded', ball_id); //emit friendAdded event
+};
+
+AgarioClient.Ball.prototype.isMyFriend = function() { //adding ball.isMyFriend() funtion
+    return this.is_friend == true; //if ball is_friend is true, then true will be returned
+};
+
+client.on('ballAppear', function(ball_id) { //when we somebody
+    var ball = client.balls[ball_id];
+    if(ball.mine) return; //this is mine ball
+    if(ball.isMyFriend()) return; //this ball is already a friend
+    if(ball.name == 'agario-client') { //if ball have name 'agario-client'
+        client.addFriend(ball_id); //add it to friends
+    }
+});
+
+client.on('friendLost', function(friend) { //on friendLost event
+    client.log('I lost my friend: ' + friend);
+});
+
+client.on('friendAdded', function(friend_id) { //on friendEaten event
+    var friend = client.balls[friend_id];
+    client.log('Found new friend: ' + friend + '!');
+});
+//end of adding custom properties/events example
+
 client.once('leaderBoardUpdate', function(old, leaders) { //when we receive leaders list. Fire only once
     var name_array = leaders.map(function(ball_id) { //converting leader's IDs to leader's names
         return client.balls[ball_id].name || 'unnamed'
@@ -21,13 +54,13 @@ client.once('leaderBoardUpdate', function(old, leaders) { //when we receive lead
 
 client.on('mineBallDestroy', function(ball_id, reason) { //when my ball destroyed
     if(reason.by) {
-        console.log(client.balls[reason.by] + ' ate my ball');
+        client.log(client.balls[reason.by] + ' ate my ball');
     }
 
     if(reason.reason == 'merge') {
-        console.log('my ball ' + ball_id + ' merged with my other ball, now i have ' + client.my_balls.length + ' balls');
+        client.log('my ball ' + ball_id + ' merged with my other ball, now i have ' + client.my_balls.length + ' balls');
     }else{
-        console.log('i lost my ball ' + ball_id + ', ' + client.my_balls.length + ' balls left');
+        client.log('i lost my ball ' + ball_id + ', ' + client.my_balls.length + ' balls left');
     }
 });
 
@@ -73,6 +106,7 @@ function recalculateTarget() { //this is all our example logic
         if(ball.virus) continue; //if ball is a virus (green non edible thing) then we skip it
         if(!ball.visible) continue; //if ball is not on our screen (field of view) then we skip it
         if(ball.mine) continue; //if ball is our ball - then we skip it
+        if(ball.isMyFriend()) continue; //this is my friend, ignore him (implemented by custom property)
         if(ball.size/my_ball.size > 0.5) continue; //if ball is bigger than 50% of our size - then we skip it
         var distance = getDistanceBetweenBalls(ball, my_ball); //we calculate distances between our ball and candidate
         if(candidate_ball && distance > candidate_distance) continue; //if we do have some candidate and distance to it smaller, than distance to this ball, we skip it
@@ -96,3 +130,4 @@ AgarioClient.servers.getFFAServer({region: region}, function(srv) { //requesting
     console.log('Connecting to ' + srv.server + ' with key ' + srv.key);
     client.connect('ws://' + srv.server, srv.key); //do not forget to add ws://
 });
+

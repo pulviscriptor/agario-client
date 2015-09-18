@@ -2,13 +2,13 @@
 
 function Packet(e) {
     if(e instanceof Buffer) {
-        this.data = e;
+        this.data   = e;
         this.length = this.data.length;
     }else if((typeof Buffer) != 'undefined' && e.data instanceof Buffer) {
-        this.data = e.data;
+        this.data   = e.data;
         this.length = this.data.length;
     }else{
-        this.data = new DataView(e.data);
+        this.data   = new DataView(e.data);
         this.length = this.data.byteLength;
     }
 
@@ -186,3 +186,4 @@ Packet.prototype = {
 };
 
 module.exports = Packet;
+

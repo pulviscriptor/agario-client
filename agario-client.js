@@ -1,35 +1,33 @@
-var WebSocket = require('ws');
-var Packet = require('./packet.js');
-var servers = require('./servers.js');
+var WebSocket    = require('ws');
+var Packet       = require('./packet.js');
+var servers      = require('./servers.js');
 var EventEmitter = require('events').EventEmitter;
 
 function Client(client_name) {
     //you can change this values
-    this.client_name = client_name;     //name used for log
-    this.debug = 1;                     //debug level, 0-5 (5 will output extremely lot of data)
-    this.inactive_destroy = 5*60*1000;  //time in ms when to destroy inactive balls
-    this.inactive_check = 10*1000;      //time in ms when to search inactive balls
-    this.spawn_interval = 200;		//time in ms for respawn interval. 0 to disable (if your custom server don't have spawn problems)
-    this.spawn_attempts = 25;		//how much attempts to spawn before give up (official servers do have unstable spawn problems)
+    this.client_name      = client_name; //name used for log
+    this.debug            = 1;           //debug level, 0-5 (5 will output extremely lot of data)
+    this.inactive_destroy = 5*60*1000;   //time in ms when to destroy inactive balls
+    this.inactive_check   = 10*1000;     //time in ms when to search inactive balls
+    this.spawn_interval   = 200;	 //time in ms for respawn interval. 0 to disable (if your custom server don't have spawn problems)
+    this.spawn_attempts   = 25;		 //how much attempts to spawn before give up (official servers do have unstable spawn problems)
 
     //don't change things below if you don't understand what you're doing
 
-    this.tick_counter = 0;
-    this.inactive_interval = 0; //ID of setInterval()
-    this.balls = {};            //all balls
-    this.my_balls = [];         //IDs of my balls
-    this.score = 0;             //my score
-    this.leaders = [];          //IDs of leaders in FFA mode
-    this.teams_scores = [];     //scores of teams in Teams mode
-    this.facebook_key = null;   //facebook key. Check README.md how to get it
-    this.spawn_attempt     = 0; //attempt to spawn
-    this.spawn_interval_id = 0; //ID of setInterval()
+    this.tick_counter      = 0;    //number of ticks (packet ID 16 counter)
+    this.inactive_interval = 0;    //ID of setInterval()
+    this.balls             = {};   //all balls
+    this.my_balls          = [];   //IDs of my balls
+    this.score             = 0;    //my score
+    this.leaders           = [];   //IDs of leaders in FFA mode
+    this.teams_scores      = [];   //scores of teams in Teams mode
+    this.facebook_key      = '';   //facebook key. Check README.md how to get it
+    this.spawn_attempt     = 0;    //attempt to spawn
+    this.spawn_interval_id = 0;    //ID of setInterval()
 
     if(this.debug >= 1)
         this.log('client created');
 }
-
-Client.servers = servers;
 
 Client.prototype = {
     connect: function(server, key) {
@@ -37,14 +35,14 @@ Client.prototype = {
             'Origin': 'http://agar.io'
         };
 
-        this.ws = new WebSocket(server, null, {headers: headers});
+        this.ws            = new WebSocket(server, null, {headers: headers});
         this.ws.binaryType = "arraybuffer";
-        this.ws.onopen = this.onConnect.bind(this);
-        this.ws.onmessage = this.onMessage.bind(this);
-        this.ws.onclose = this.onDisconnect.bind(this);
-        this.ws.onerror = this.onError.bind(this);
-        this.server = server;
-        this.key = key;
+        this.ws.onopen     = this.onConnect.bind(this);
+        this.ws.onmessage  = this.onMessage.bind(this);
+        this.ws.onclose    = this.onDisconnect.bind(this);
+        this.ws.onerror    = this.onError.bind(this);
+        this.server        = server;
+        this.key           = key;
 
         if(this.debug >= 1) {
             if(!key) this.log('[warning] You did not specified "key" for Client.connect(server, key)\n' +
@@ -119,13 +117,13 @@ Client.prototype = {
     },
 
     onMessage: function(e) {
-        var packet = new Packet(e);
+        var packet    = new Packet(e);
         var packet_id = packet.readUInt8();
         var processor = this.processors[packet_id];
-        if(!processor) return this.log('warning: unknown packet ID(' + packet_id + '): ' + packet.toString());
+        if(!processor) return this.log('[warning] unknown packet ID(' + packet_id + '): ' + packet.toString());
 
         if(this.debug >= 4)
-            this.log('ACK packet ID=' + packet_id + ' LEN=' + packet.length);
+            this.log('RECV packet ID=' + packet_id + ' LEN=' + packet.length);
         if(this.debug >= 5)
             this.log('dump: ' + packet.toString());
 
@@ -146,14 +144,14 @@ Client.prototype = {
     reset: function() {
         if(this.debug >= 3)
             this.log('reset()');
-
-        this.leaders = [];
-        this.teams_scores = [];
-        this.my_balls = [];
-        this.spawn_attempt = 0;
+ 
         clearInterval(this.inactive_interval);
         clearInterval(this.spawn_interval_id);
         this.spawn_interval_id = 0;
+        this.leaders           = [];
+        this.teams_scores      = [];
+        this.my_balls          = [];
+        this.spawn_attempt     = 0;
 
         for(var k in this.balls) if(this.balls.hasOwnProperty(k)) this.balls[k].destroy({'reason':'reset'});
         this.emit('reset');
@@ -163,7 +161,7 @@ Client.prototype = {
         var time = (+new Date);
 
         if(this.debug >= 3)
-            this.log('Destroying inactive balls');
+            this.log('destroying inactive balls');
 
         for(var k in this.balls) {
             if(!this.balls.hasOwnProperty(k)) continue;
@@ -172,7 +170,7 @@ Client.prototype = {
             if(ball.visible) continue;
 
             if(this.debug >= 3)
-                this.log('Destroying inactive ' + ball);
+                this.log('destroying inactive ' + ball);
 
             ball.destroy({reason: 'inactive'});
         }
@@ -255,7 +253,7 @@ Client.prototype = {
                 ball.appear();
                 ball.update();
 
-                if(client.debug >= 4)
+                if(client.debug >= 5)
                     client.log('action: ball_id=' + ball_id + ' coordinate_x=' + coordinate_x + ' coordinate_y=' + coordinate_y + ' size=' + size + ' is_virus=' + is_virus + ' nick=' + nick);
 
                 client.emit('ballAction', ball_id, coordinate_x, coordinate_y, size, is_virus, nick);
@@ -281,8 +279,8 @@ Client.prototype = {
 
         //update spectating coordinates in "spectate" mode
         '17': function(client, packet) {
-            var x = packet.readFloat32LE();
-            var y = packet.readFloat32LE();
+            var x    = packet.readFloat32LE();
+            var y    = packet.readFloat32LE();
             var zoom = packet.readFloat32LE();
 
             if(client.debug >= 4)
@@ -299,8 +297,8 @@ Client.prototype = {
         //new ID of your ball (when you join or press space)
         '32': function(client, packet) {
             var ball_id = packet.readUInt32LE();
-            var ball = client.balls[ball_id] || new Ball(client, ball_id);
-            ball.mine = true;
+            var ball    = client.balls[ball_id] || new Ball(client, ball_id);
+            ball.mine   = true;
             if(!client.my_balls.length) client.score = 0;
             client.my_balls.push(ball_id);
 
@@ -321,7 +319,6 @@ Client.prototype = {
         //leaderboard update in FFA mode
         '49': function(client, packet) {
             var users = [];
-
             var count = packet.readUInt32LE();
 
             for(var i=0;i<count;i++) {
@@ -342,7 +339,7 @@ Client.prototype = {
 
             if(JSON.stringify(client.leaders) == JSON.stringify(users)) return;
             var old_leaders = client.leaders;
-            client.leaders = users;
+            client.leaders  = users;
 
             if(client.debug >= 2)
                 client.log('leaders update: ' + JSON.stringify(users));
@@ -352,7 +349,7 @@ Client.prototype = {
 
         //teams scored update in teams mode
         '50': function(client, packet) {
-            var teams_count = packet.readUInt32LE();
+            var teams_count  = packet.readUInt32LE();
             var teams_scores = [];
 
             for (var i=0;i<teams_count;++i) {
@@ -389,9 +386,9 @@ Client.prototype = {
         },
 
         '81': function(client, packet) {
-            var level = packet.readUInt32LE();
+            var level       = packet.readUInt32LE();
             var curernt_exp = packet.readUInt32LE();
-            var need_exp = packet.readUInt32LE();
+            var need_exp    = packet.readUInt32LE();
 
             if(client.debug >= 2)
                 client.log('experience update: ' + [level, curernt_exp, need_exp].join(','));
@@ -403,7 +400,7 @@ Client.prototype = {
             packet.offset += 4;
             var packet_id = packet.readUInt8();
             var processor = client.processors[packet_id];
-            if(!processor) return client.log('warning: unknown packet ID(240->' + packet_id + '): ' + packet.toString());
+            if(!processor) return client.log('[warning] unknown packet ID(240->' + packet_id + '): ' + packet.toString());
             processor(client, packet);
         },
 
@@ -420,7 +417,7 @@ Client.prototype = {
         var potential_score = 0;
         for (var i=0;i<this.my_balls.length;i++) {
             var ball_id = this.my_balls[i];
-            var ball = this.balls[ball_id];
+            var ball    = this.balls[ball_id];
             potential_score += Math.pow(ball.size, 2);
         }
         var old_score = this.score;
@@ -466,7 +463,7 @@ Client.prototype = {
 
                 if(that.spawn_attempt >= that.spawn_attempts) {
                     if(that.debug >= 1)
-                        that.log('spawn() interval gave up! Disconnecting from server!');
+                        that.log('[warning] spawn() interval gave up! Disconnecting from server!');
                     that.spawn_attempt = 0;
                     clearInterval(that.spawn_interval_id);
                     that.spawn_interval_id = 0;
@@ -512,18 +509,18 @@ Client.prototype = {
 function Ball(client, id) {
     if(client.balls[id]) return client.balls[id];
 
-    this.id = id;
-    this.name = null;
-    this.x = 0;
-    this.y = 0;
-    this.size = 0;
-    this.mass = 0;
+    this.id    = id;
+    this.name  = null;
+    this.x     = 0;
+    this.y     = 0;
+    this.size  = 0;
+    this.mass  = 0;
     this.virus = false;
-    this.mine = false;
+    this.mine  = false;
 
-    this.client = client;
-    this.destroyed = false;
-    this.visible = false;
+    this.client      = client;
+    this.destroyed   = false;
+    this.visible     = false;
     this.last_update = (+new Date);
     this.update_tick = 0;
 
@@ -549,8 +546,8 @@ Ball.prototype = {
         if(this.x == new_x && this.y == new_y) return;
         var old_x = this.x;
         var old_y = this.y;
-        this.x = new_x;
-        this.y = new_y;
+        this.x    = new_x;
+        this.y    = new_y;
 
         if(!old_x && !old_y) return;
         this.emit('move', old_x, old_y, new_x, new_y);
@@ -560,8 +557,8 @@ Ball.prototype = {
     setSize: function(new_size) {
         if(this.size == new_size) return;
         var old_size = this.size;
-        this.size = new_size;
-        this.mass = parseInt(Math.pow(new_size/10, 2));
+        this.size    = new_size;
+        this.mass    = parseInt(Math.pow(new_size/10, 2));
 
         if(!old_size) return;
         this.emit('resize', old_size, new_size);
@@ -572,14 +569,14 @@ Ball.prototype = {
     setName: function(name) {
         if(this.name == name) return;
         var old_name = this.name;
-        this.name = name;
+        this.name    = name;
 
         this.emit('rename', old_name, name);
         this.client.emit('ballRename', this.id, old_name, name);
     },
 
     update: function() {
-        var old_time = this.last_update;
+        var old_time     = this.last_update;
         this.last_update = (+new Date);
 
         this.emit('update', old_time, this.last_update);
@@ -614,4 +611,7 @@ for (var key in EventEmitter.prototype) {
     Client.prototype[key] = Ball.prototype[key] = EventEmitter.prototype[key];
 }
 
+Client.servers = servers;
+Client.Ball    = Ball;
 module.exports = Client;
+

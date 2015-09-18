@@ -1,3 +1,14 @@
+## 17.11.2015 ##
+Code changes:
+
+- `AgarioClient.Ball` added
+- Added stability to `spawn()`. By default client will try to spawn 25 times before disconnect
+- `on.connected` event is now emited without 2sec delay
+- First `spawn()` after connect is now much faster
+- Config variable `client.spawn_attempts` added
+- Config variable `client.spawn_interval` added
+- `example.js` updated with custom events/variables example
+
 ## 09.11.2015 ##
 Code changes:
 
