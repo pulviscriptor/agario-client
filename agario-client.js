@@ -9,18 +9,21 @@ function Client(client_name) {
     this.debug = 1;                     //debug level, 0-5 (5 will output extremely lot of data)
     this.inactive_destroy = 5*60*1000;  //time in ms when to destroy inactive balls
     this.inactive_check = 10*1000;      //time in ms when to search inactive balls
+    this.spawn_interval = 200;		//time in ms for respawn interval. 0 to disable (if your custom server don't have spawn problems)
+    this.spawn_attempts = 25;		//how much attempts to spawn before give up (official servers do have unstable spawn problems)
 
     //don't change things below if you don't understand what you're doing
 
     this.tick_counter = 0;
     this.inactive_interval = 0; //ID of setInterval()
-    this.timer_emit_connected = null; //timer for emitting "connected" event
     this.balls = {};            //all balls
     this.my_balls = [];         //IDs of my balls
     this.score = 0;             //my score
     this.leaders = [];          //IDs of leaders in FFA mode
     this.teams_scores = [];     //scores of teams in Teams mode
     this.facebook_key = null;   //facebook key. Check README.md how to get it
+    this.spawn_attempt     = 0; //attempt to spawn
+    this.spawn_interval_id = 0; //ID of setInterval()
 
     if(this.debug >= 1)
         this.log('client created');
@@ -93,12 +96,10 @@ Client.prototype = {
             }
             this.send(buf);
         }
-        this.timer_emit_connected = setTimeout(function() {
-            client.timer_emit_connected = null;
-            if(client.debug >= 2)
-                client.log('emit connected event');
-            client.emit('connected');
-        }, 2000);
+
+        if(client.debug >= 2)
+            client.log('emit connected event');
+        client.emit('connected');
     },
 
     onError: function(e) {
@@ -149,8 +150,11 @@ Client.prototype = {
         this.leaders = [];
         this.teams_scores = [];
         this.my_balls = [];
+        this.spawn_attempt = 0;
         clearInterval(this.inactive_interval);
-        if(this.timer_emit_connected) clearTimeout(this.timer_emit_connected);
+        clearInterval(this.spawn_interval_id);
+        this.spawn_interval_id = 0;
+
         for(var k in this.balls) if(this.balls.hasOwnProperty(k)) this.balls[k].destroy({'reason':'reset'});
         this.emit('reset');
     },
@@ -303,6 +307,14 @@ Client.prototype = {
             if(client.debug >= 2)
                 client.log('my new ball: ' + ball_id);
 
+            if(client.spawn_interval_id) {
+                if(client.debug >= 4)
+                    client.log('detected new ball, disabling spawn() interval');
+                client.spawn_attempt = 0;
+                clearInterval(client.spawn_interval_id);
+                client.spawn_interval_id = 0;
+            }
+                    
             client.emit('myNewBall', ball_id);
         },
 
@@ -431,12 +443,40 @@ Client.prototype = {
 
     //spawn ball
     spawn: function(name) {
+	if(this.debug >= 3)
+            this.log('spawn() called, name=' + name);
+
         var buf = new Buffer(1 + 2*name.length);
         buf.writeUInt8(0, 0);
         for (var i=0;i<name.length;i++) {
             buf.writeUInt16LE(name.charCodeAt(i), 1 + i*2);
         }
         this.send(buf);
+
+        //fix for unstable spawn on official servers
+        if(!this.spawn_attempt && this.spawn_interval) {
+            if(this.debug >= 4)
+                this.log('Starting spawn() interval');
+
+            var that = this;
+            this.spawn_attempt = 1;
+            this.spawn_interval_id = setInterval(function() {
+                if(that.debug >= 4)
+                    that.log('spawn() interval tick, attempt ' + that.spawn_attempt + '/' + that.spawn_attempts);
+
+                if(that.spawn_attempt >= that.spawn_attempts) {
+                    if(that.debug >= 1)
+                        that.log('spawn() interval gave up! Disconnecting from server!');
+                    that.spawn_attempt = 0;
+                    clearInterval(that.spawn_interval_id);
+                    that.spawn_interval_id = 0;
+                    that.disconnect();
+                    return;
+                }
+                that.spawn_attempt++;  
+                that.spawn(name);
+            }, that.spawn_interval);
+        }
     },
 
     //activate spectate mode
