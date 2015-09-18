@@ -1,5 +1,3 @@
-# If you see this, do not clone this repository, it is broken atm #
-
 # agario-client #
 Node.js client for [agar.io](http://agar.io) with API.
 
