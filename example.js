@@ -25,10 +25,6 @@ AgarioClient.Ball.prototype.isMyFriend = function() { //adding ball.isMyFriend()
     return this.is_friend == true; //if ball is_friend is true, then true will be returned
 };
 
-AgarioClient.Ball.prototype.zzz = function() { //if you see this, i forgot to delete this
-    return this.last_update;
-};
-
 client.on('ballAppear', function(ball_id) { //when we somebody
     var ball = client.balls[ball_id];
     if(ball.mine) return; //this is mine ball
