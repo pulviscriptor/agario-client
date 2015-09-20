@@ -440,8 +440,14 @@ Client.prototype = {
 
     //spawn ball
     spawn: function(name) {
-	if(this.debug >= 3)
+        if(this.debug >= 3)
             this.log('spawn() called, name=' + name);
+
+        if(this.ws.readyState !== WebSocket.OPEN) {
+            if(this.debug >= 1)
+                this.log('[warning] spawn() was called when connection was not established, packet will be dropped');
+            return false;
+        }
 
         var buf = new Buffer(1 + 2*name.length);
         buf.writeUInt8(0, 0);
@@ -474,35 +480,66 @@ Client.prototype = {
                 that.spawn(name);
             }, that.spawn_interval);
         }
+
+        return true;
     },
 
     //activate spectate mode
     spectate: function() {
+        if(this.ws.readyState !== WebSocket.OPEN) {
+            if(this.debug >= 1)
+                this.log('[warning] spectate() was called when connection was not established, packet will be dropped');
+            return false;
+        }
+
         var buf = new Buffer([1]);
         this.send(buf);
+
+        return true;
     },
 
     moveTo: function(x, y) {
+        if(this.ws.readyState !== WebSocket.OPEN) {
+            if(this.debug >= 1)
+                this.log('[warning] moveTo() was called before connection established, packet will be dropped');
+            return false;
+        }
         var buf = new Buffer(13);
         buf.writeUInt8(16, 0);
         buf.writeInt32LE(Math.round(x), 1);
         buf.writeInt32LE(Math.round(y), 5);
         buf.writeUInt32LE(0, 9);
         this.send(buf);
+
+        return true;
     },
 
     //split your balls
     //they will split in direction that you have set with moveTo()
     split: function() {
+        if(this.ws.readyState !== WebSocket.OPEN) {
+            if(this.debug >= 1)
+                this.log('[warning] split() was called when connection was not established, packet will be dropped');
+            return false;
+        }
         var buf = new Buffer([17]);
         this.send(buf);
+
+        return true;
     },
 
     //eject some mass
     //mass will eject in direction that you have set with moveTo()
     eject: function() {
+        if(this.ws.readyState !== WebSocket.OPEN) {
+            if(this.debug >= 1)
+                this.log('[warning] eject() was called when connection was not established, packet will be dropped');
+            return false;
+        }
         var buf = new Buffer([21]);
         this.send(buf);
+
+        return true;
     }
 };
 
