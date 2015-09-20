@@ -1,3 +1,17 @@
+## 20.11.2015 ##
+Code changes:
+
+Protection from coding incidents added. 
+Next functions now can be called before connection established:
+
+- `client.spawn()`
+- `client.spectate()`
+- `client.moveTo()`
+- `client.split()`
+- `client.eject()`
+
+They will return `false` if packet was not sent and `true` on success.
+
 ## 17.11.2015 ##
 Code changes:
 
