@@ -52,11 +52,11 @@ Properties that better not to change or you can break something:
 ## Client methods ##
 - `client.connect(server, key)` connect to [agar.io](http://agar.io) server. Check [Servers](#servers) part in this readme to see how to get server IP and key. **ProTip:** each server have few rooms (if it is not party), so you may need connect few times before you will get in room that you want (but you need new key each time and [agar.io](http://agar.io) can ban your IP for flooding with requests). You can look `client.once('leaderBoardUpdate')` to know if you're connected to correct room
 - `client.disconnect()` disconnect from server
-- `client.spawn(name)` will spawn `Ball` with nickname. `client.on('myNewBall')` will be called when server sends our `Ball` info
-- `client.spectate()` will activate spectating mode. Look at `client.on('spectateFieldUpdate')` for FOV updates
-- `client.moveTo(x,y)` send move command. `x` and `y` is numbers where you want to move. Coordinates (size) of map you can get in `client.on('mapSizeLoad')`. Your `Balls` will move to coordinates you specified until you send new coordinates to move. Original source code do this every **100ms** (10 times in second) and before split and eject
-- `client.split()` will split your `Balls` in two. `Ball` will be ejected in last direction that you sent with `client.moveTo()`. `client.on('myNewBall')` will be called when server sends our `Balls` info
-- `client.eject()` will eject some mass from your `Balls`. Mass will be ejected in last direction that you sent with `client.moveTo()`. Ejected mass is `Ball` too (but we don't own them). So `client.on('ballAppear')` will be called when server sends ejected mass `Balls` info.
+- `client.spawn(name)` will spawn `Ball` with nickname. `client.on('myNewBall')` will be called when server sends our `Ball` info. Will return `false` if connection is not established.
+- `client.spectate()` will activate spectating mode. Look at `client.on('spectateFieldUpdate')` for FOV updates. Will return `false` if connection is not established.
+- `client.moveTo(x,y)` send move command. `x` and `y` is numbers where you want to move. Coordinates (size) of map you can get in `client.on('mapSizeLoad')`. Your `Balls` will move to coordinates you specified until you send new coordinates to move. Original source code do this every **100ms** (10 times in second) and before split and eject. Will return `false` if connection is not established.
+- `client.split()` will split your `Balls` in two. `Ball` will be ejected in last direction that you sent with `client.moveTo()`. `client.on('myNewBall')` will be called when server sends our `Balls` info. Will return `false` if connection is not established.
+- `client.eject()` will eject some mass from your `Balls`. Mass will be ejected in last direction that you sent with `client.moveTo()`. Ejected mass is `Ball` too (but we don't own them). So `client.on('ballAppear')` will be called when server sends ejected mass `Balls` info. Will return `false` if connection is not established.
 
 ## Client events ##
 In this list `on.eventName(param1, param2)` means you need to do `client.on('eventName', function(param1, param2) { ... })`
