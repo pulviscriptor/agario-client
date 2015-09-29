@@ -1,3 +1,8 @@
+## 29.09.2015 ##
+Client changes:
+
+- Facebook key is now stored in `JSON.parse(localStorage.loginCache3).authToken`
+
 ## 20.09.2015 ##
 Code changes:
 
