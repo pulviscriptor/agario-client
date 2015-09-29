@@ -80,6 +80,10 @@ client.on('somebodyAteSomething', function(eater_ball, eaten_ball) { //when some
     client.log('I ate ' + eaten_ball + ', my new size is ' + ball.size);
 });
 
+client.on('experienceUpdate', function(level, current_exp, need_exp) { //if facebook key used and server sent exp info
+    client.log('Experience update: Current level is ' + level + ' and experience is ' + current_exp + '/' + need_exp);
+});
+
 client.on('connected', function() { //when we connected to server
     client.log('spawning');
     client.spawn('agario-client'); //spawning new ball
