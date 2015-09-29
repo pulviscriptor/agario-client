@@ -1,4 +1,4 @@
-## 20.11.2015 ##
+## 20.09.2015 ##
 Code changes:
 
 Protection from coding incidents added. 
@@ -12,7 +12,7 @@ Next functions now can be called before connection established:
 
 They will return `false` if packet was not sent and `true` on success.
 
-## 17.11.2015 ##
+## 17.09.2015 ##
 Code changes:
 
 - `AgarioClient.Ball` added
@@ -23,7 +23,7 @@ Code changes:
 - Config variable `client.spawn_interval` added
 - `example.js` updated with custom events/variables example
 
-## 09.11.2015 ##
+## 11.09.2015 ##
 Code changes:
 
 - `ball.mass` added
