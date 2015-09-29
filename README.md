@@ -33,7 +33,7 @@ Properties that you can change:
 - `client.debug` debug level. 0-5. 0 is completely silent. 5 is super verbose. **Default: 1**
 - `client.server` address that was used in `client.connect()` call
 - `client.key` key that was used in `client.connect()` call
-- `client.facebook_key` key to login. You can get it on [agar.io](http://agar.io) by log-in through Facebook and writing in console `JSON.parse(localStorage.loginCache).ha`
+- `client.facebook_key` key to login. See how to get key in [additional info](#facebook-key).
 - `client.inactive_destroy` time in ms for how long ball will live in memory after his last known action (if player exit from game or ball eaten outside our field of view, we will not know it since server sends action only about field that you see. Original code `destroy()` `Ball` when he `disappear` from field of view. You can do that in `client.on('ballDisppear')` if you want it for some reason). **Default: 5\*60\*1000** (5 minutes)
 - `client.inactive_check` time in ms for time interval that search and destroy inactive `Balls`. **Default: 10\*1000** (10 seconds)
 - `client.spawn_attempts` how much we need try spawn before disconnect (made for unstable spawn on official servers). **Default: 25** 
@@ -86,7 +86,7 @@ In this list `on.eventName(param1, param2)` means you need to do `client.on('eve
 - `on.ballRename(ball_id, old_name, new_name)` `Ball` set name/change name/we discover name
 - `on.ballUpdate(ball_id, old_update_time, new_update_time)` new data about ball received
 - `on.spectateFieldUpdate(cord_x, cord_y, zoom_level)` coordinates of field of view in `client.spectate()` mode
-- `on.experienceUpdate(level, current_exp, need_exp)` experience information update (if logined with `Client.facebook_key`)
+- `on.experienceUpdate(level, current_exp, need_exp)` experience information update (if logined with [facebook key](#facebook-key))
 
 # Ball API #
 `var ball = client.balls[ball_id];` *ball_id* is number that you can get from events
@@ -181,6 +181,20 @@ If you want record/repeat or watch in real time what your client doing through w
 - `{'reason': 'inactive'}` when we didn't saw `Ball` for `client.inactive_destroy` ms
 - `{'reason': 'eaten', 'by': ball_id}` when `Ball` got eaten
 - `{'reason': 'merge'}` when our `Ball` merges with our other `Ball`
+
+## Facebook key ##
+Facebook key currently stored in `localStorage` of browser. 
+First it was in `JSON.parse(localStorage.loginCache).ga` 
+Then in `JSON.parse(localStorage.loginCache).ha`
+Last known `JSON.parse(localStorage.loginCache3).authToken` 
+To get key, you need 
+- Open http://agar.io 
+- Log-in through facebook
+- Open browser's [JS console](https://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers) 
+- Paste `JSON.parse(localStorage.loginCache3).authToken` 
+- Press `Enter` key on keyboard
+
+If there is no key, then its location may be changed again. Create an [issue](https://github.com/pulviscriptor/agario-client/issues) or [email me](mailto:pulviscriptor@gmail.com). 
 
 ## Adding properties/events ##
 You can add your own properties/events to clients/balls. 
