@@ -1,3 +1,8 @@
+## 10.10.2015 ##
+Code changes:
+
+- `Client.spectateModeToggle()` added (by [jashman](https://github.com/jashman))
+
 ## 29.09.2015 ##
 Client changes:
 
