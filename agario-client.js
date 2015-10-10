@@ -144,7 +144,7 @@ Client.prototype = {
     reset: function() {
         if(this.debug >= 3)
             this.log('reset()');
- 
+
         clearInterval(this.inactive_interval);
         clearInterval(this.spawn_interval_id);
         this.spawn_interval_id = 0;
@@ -312,7 +312,7 @@ Client.prototype = {
                 clearInterval(client.spawn_interval_id);
                 client.spawn_interval_id = 0;
             }
-                    
+
             client.emit('myNewBall', ball_id);
         },
 
@@ -476,7 +476,7 @@ Client.prototype = {
                     that.disconnect();
                     return;
                 }
-                that.spawn_attempt++;  
+                that.spawn_attempt++;
                 that.spawn(name);
             }, that.spawn_interval);
         }
@@ -493,6 +493,22 @@ Client.prototype = {
         }
 
         var buf = new Buffer([1]);
+        this.send(buf);
+
+        return true;
+    },
+
+    //switch spectate mode (toggle between free look view and leader view)
+    spectateModeToggle: function() {
+        if(this.ws.readyState !== WebSocket.OPEN) {
+            if(this.debug >= 1)
+                this.log('[warning] spectateModeToggle() was called when connection was not established, packet will be dropped');
+            return false;
+        }
+
+        var buf = new Buffer([18]);
+        this.send(buf);
+        var buf = new Buffer([19]);
         this.send(buf);
 
         return true;
@@ -651,4 +667,3 @@ for (var key in EventEmitter.prototype) {
 Client.servers = servers;
 Client.Ball    = Ball;
 module.exports = Client;
-
