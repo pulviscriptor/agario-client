@@ -508,7 +508,7 @@ Client.prototype = {
 
         var buf = new Buffer([18]);
         this.send(buf);
-        var buf = new Buffer([19]); // Not sure is necessary?
+        var buf = new Buffer([19]);
         this.send(buf);
 
         return true;
