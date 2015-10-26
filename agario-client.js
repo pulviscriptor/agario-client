@@ -9,8 +9,9 @@ function Client(client_name) {
     this.debug            = 1;           //debug level, 0-5 (5 will output extremely lot of data)
     this.inactive_destroy = 5*60*1000;   //time in ms when to destroy inactive balls
     this.inactive_check   = 10*1000;     //time in ms when to search inactive balls
-    this.spawn_interval   = 200;	 //time in ms for respawn interval. 0 to disable (if your custom server don't have spawn problems)
-    this.spawn_attempts   = 25;		 //how much attempts to spawn before give up (official servers do have unstable spawn problems)
+    this.spawn_interval   = 200;         //time in ms for respawn interval. 0 to disable (if your custom server don't have spawn problems)
+    this.spawn_attempts   = 25;          //how much attempts to spawn before give up (official servers do have unstable spawn problems)
+    this.agent            = null;        //agent for connection. Check additional info in readme
 
     //don't change things below if you don't understand what you're doing
 
@@ -35,7 +36,7 @@ Client.prototype = {
             'Origin': 'http://agar.io'
         };
 
-        this.ws            = new WebSocket(server, null, {headers: headers});
+        this.ws            = new WebSocket(server, null, {headers: headers, agent: this.agent});
         this.ws.binaryType = "arraybuffer";
         this.ws.onopen     = this.onConnect.bind(this);
         this.ws.onmessage  = this.onMessage.bind(this);
@@ -95,8 +96,6 @@ Client.prototype = {
             this.send(buf);
         }
 
-        if(client.debug >= 2)
-            client.log('emit connected event');
         client.emit('connected');
     },
 
@@ -341,7 +340,7 @@ Client.prototype = {
             var old_leaders = client.leaders;
             client.leaders  = users;
 
-            if(client.debug >= 2)
+            if(client.debug >= 3)
                 client.log('leaders update: ' + JSON.stringify(users));
 
             client.emit('leaderBoardUpdate', old_leaders, users);
@@ -359,7 +358,7 @@ Client.prototype = {
             if(JSON.stringify(client.teams_scores) == JSON.stringify(teams_scores)) return;
             var old_scores = client.teams_scores;
 
-            if(client.debug >= 2)
+            if(client.debug >= 3)
                 client.log('teams scores update: ' + JSON.stringify(teams_scores));
 
             client.teams_scores = teams_scores;

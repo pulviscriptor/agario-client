@@ -14,7 +14,7 @@ var servers = {
         };
 
         var options = {
-            host: 'm.agar.io',
+            host: opt.ip || 'm.agar.io',
             port: 80,
             path: opt.url || '/',
             method: 'POST',
@@ -22,8 +22,10 @@ var servers = {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Content-Length': opt.data.length,
                 'Origin': 'http://agar.io',
-                'Referer': 'http://agar.io/'
-            }
+                'Referer': 'http://agar.io/',
+                'Host': 'm.agar.io'
+            },
+            agent: opt.agent || null
         };
 
         var req = http.request(options, function(res) {
@@ -69,7 +71,9 @@ var servers = {
         if(!opt) opt = {};
         var region = opt.region || 'EU-London';
         var post_opt = {
-            data: region + '\n' + servers.init_key
+            data: region + '\n' + servers.init_key,
+            agent: opt.agent,
+            ip: opt.ip
         };
         servers.postRequest(post_opt, cb);
     },
@@ -78,7 +82,9 @@ var servers = {
         if(!opt) opt = {};
         var region = opt.region || 'EU-London';
         var post_opt = {
-            data: region + ':teams\n' + servers.init_key
+            data: region + ':teams\n' + servers.init_key,
+            agent: opt.agent,
+            ip: opt.ip
         };
         servers.postRequest(post_opt, cb);
     },
@@ -87,7 +93,9 @@ var servers = {
         if(!opt) opt = {};
         var region = opt.region || 'EU-London';
         var post_opt = {
-            data: region + ':experimental\n' + servers.init_key
+            data: region + ':experimental\n' + servers.init_key,
+            agent: opt.agent,
+            ip: opt.ip
         };
         servers.postRequest(post_opt, cb);
     },
@@ -96,7 +104,9 @@ var servers = {
         if(!opt) opt = {};
         var region = opt.region || 'EU-London';
         var post_opt = {
-            data: region + ':party\n' + servers.init_key
+            data: region + ':party\n' + servers.init_key,
+            agent: opt.agent,
+            ip: opt.ip
         };
         servers.postRequest(post_opt, cb);
     },
@@ -109,7 +119,9 @@ var servers = {
         var post_opt = {
             url: '/getToken',
             data: party_key,
-            res_data_index: 0
+            res_data_index: 0,
+            agent: opt.agent,
+            ip: opt.ip
         };
         servers.postRequest(post_opt, function(res) {
             if(!res.server) return cb(res);
