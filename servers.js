@@ -1,7 +1,17 @@
 var http = require('http');
+var dns = require('dns');
 
 var servers = {
     init_key: 154669603, //used in initial packet id 255 and POST requests, hardcoded in client
+
+    resolveDomainName: function(domain, post_opt, cb) {
+        dns.lookup(domain, function (err, address) {
+            if(err) return cb({error: 'LOOKUP_FAIL', error_source: err});
+
+            post_opt.ip = address;
+            servers.postRequest(post_opt, cb);
+        });
+    },
 
     postRequest: function(opt, cb) {
         var ret = {
@@ -73,9 +83,14 @@ var servers = {
         var post_opt = {
             data: region + '\n' + servers.init_key,
             agent: opt.agent,
-            ip: opt.ip
+            ip: opt.ip,
+            resolve: opt.resolve
         };
-        servers.postRequest(post_opt, cb);
+        if(!opt.ip && opt.resolve) {
+            servers.resolveDomainName('m.agar.io', post_opt, cb);
+        }else{
+            servers.postRequest(post_opt, cb);
+        }
     },
 
     getTeamsServer: function(opt, cb) {
@@ -84,9 +99,14 @@ var servers = {
         var post_opt = {
             data: region + ':teams\n' + servers.init_key,
             agent: opt.agent,
-            ip: opt.ip
+            ip: opt.ip,
+            resolve: opt.resolve
         };
-        servers.postRequest(post_opt, cb);
+        if(!opt.ip && opt.resolve) {
+            servers.resolveDomainName('m.agar.io', post_opt, cb);
+        }else{
+            servers.postRequest(post_opt, cb);
+        }
     },
 
     getExperimentalServer: function(opt, cb) {
@@ -95,9 +115,14 @@ var servers = {
         var post_opt = {
             data: region + ':experimental\n' + servers.init_key,
             agent: opt.agent,
-            ip: opt.ip
+            ip: opt.ip,
+            resolve: opt.resolve
         };
-        servers.postRequest(post_opt, cb);
+        if(!opt.ip && opt.resolve) {
+            servers.resolveDomainName('m.agar.io', post_opt, cb);
+        }else{
+            servers.postRequest(post_opt, cb);
+        }
     },
 
     createParty: function(opt, cb) {
@@ -106,9 +131,14 @@ var servers = {
         var post_opt = {
             data: region + ':party\n' + servers.init_key,
             agent: opt.agent,
-            ip: opt.ip
+            ip: opt.ip,
+            resolve: opt.resolve
         };
-        servers.postRequest(post_opt, cb);
+        if(!opt.ip && opt.resolve) {
+            servers.resolveDomainName('m.agar.io', post_opt, cb);
+        }else{
+            servers.postRequest(post_opt, cb);
+        }
     },
 
     getPartyServer: function(opt, cb) {
@@ -121,7 +151,8 @@ var servers = {
             data: party_key,
             res_data_index: 0,
             agent: opt.agent,
-            ip: opt.ip
+            ip: opt.ip,
+            resolve: opt.resolve
         };
         servers.postRequest(post_opt, function(res) {
             if(!res.server) return cb(res);
