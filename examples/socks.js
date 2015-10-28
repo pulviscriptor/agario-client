@@ -21,13 +21,9 @@ try {
 }catch(e){
     console.log('Failed to load `socks` lib. Install it in examples path using:');
     console.log('  mkdir ./node_modules/examples/node_modules');
-    console.log('  npm install socks --prefix ./node_modules/examples');
-    console.log('OR');
-    console.log(' copy socks.js to somewhere where you have `socks` and `agario-client` installed and run it there');
-    console.log(' Something like:');
-    console.log('  npm install socks');
-    console.log('  cp ./node_modules/examples/socks.js ./');
-    console.log('  node ./socks.js');
+    console.log('  npm install socks --prefix ./node_modules/agario-client/examples');
+    console.log('  node ./node_modules/agario-client/examples/socks.js');
+    process.exit(0);
 }
 
 //And we need agario-client

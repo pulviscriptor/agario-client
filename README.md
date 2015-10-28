@@ -34,7 +34,7 @@ Properties that you can change:
 - `client.server` address that was used in `client.connect()` call
 - `client.key` key that was used in `client.connect()` call
 - `client.facebook_key` key to login. See how to get key in [additional info](#facebook-key).
-- `client.agent` agent to use for connection. Check [additional info](#socks-proxy-support).
+- `client.agent` agent to use for connection. Check [additional info](#socksproxy-support).
 - `client.inactive_destroy` time in ms for how long ball will live in memory after his last known action (if player exit from game or ball eaten outside our field of view, we will not know it since server sends action only about field that you see. Original code `destroy()` `Ball` when he `disappear` from field of view. You can do that in `client.on('ballDisppear')` if you want it for some reason). **Default: 5\*60\*1000** (5 minutes)
 - `client.inactive_check` time in ms for time interval that search and destroy inactive `Balls`. **Default: 10\*1000** (10 seconds)
 - `client.spawn_attempts` how much we need try spawn before disconnect (made for unstable spawn on official servers). **Default: 25** 
@@ -136,7 +136,7 @@ Functions need `opt` as options object and `cb` as callback function.
 
 ## Servers options ##
 All functions can accept: 
-`opt.agent` to use for connection. Check [additional info](#socks-proxy-support)
+`opt.agent` to use for connection. Check [additional info](#socksproxy-support)
 `opt.resolve` set to `true` to resolve IP on client side (since SOCKS4 can't accept domain names)
 `opt.ip` if you resolved `m.agar.ip` IP by other way (will cancel `opt.resolve`). 
 
