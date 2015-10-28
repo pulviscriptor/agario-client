@@ -1,3 +1,18 @@
+## 28.10.2015 ##
+Code changes:
+
+- `example.js` moved to `./examples/`
+
+Thanks to [henopied](https://github.com/henopied) who showed me how to add SOCKS/Proxy support now we have:
+
+- `AgarioClient.agent` added
+- `AgarioClient.servers` `opt.agent` added
+- `AgarioClient.servers` `opt.resolve` added
+- `AgarioClient.servers` `opt.ip` added
+- `./examples/socks.js` added showing how to use SOCKS
+
+Test it using `node ./node_modules/agario-client/examples/socks.js`
+
 ## 10.10.2015 ##
 Code changes:
 
