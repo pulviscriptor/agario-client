@@ -9,9 +9,9 @@
   "devDependencies": {},
   "files": [
     "agario-client.js",
-    "example.js",
     "packet.js",
-    "servers.js"
+    "servers.js",
+    "examples"
   ],
   "scripts": {
     "test": "node example.js"
