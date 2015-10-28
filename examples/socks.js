@@ -13,7 +13,22 @@ console.log('Example will use SOCKS server ' + process.argv[3] + ':' + process.a
 
 //First we need to create agent for connection, you can do it any way with any lib you want.
 //I will use `socks` lib https://www.npmjs.com/package/socks
-var Socks = require('socks');
+
+//var Socks = require('socks'); //DO THIS, not what i do
+var Socks;
+try {
+    Socks = require('socks');
+}catch(e){
+    console.log('Failed to load `socks` lib. Install it in examples path using:');
+    console.log('  mkdir ./node_modules/examples/node_modules');
+    console.log('  npm install socks --prefix ./node_modules/examples');
+    console.log('OR');
+    console.log(' copy socks.js to somewhere where you have `socks` and `agario-client` installed and run it there');
+    console.log(' Something like:');
+    console.log('  npm install socks');
+    console.log('  cp ./node_modules/examples/socks.js ./');
+    console.log('  node ./socks.js');
+}
 
 //And we need agario-client
 var AgarioClient = require('../agario-client.js'); //Use next line in your code
