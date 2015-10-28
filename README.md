@@ -4,7 +4,7 @@ Node.js client for [agar.io](http://agar.io) with API.
 ## Instructions ##
 - Install [Node.js](https://nodejs.org/)
 - Install client using `npm install agario-client` (ignore `python` errors)
-- Run `node ./node_modules/agario-client/example.js` (for testing purpose)
+- Run `node ./node_modules/agario-client/examples/basic.js` (for testing purpose)
 - If it works, you're ready to look at API and code
 
 # API #
@@ -34,6 +34,7 @@ Properties that you can change:
 - `client.server` address that was used in `client.connect()` call
 - `client.key` key that was used in `client.connect()` call
 - `client.facebook_key` key to login. See how to get key in [additional info](#facebook-key).
+- `client.agent` agent to use for connection. Check [additional info](#socks-proxy-support).
 - `client.inactive_destroy` time in ms for how long ball will live in memory after his last known action (if player exit from game or ball eaten outside our field of view, we will not know it since server sends action only about field that you see. Original code `destroy()` `Ball` when he `disappear` from field of view. You can do that in `client.on('ballDisppear')` if you want it for some reason). **Default: 5\*60\*1000** (5 minutes)
 - `client.inactive_check` time in ms for time interval that search and destroy inactive `Balls`. **Default: 10\*1000** (10 seconds)
 - `client.spawn_attempts` how much we need try spawn before disconnect (made for unstable spawn on official servers). **Default: 25** 
@@ -133,7 +134,11 @@ In this list `on.eventName(param1, param2)` means you need to do `ball.on('event
 When you do `var AgarioClient = require('agario-client');` you can access `AgarioClient.servers` 
 Functions need `opt` as options object and `cb` as callback function. 
 
-## Options ##
+## Servers options ##
+All functions can accept: 
+`opt.agent` to use for connection. Check [additional info](#socks-proxy-support)
+`opt.resolve` set to `true` to resolve IP on client side (since SOCKS4 can't accept domain names)
+`opt.ip` if you resolved `m.agar.ip` IP by other way (will cancel `opt.resolve`). 
 
 - `servers.getFFAServer(opt, cb)` to request FFA server.  
   Needs `opt.region`
@@ -149,17 +154,19 @@ Functions need `opt` as options object and `cb` as callback function.
 
 Check [region list](#regions-list) below in this file.
 
-## Callbacks ##
+## Servers callbacks ##
 
 Callback will be called with single object that can contain:
 - `server` - server's IP:PORT (**add `ws://` before passing to connect()**)
 - `key` - server's key
-- `error` - error code (`WRONG_HTTP_CODE`/`WRONG_DATA_FORMAT`/`REQUEST_ERROR`)
+- `error` - error code (`WRONG_HTTP_CODE`/`WRONG_DATA_FORMAT`/`REQUEST_ERROR`/`LOOKUP_FAIL`)
 - `error_source` - error object passed from `req.on.error` when available (for example when `REQUEST_ERROR` happens)
 - `res` - response object when available (for example when `WRONG_HTTP_CODE` happens)
 - `data` - response data string when available (for example when `WRONG_DATA_FORMAT` happens)
 
-You can check how `example.js` uses this.
+`LOOKUP_FAIL` can happen only if `opt.lookup` was set to `true` and will have  only `error_source`
+
+You can check how `examples/basic.js` uses this.
 
 # Additional information #
 
@@ -195,7 +202,10 @@ To get key, you need
 - Paste `JSON.parse(localStorage.loginCache3).authToken` 
 - Press `Enter` key on keyboard
 
-If there is no key, then its location may be changed again. Create an [issue](https://github.com/pulviscriptor/agario-client/issues) or [email me](mailto:pulviscriptor@gmail.com). 
+If there is no key, then its location may be changed again. Create an [issue](https://github.com/pulviscriptor/agario-client/issues) or [email me](mailto:pulviscriptor@gmail.com).
+
+## SOCKS/Proxy support ##
+You can change default agent for `AgarioClient` and `AgarioClient.servers` to use for connections. You can use libs to do it. For testing and example i used [socks](https://www.npmjs.com/package/socks) lib. Execute `node ./node_modules/agario-client/examples/socks.js` to test it and read `examples/socks.js` file to see how to use SOCKS. For proxy you will need to use some other lib.
 
 ## Adding properties/events ##
 You can add your own properties/events to clients/balls. 
@@ -204,22 +214,24 @@ You can add your own properties/events to clients/balls.
 - Prototype of `Ball` is located at `AgarioClient.Ball.prototype.` 
 
 For example: 
-
-    AgarioClient.Ball.prototype.isMyFriend = function() { ... };  //to call ball.isMyFriend()
-    AgarioClient.prototype.addFriend = function(ball_id) { ... }; //to call client.addFriend(1234) 
+```javascript
+AgarioClient.Ball.prototype.isMyFriend = function() { ... };  //to call ball.isMyFriend()
+AgarioClient.prototype.addFriend = function(ball_id) { ... }; //to call client.addFriend(1234) 
+```
 
 Events:
+```javascript
+client.on('somebodyAteSomething', function(eater_id, eaten_id) {  #eat event
+    if(client.balls[eaten_id].isMyFriend()) { //if this is my friend
+        client.emit('friendEaten', eater_id, eaten_id); //emit custom event
+    }
+});
+client.on('friendEaten', function(eater_id, friend_id) { //on friend eaten
+    client.log('My friend got eaten!');
+});
+```
 
-    client.on('somebodyAteSomething', function(eater_id, eaten_id) {  #eat event
-        if(client.balls[eaten_id].isMyFriend()) { //if this is my friend
-            client.emit('friendEaten', eater_id, eaten_id); //emit custom event
-        }
-    });
-    client.on('friendEaten', function(eater_id, friend_id) { //on friend eaten
-        client.log('My friend got eaten!');
-    });
-
-Check full example in `example.js`
+Check full example in `examples/basic.js`
 
 ## Feedback ##
 If something is broken, please [email me](mailto:pulviscriptor@gmail.com) or [create issue](https://github.com/pulviscriptor/agario-client/issues/new). I will not know that something is broken until somebody will tell me that.
