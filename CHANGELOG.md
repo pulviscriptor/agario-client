@@ -1,3 +1,11 @@
+## 30.10.2015 ##
+Protocol changes:
+
+- Premium skins/colors added
+- Previously reserved byte in packet ID 16 part 2 is now used for some variable of ball and indicator of premium skin/color
+
+New variables/skins info will be added to agario-client later
+
 ## 28.10.2015 ##
 Code changes:
 
