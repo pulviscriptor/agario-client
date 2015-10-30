@@ -223,20 +223,24 @@ Client.prototype = {
 
                 var opt = packet.readUInt8();
                 is_virus = !!(opt & 1);
+                var something_1 = !!(opt & 16); //todo what is this?
 
                 //reserved for future use?
                 if (opt & 2) {
-                    packet.offset += 4;
+                    packet.offset += packet.readUInt32LE();
                 }
                 if (opt & 4) {
-                    packet.offset += 8;
-                }
-                if (opt & 8) {
-                    packet.offset += 16;
+                    var something_2 = ''; //todo something related to premium skins
+                    while(1) {
+                        var char = packet.readUInt8();
+                        if(char == 0) break;
+                        if(!something_2) something_2 = '';
+                        something_2 += String.fromCharCode(char);
+                    }
                 }
 
                 while(1) {
-                    var char = packet.readUInt16LE();
+                    char = packet.readUInt16LE();
                     if(char == 0) break;
                     if(!nick) nick = '';
                     nick += String.fromCharCode(char);
