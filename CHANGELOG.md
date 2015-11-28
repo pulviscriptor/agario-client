@@ -1,3 +1,8 @@
+## 28.11.2015 ##
+Protocol changes:
+
+- Initial key (pakect ID 255) changed key from 154669603 (0x9381223) to 2200049715 (0x83221833)
+
 ## 30.10.2015 ##
 Protocol changes:
 
