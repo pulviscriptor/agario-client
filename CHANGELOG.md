@@ -1,3 +1,6 @@
+## 29.11.2015 ##
+Example `examples/multiple.js` added demonstrating 5 clients connecting to a party server from one script
+
 ## 28.11.2015 ##
 Protocol changes:
 
