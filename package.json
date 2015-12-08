@@ -14,7 +14,7 @@
     "examples"
   ],
   "scripts": {
-    "test": "node example.js"
+    "test": "node examples/basic.js"
   },
   "repository": {
     "type": "git",
