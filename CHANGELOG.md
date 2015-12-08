@@ -1,3 +1,9 @@
+## 07.12.2015 ##
+Added support for the debug line (added by [henopied](https://github.com/henopied))
+Code changes:
+
+- `on.debugLine(line_x, line_y)` added, the server sometimes sends a line for the client to render from your ball to the point though don't expect to see it.
+
 ## 29.11.2015 ##
 Example `examples/multiple.js` added demonstrating 5 clients connecting to a party server from one script
 
@@ -42,7 +48,7 @@ Client changes:
 ## 20.09.2015 ##
 Code changes:
 
-Protection from coding incidents added. 
+Protection from coding incidents added.
 Next functions now can be called before connection established:
 
 - `client.spawn()`

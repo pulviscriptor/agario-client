@@ -297,6 +297,16 @@ Client.prototype = {
             //in original code it clears our balls array, but i never saw this packet
         },
 
+        //debug line drawn from the player to the specified point
+        '21': function (client, packet) {
+            var line_x = packet.readSInt16LE();
+            var line_y = packet.readSInt16LE();
+
+            if (client.debug >= 4)
+                client.log('debug line drawn from x=' + line_x + ' y=' + line_y);
+            client.emit('debugLine', line_x, line_y);
+        },
+
         //new ID of your ball (when you join or press space)
         '32': function(client, packet) {
             var ball_id = packet.readUInt32LE();
