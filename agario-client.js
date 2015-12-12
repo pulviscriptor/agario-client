@@ -58,7 +58,14 @@ Client.prototype = {
         if(this.debug >= 1)
             this.log('disconnect() called');
 
+        if(!this.ws) {
+            if(this.debug >= 1)
+                this.log('[warning] disconnect() called before connect(), ignoring this call');
+            return false;
+        }
+
         this.ws.close();
+        return true;
     },
 
     onConnect: function() {
