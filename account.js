@@ -2,13 +2,14 @@ var https = require('https');
 var agar_client_id = '677505792353827'; //hardcoded in client
 
 function Account() {
-    this.token    = null;
-    this.provider = 1;
-    this.c_user   = null;
-    this.datr     = null;
-    this.xs       = null;
-    this.agent    = null;
-    this.debug    = 1;
+    this.token          = null;
+    this.token_expire   = 0;
+    this.token_provider = 1;
+    this.c_user         = null;
+    this.datr           = null;
+    this.xs             = null;
+    this.agent          = null;
+    this.debug          = 1;
 
     this.ws         = null;
     this.connecting = false;
@@ -66,9 +67,14 @@ Account.prototype.requestFBToken = function(cb) {
             res.headers.location.replace(/access_token=([a-zA-Z0-9-_]*)&/, function(_, parsed_token) {
                 if(parsed_token) {
                     account.token = parsed_token;
-                    account.provider = 1;
+                    account.token_provider = 1;
                 }
-            })
+            });
+            res.headers.location.replace(/expires_in=([0-9]*)/, function(_, expire) {
+                if(expire) {
+                    account.token_expire = (+new Date) + expire*1000;
+                }
+            });
         }
 
         if(cb) cb(account.token, ret);

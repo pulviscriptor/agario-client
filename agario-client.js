@@ -1,6 +1,7 @@
 var WebSocket    = require('ws');
 var Packet       = require('./packet.js');
 var servers      = require('./servers.js');
+var Account      = require('./account.js');
 var EventEmitter = require('events').EventEmitter;
 
 function Client(client_name) {
@@ -22,7 +23,8 @@ function Client(client_name) {
     this.score             = 0;    //my score
     this.leaders           = [];   //IDs of leaders in FFA mode
     this.teams_scores      = [];   //scores of teams in Teams mode
-    this.facebook_key      = '';   //facebook key. Check README.md how to get it
+    this.auth_token        = '';   //auth token. Check README.md how to get it
+    this.auth_provider     = 1;    //auth provider. 1 = facebook, 2 = google
     this.spawn_attempt     = 0;    //attempt to spawn
     this.spawn_interval_id = 0;    //ID of setInterval()
 
@@ -94,11 +96,12 @@ Client.prototype = {
             }
             this.send(buf);
         }
-        if(this.facebook_key) {
-            buf = new Buffer(1 + this.facebook_key.length);
-            buf.writeUInt8(81, 0);
-            for (i=1;i<=this.facebook_key.length;++i) {
-                buf.writeUInt8(this.facebook_key.charCodeAt(i-1), i);
+        if(this.auth_token) {
+            buf = new Buffer(2 + this.auth_token.length);
+            buf.writeUInt8(82, 0);
+            buf.writeUInt8(this.auth_provider, 1);
+            for (i=1;i<=this.auth_token.length;++i) {
+                buf.writeUInt8(this.auth_token.charCodeAt(i-1), i+1);
             }
             this.send(buf);
         }
@@ -566,6 +569,11 @@ Client.prototype = {
         this.send(buf);
 
         return true;
+    },
+
+    //deprecated
+    set facebook_key(_) {
+        console.trace('Property "facebook_key" is deprecated. Please check in README.md how new authorization works');
     }
 };
 
@@ -675,5 +683,7 @@ for (var key in EventEmitter.prototype) {
 }
 
 Client.servers = servers;
+Client.Packet  = Packet;
+Client.Account = Account;
 Client.Ball    = Ball;
 module.exports = Client;

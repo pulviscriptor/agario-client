@@ -8,7 +8,7 @@ var client = new AgarioClient('worker'); //create new client and call it "worker
 var interval_id = 0; //here we will store setInterval's ID
 
 client.debug = 1; //setting debug to 1 (avaialble 0-5)
-client.facebook_key = ''; //you can put here your facebook key. Check in README.md how to get it
+client.auth_token = ''; //you can put here your auth token to authorize client. Check in README.md how to get it
 
 //here adding custom properties/events example shown
 AgarioClient.prototype.addFriend = function(ball_id) { //adding client.addFriend(ball_id) function
