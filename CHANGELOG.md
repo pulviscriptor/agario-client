@@ -1,3 +1,17 @@
+## 25.12.2015 ##
+agar changes:
+- Facebook key is deprecated. Now tokens used.
+
+Code changes:
+- Example `examples/auth_token.js` added demonstrating requesting facebook token
+- `client.facebook_key` marked as deprecated
+- `client.auth_token` added
+- `client.auth_provider` added
+- `AgarioClient.Account` added
+- `AgarioClient.Account.requestFBToken()` added (with [Endromede](https://github.com/Endromede)'s help)
+
+This update would not been possible without [Endromede](https://github.com/Endromede) who reverse-engineered new tokens system.
+
 ## 29.11.2015 ##
 Example `examples/multiple.js` added demonstrating 5 clients connecting to a party server from one script
 
