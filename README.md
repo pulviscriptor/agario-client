@@ -33,7 +33,8 @@ Properties that you can change:
 - `client.debug` debug level. 0-5. 0 is completely silent. 5 is super verbose. **Default: 1**
 - `client.server` address that was used in `client.connect()` call
 - `client.key` key that was used in `client.connect()` call
-- `client.facebook_key` key to login. See how to get key in [additional info](#facebook-key).
+- `client.auth_token` token to login. See how to get token in [additional info](#auth-token).
+- `client.auth_provider` provider to login. **1** for facebook, **2** for google. **Default: 1**
 - `client.agent` agent to use for connection. Check [additional info](#socksproxy-support).
 - `client.inactive_destroy` time in ms for how long ball will live in memory after his last known action (if player exit from game or ball eaten outside our field of view, we will not know it since server sends action only about field that you see. Original code `destroy()` `Ball` when he `disappear` from field of view. You can do that in `client.on('ballDisppear')` if you want it for some reason). **Default: 5\*60\*1000** (5 minutes)
 - `client.inactive_check` time in ms for time interval that search and destroy inactive `Balls`. **Default: 10\*1000** (10 seconds)
@@ -190,19 +191,34 @@ If you want record/repeat or watch in real time what your client doing through w
 - `{'reason': 'eaten', 'by': ball_id}` when `Ball` got eaten
 - `{'reason': 'merge'}` when our `Ball` merges with our other `Ball`
 
-## Facebook key ##
-Facebook key currently stored in `localStorage` of browser. 
-First it was in `JSON.parse(localStorage.loginCache).ga` 
-Then in `JSON.parse(localStorage.loginCache).ha`
-Last known `JSON.parse(localStorage.loginCache3).authToken` 
-To get key, you need 
-- Open http://agar.io 
-- Log-in through facebook
-- Open browser's [JS console](https://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers) 
-- Paste `JSON.parse(localStorage.loginCache3).authToken` 
-- Press `Enter` key on keyboard
+## Auth token ##
+To login into your account you need to request token. You can check example in `examples/auth_token.js` 
+First create new `AgarioClient.Account`
+```javascript
+var account = new AgarioClient.Account();
+```
+Then you need to login through facebook on http://agar.io then go to http://www.facebook.com/ and get cookies c_user,datr,xs. 
+Here is list of properties of `account`: 
+- **account.c_user** - set to cookie "c_user" from http://www.facebook.com/
+- **account.datr** - set to cookie "datr" from http://www.facebook.com/
+- **account.xs** - set to cookie "xs" from http://www.facebook.com/
+- **account.agent** - agent for connection. Tests shows that you can request token from any IP and then use it on any IP so you don't need SOCKS/Proxy.
+- **account.debug** - set **1** to show warnings, otherwise **0**. **Default: 1**
+- **account.token_provider** - will contain **1** for facebook, **2** for google. But currently there is no token requesters for google. `requestFBToken()` will set it to **1**
+- **account.token_expire** - contains timestamp in milliseconds when token will expire. Tokens are valid for 1-2 hours. If `(+new Date)>account.token_expire` then you need to request new token and use it in new connection to agar.
 
-If there is no key, then its location may be changed again. Create an [issue](https://github.com/pulviscriptor/agario-client/issues) or [email me](mailto:pulviscriptor@gmail.com).
+Then you call 
+```javascript
+account.requestFBToken(function(token, info) {
+	//If you have `token` then you can set it to `client.auth_token` 
+    // and `client.connect()` to agar server
+});
+```
+If `token` is null, then something went wrong. Check `info` which can contain: 
+- **info.error** - `Error` of connection error
+- **info.res** - response's [http.IncomingMessage](https://nodejs.org/api/http.html#http_http_incomingmessage) object
+- **info.data** - content of page
+
 
 ## SOCKS/Proxy support ##
 You can change default agent for `AgarioClient` and `AgarioClient.servers` to use for connections. You can use libs to do it. For testing and example i used [socks](https://www.npmjs.com/package/socks) lib. Execute `node ./node_modules/agario-client/examples/socks.js` to test it and read `examples/socks.js` file to see how to use SOCKS. For proxy you will need to use some other lib.
