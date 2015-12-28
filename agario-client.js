@@ -409,6 +409,12 @@ Client.prototype = {
             client.emit('experienceUpdate', level, curernt_exp, need_exp);
         },
 
+        '102': function() {
+            // This packet used for some shop server wss://web-live-v3-0.agario.miniclippt.com/ws
+            // There is some "reserved" code for it in "account.js" you can check that. But it is not used since this server is useless for client
+            // If you need that server support, you may create issue https://github.com/pulviscriptor/agario-client/issues
+        },
+
         '240': function(client, packet) {
             packet.offset += 4;
             var packet_id = packet.readUInt8();
