@@ -43,9 +43,18 @@ Account.prototype.requestFBToken = function(cb) {
         data: null
     };
 
-    var cookies = 'c_user=' + encodeURIComponent(this.c_user) + ';' +
-        'datr=' + encodeURIComponent(this.datr) + ';' +
-        'xs=' + encodeURIComponent(this.xs) + ';';
+    var c_user = this.c_user;
+    var datr = this.datr;
+    var xs = this.xs;
+
+    //Some users don't decode their cookies, so let's try do it here
+    if(c_user && c_user.indexOf('%')) c_user = decodeURIComponent(c_user);
+    if(datr && datr.indexOf('%')) datr = decodeURIComponent(datr);
+    if(xs && xs.indexOf('%')) xs = decodeURIComponent(xs);
+
+    var cookies = 'c_user=' + encodeURIComponent(c_user) + ';' +
+        'datr=' + encodeURIComponent(datr) + ';' +
+        'xs=' + encodeURIComponent(xs) + ';';
 
     var options = {
         host: 'www.facebook.com',
