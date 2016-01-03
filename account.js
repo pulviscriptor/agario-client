@@ -32,9 +32,9 @@ Account.prototype.requestFBToken = function(cb) {
     var account = this;
 
     if(this.debug >= 1) {
-        if(!this.c_user) this.log('[warning] You did not specified Agent.c_user');
-        if(!this.datr)   this.log('[warning] You did not specified Agent.datr');
-        if(!this.xs)     this.log('[warning] You did not specified Agent.xs');
+        if(!this.c_user) this.log('[warning] You did not specified Account.c_user');
+        if(!this.datr)   this.log('[warning] You did not specified Account.datr');
+        if(!this.xs)     this.log('[warning] You did not specified Account.xs');
     }
 
     var ret = {
