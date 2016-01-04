@@ -77,23 +77,23 @@ Account.prototype.requestFBToken = function(cb) {
         });
         res.on('end', function() {
             ret.data = data;
+
+            if(res && res.headers && res.headers.location) {
+                res.headers.location.replace(/access_token=([a-zA-Z0-9-_]*)&/, function(_, parsed_token) {
+                    if(parsed_token) {
+                        account.token = parsed_token;
+                        account.token_provider = 1;
+                    }
+                });
+                res.headers.location.replace(/expires_in=([0-9]*)/, function(_, expire) {
+                    if(expire) {
+                        account.token_expire = (+new Date) + expire*1000;
+                    }
+                });
+            }
+
+            if(cb) cb(account.token, ret);
         });
-
-        if(res && res.headers && res.headers.location) {
-            res.headers.location.replace(/access_token=([a-zA-Z0-9-_]*)&/, function(_, parsed_token) {
-                if(parsed_token) {
-                    account.token = parsed_token;
-                    account.token_provider = 1;
-                }
-            });
-            res.headers.location.replace(/expires_in=([0-9]*)/, function(_, expire) {
-                if(expire) {
-                    account.token_expire = (+new Date) + expire*1000;
-                }
-            });
-        }
-
-        if(cb) cb(account.token, ret);
     });
 
     req.on('error', function(e) {
