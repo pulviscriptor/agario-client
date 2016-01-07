@@ -137,7 +137,28 @@ Client.prototype = {
             this.log('dump: ' + packet.toString());
 
         this.emit('message', packet);
-        processor(this, packet);
+
+        try {
+            processor(this, packet);
+        }catch(err){
+            this.onPacketError(packet, err);
+        }
+    },
+
+    // Had to do this because sometimes somehow packets get moving by 1 byte
+    // https://github.com/pulviscriptor/agario-client/issues/46#issuecomment-169764771
+    onPacketError: function(packet, err) {
+        var crash = true;
+
+        this.emit('packetError', packet, err, function() {
+            crash = false;
+        });
+
+        if(crash) {
+            if(this.debug >= 1)
+                this.log('Packet error detected! Check packetError event in README.md');
+            throw err;
+        }
     },
 
     send: function(buf) {
