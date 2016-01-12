@@ -1,6 +1,10 @@
+## 12.01.2016 ##
+Code changes:
+- `client.headers` added for customizing WebSocket connection headers.
+
 ## 07.01.2016 ##
 Code changes:
--`client.on.packetError(packet, err, preventCrash)` added. Check [issue #46](https://github.com/pulviscriptor/agario-client/issues/46#issuecomment-169764771)
+- `client.on.packetError(packet, err, preventCrash)` added. Check [issue #46](https://github.com/pulviscriptor/agario-client/issues/46#issuecomment-169764771)
 
 Thanks to [DrTheGoat](https://github.com/DrTheGoat) for helping with getting corrupted packet.
 
