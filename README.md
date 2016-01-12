@@ -36,6 +36,7 @@ Properties that you can change:
 - `client.auth_token` token to login. See how to get token in [additional info](#auth-token).
 - `client.auth_provider` provider to login. **1** for facebook, **2** for google. **Default: 1**
 - `client.agent` agent to use for connection. Check [additional info](#socksproxy-support).
+- `client.headers` object with headers for WebSocket connection. **Default: {'Origin':'http://agar.io'}**
 - `client.inactive_destroy` time in ms for how long ball will live in memory after his last known action (if player exit from game or ball eaten outside our field of view, we will not know it since server sends action only about field that you see. Original code `destroy()` `Ball` when he `disappear` from field of view. You can do that in `client.on('ballDisppear')` if you want it for some reason). **Default: 5\*60\*1000** (5 minutes)
 - `client.inactive_check` time in ms for time interval that search and destroy inactive `Balls`. **Default: 10\*1000** (10 seconds)
 - `client.spawn_attempts` how much we need try spawn before disconnect (made for unstable spawn on official servers). **Default: 25** 
