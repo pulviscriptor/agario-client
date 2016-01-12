@@ -13,6 +13,9 @@ function Client(client_name) {
     this.spawn_interval   = 200;         //time in ms for respawn interval. 0 to disable (if your custom server don't have spawn problems)
     this.spawn_attempts   = 25;          //how much attempts to spawn before give up (official servers do have unstable spawn problems)
     this.agent            = null;        //agent for connection. Check additional info in readme
+    this.headers          = {            //headers for WebSocket connection.
+        'Origin': 'http://agar.io'
+    };
 
     //don't change things below if you don't understand what you're doing
 
@@ -34,11 +37,7 @@ function Client(client_name) {
 
 Client.prototype = {
     connect: function(server, key) {
-        var headers = {
-            'Origin': 'http://agar.io'
-        };
-
-        this.ws            = new WebSocket(server, null, {headers: headers, agent: this.agent});
+        this.ws            = new WebSocket(server, null, {headers: this.headers, agent: this.agent});
         this.ws.binaryType = "arraybuffer";
         this.ws.onopen     = this.onConnect.bind(this);
         this.ws.onmessage  = this.onMessage.bind(this);
