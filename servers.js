@@ -34,9 +34,10 @@ var servers = {
                 'Origin': 'http://agar.io',
                 'Referer': 'http://agar.io/',
                 'Host': 'm.agar.io'
-            },
-            agent: opt.agent || null
+            }
         };
+        if(opt.agent) options.agent = opt.agent;
+        if(opt.local_address) options.localAddress = opt.local_address;
 
         var req = http.request(options, function(res) {
             var server = '';
