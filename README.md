@@ -36,6 +36,7 @@ Properties that you can change:
 - `client.auth_token` token to login. See how to get token in [additional info](#auth-token).
 - `client.auth_provider` provider to login. **1** for facebook, **2** for google. **Default: 1**
 - `client.agent` agent to use for connection. Check [additional info](#socksproxy-support).
+- `client.local_address` local interface to bind to for network connections (IP address of interface)
 - `client.headers` object with headers for WebSocket connection. **Default: {'Origin':'http://agar.io'}**
 - `client.inactive_destroy` time in ms for how long ball will live in memory after his last known action (if player exit from game or ball eaten outside our field of view, we will not know it since server sends action only about field that you see. Original code `destroy()` `Ball` when he `disappear` from field of view. You can do that in `client.on('ballDisppear')` if you want it for some reason). **Default: 5\*60\*1000** (5 minutes)
 - `client.inactive_check` time in ms for time interval that search and destroy inactive `Balls`. **Default: 10\*1000** (10 seconds)
@@ -140,6 +141,7 @@ Functions need `opt` as options object and `cb` as callback function.
 ## Servers options ##
 All functions can accept: 
 `opt.agent` to use for connection. Check [additional info](#socksproxy-support)
+`opt.local_address` local interface to bind to for network connections (IP address of interface)
 `opt.resolve` set to `true` to resolve IP on client side (since SOCKS4 can't accept domain names)
 `opt.ip` if you resolved `m.agar.ip` IP by other way (will cancel `opt.resolve`). 
 
