@@ -1,3 +1,8 @@
+## 13.01.2016 ##
+Code changes:
+- `client.local_address` added. Local interface to bind to for network connections (IP address of interface)
+- `AgarioClient.servers` `opt.local_address` added. Local interface to bind to for network connections (IP address of interface)
+
 ## 12.01.2016 ##
 Code changes:
 - `client.headers` added for customizing WebSocket connection headers.
