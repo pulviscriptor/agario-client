@@ -77,7 +77,7 @@ Client changes:
 ## 20.09.2015 ##
 Code changes:
 
-Protection from coding incidents added.
+Protection from coding incidents added. 
 Next functions now can be called before connection established:
 
 - `client.spawn()`

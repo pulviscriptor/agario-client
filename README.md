@@ -196,7 +196,6 @@ If you want record/repeat or watch in real time what your client doing through w
 - `{'reason': 'eaten', 'by': ball_id}` when `Ball` got eaten
 - `{'reason': 'merge'}` when our `Ball` merges with our other `Ball`
 
-<<<<<<< HEAD
 ## Auth token ##
 To login into your account you need to request token. You can check example in `examples/auth_token.js` 
 First create new `AgarioClient.Account`
@@ -224,22 +223,6 @@ If `token` is null, then something went wrong. Check `info` which can contain:
 - **info.error** - `Error` of connection error
 - **info.res** - response's [http.IncomingMessage](https://nodejs.org/api/http.html#http_http_incomingmessage) object
 - **info.data** - content of page
-
-=======
-## Facebook key ##
-Facebook key currently stored in `localStorage` of browser.
-First it was in `JSON.parse(localStorage.loginCache).ga`
-Then in `JSON.parse(localStorage.loginCache).ha`
-Last known `JSON.parse(localStorage.loginCache3).authToken`
-To get key, you need
-- Open http://agar.io
-- Log-in through facebook
-- Open browser's [JS console](https://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers)
-- Paste `JSON.parse(localStorage.loginCache3).authToken`
-- Press `Enter` key on keyboard
-
-If there is no key, then its location may be changed again. Create an [issue](https://github.com/pulviscriptor/agario-client/issues) or [email me](mailto:pulviscriptor@gmail.com).
->>>>>>> 4825f781afc8f83102f0635eee42f5b60de3521d
 
 ## SOCKS/Proxy support ##
 You can change default agent for `AgarioClient` and `AgarioClient.servers` to use for connections. You can use libs to do it. For testing and example i used [socks](https://www.npmjs.com/package/socks) lib. Execute `node ./node_modules/agario-client/examples/socks.js` to test it and read `examples/socks.js` file to see how to use SOCKS. For proxy you will need to use some other lib.
