@@ -1,10 +1,10 @@
 {
   "name": "agario-client",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Node.js agar.io client implementation",
   "main": "agario-client.js",
   "dependencies": {
-    "ws": "^0.7.1"
+    "ws": "^1.0.1"
   },
   "devDependencies": {},
   "files": [
@@ -15,7 +15,7 @@
     "examples"
   ],
   "scripts": {
-    "test": "node example.js"
+    "test": "node examples/basic.js"
   },
   "repository": {
     "type": "git",

@@ -1,3 +1,9 @@
+## 14.01.2016 ##
+Added support for the debug line (added by [henopied](https://github.com/henopied))
+Code changes:
+
+- `on.debugLine(line_x, line_y)` added, the server sometimes sends a line for the client to render from your ball to the point though don't expect to see it.
+
 ## 13.01.2016 ##
 Code changes:
 - `client.local_address` added. Local interface to bind to for network connections (IP address of interface)
