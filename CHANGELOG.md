@@ -1,4 +1,9 @@
-<<<<<<< HEAD
+## 14.01.2016 ##
+Added support for the debug line (added by [henopied](https://github.com/henopied))
+Code changes:
+
+- `on.debugLine(line_x, line_y)` added, the server sometimes sends a line for the client to render from your ball to the point though don't expect to see it.
+
 ## 13.01.2016 ##
 Code changes:
 - `client.local_address` added. Local interface to bind to for network connections (IP address of interface)
@@ -27,13 +32,6 @@ Code changes:
 - `AgarioClient.Account.requestFBToken()` added (with [Endromede](https://github.com/Endromede)'s help)
 
 This update would not been possible without [Endromede](https://github.com/Endromede) who reverse-engineered new tokens system.
-=======
-## 07.12.2015 ##
-Added support for the debug line (added by [henopied](https://github.com/henopied))
-Code changes:
-
-- `on.debugLine(line_x, line_y)` added, the server sometimes sends a line for the client to render from your ball to the point though don't expect to see it.
->>>>>>> 4825f781afc8f83102f0635eee42f5b60de3521d
 
 ## 29.11.2015 ##
 Example `examples/multiple.js` added demonstrating 5 clients connecting to a party server from one script
