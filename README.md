@@ -24,7 +24,7 @@ Both objects have same methods for events from [events.EventEmitter](https://nod
 
 # Client API #
     var AgarioClient = require('agario-client');
-    var client = new AgarioClient(client_name); 
+    var client = new AgarioClient(client_name);
 *client_name* is string for client that will be used for logging (if you enable it). It's not your ball name.
 
 ## Client properties ##
@@ -40,8 +40,8 @@ Properties that you can change:
 - `client.headers` object with headers for WebSocket connection. **Default: {'Origin':'http://agar.io'}**
 - `client.inactive_destroy` time in ms for how long ball will live in memory after his last known action (if player exit from game or ball eaten outside our field of view, we will not know it since server sends action only about field that you see. Original code `destroy()` `Ball` when he `disappear` from field of view. You can do that in `client.on('ballDisppear')` if you want it for some reason). **Default: 5\*60\*1000** (5 minutes)
 - `client.inactive_check` time in ms for time interval that search and destroy inactive `Balls`. **Default: 10\*1000** (10 seconds)
-- `client.spawn_attempts` how much we need try spawn before disconnect (made for unstable spawn on official servers). **Default: 25** 
-- `client.spawn_interval` time in ms between spawn attempts. **Default: 200** 
+- `client.spawn_attempts` how much we need try spawn before disconnect (made for unstable spawn on official servers). **Default: 25**
+- `client.spawn_interval` time in ms between spawn attempts. **Default: 200**
 
 Properties that better not to change or you can break something:
 
@@ -93,6 +93,7 @@ In this list `on.eventName(param1, param2)` means you need to do `client.on('eve
 - `on.spectateFieldUpdate(cord_x, cord_y, zoom_level)` coordinates of field of view in `client.spectate()` mode
 - `on.experienceUpdate(level, current_exp, need_exp)` experience information update (if logined with [auth token](#auth-token))
 - `on.packetError(packet, err, preventCrash)` unable to parse packet. It can mean that agar changed protocol or [issue #46](https://github.com/pulviscriptor/agario-client/issues/46#issuecomment-169764771). <b>By default client will crash.</b> But if you sure this is not protocol change and it don't need [new issue](https://github.com/pulviscriptor/agario-client/issues/) then you need to call `preventCrash()` before callback execution ends. I highly <b>recommend to disconnect</b> `client` if this error happens.
+- `on.debugLine(line_x, line_y)` the server sometimes sends a line for the client to render from your ball to the point though don't expect to see it.
 
 # Ball API #
 `var ball = client.balls[ball_id];` *ball_id* is number that you can get from events
@@ -135,15 +136,15 @@ In this list `on.eventName(param1, param2)` means you need to do `ball.on('event
  - `on.disappear()` `Ball` disappear from "screen" (field of view)
 
 # Servers #
-When you do `var AgarioClient = require('agario-client');` you can access `AgarioClient.servers` 
-Functions need `opt` as options object and `cb` as callback function. 
+When you do `var AgarioClient = require('agario-client');` you can access `AgarioClient.servers`
+Functions need `opt` as options object and `cb` as callback function.
 
 ## Servers options ##
-All functions can accept: 
+All functions can accept:
 `opt.agent` to use for connection. Check [additional info](#socksproxy-support)
 `opt.local_address` local interface to bind to for network connections (IP address of interface)
 `opt.resolve` set to `true` to resolve IP on client side (since SOCKS4 can't accept domain names)
-`opt.ip` if you resolved `m.agar.ip` IP by other way (will cancel `opt.resolve`). 
+`opt.ip` if you resolved `m.agar.ip` IP by other way (will cancel `opt.resolve`).
 
 - `servers.getFFAServer(opt, cb)` to request FFA server.  
   Needs `opt.region`
@@ -195,6 +196,7 @@ If you want record/repeat or watch in real time what your client doing through w
 - `{'reason': 'eaten', 'by': ball_id}` when `Ball` got eaten
 - `{'reason': 'merge'}` when our `Ball` merges with our other `Ball`
 
+<<<<<<< HEAD
 ## Auth token ##
 To login into your account you need to request token. You can check example in `examples/auth_token.js` 
 First create new `AgarioClient.Account`
@@ -223,20 +225,35 @@ If `token` is null, then something went wrong. Check `info` which can contain:
 - **info.res** - response's [http.IncomingMessage](https://nodejs.org/api/http.html#http_http_incomingmessage) object
 - **info.data** - content of page
 
+=======
+## Facebook key ##
+Facebook key currently stored in `localStorage` of browser.
+First it was in `JSON.parse(localStorage.loginCache).ga`
+Then in `JSON.parse(localStorage.loginCache).ha`
+Last known `JSON.parse(localStorage.loginCache3).authToken`
+To get key, you need
+- Open http://agar.io
+- Log-in through facebook
+- Open browser's [JS console](https://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers)
+- Paste `JSON.parse(localStorage.loginCache3).authToken`
+- Press `Enter` key on keyboard
+
+If there is no key, then its location may be changed again. Create an [issue](https://github.com/pulviscriptor/agario-client/issues) or [email me](mailto:pulviscriptor@gmail.com).
+>>>>>>> 4825f781afc8f83102f0635eee42f5b60de3521d
 
 ## SOCKS/Proxy support ##
 You can change default agent for `AgarioClient` and `AgarioClient.servers` to use for connections. You can use libs to do it. For testing and example i used [socks](https://www.npmjs.com/package/socks) lib. Execute `node ./node_modules/agario-client/examples/socks.js` to test it and read `examples/socks.js` file to see how to use SOCKS. For proxy you will need to use some other lib.
 
 ## Adding properties/events ##
-You can add your own properties/events to clients/balls. 
+You can add your own properties/events to clients/balls.
 `var AgarioClient = require('agario-client');`
-- Prototype of `Client` is located at `AgarioClient.prototype.` 
-- Prototype of `Ball` is located at `AgarioClient.Ball.prototype.` 
+- Prototype of `Client` is located at `AgarioClient.prototype.`
+- Prototype of `Ball` is located at `AgarioClient.Ball.prototype.`
 
-For example: 
+For example:
 ```javascript
 AgarioClient.Ball.prototype.isMyFriend = function() { ... };  //to call ball.isMyFriend()
-AgarioClient.prototype.addFriend = function(ball_id) { ... }; //to call client.addFriend(1234) 
+AgarioClient.prototype.addFriend = function(ball_id) { ... }; //to call client.addFriend(1234)
 ```
 
 Events:
