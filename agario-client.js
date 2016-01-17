@@ -31,9 +31,6 @@ function Client(client_name) {
     this.auth_provider     = 1;    //auth provider. 1 = facebook, 2 = google
     this.spawn_attempt     = 0;    //attempt to spawn
     this.spawn_interval_id = 0;    //ID of setInterval()
-
-    if(this.debug >= 1)
-        this.log('client created');
 }
 
 Client.prototype = {
