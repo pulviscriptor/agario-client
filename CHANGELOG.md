@@ -1,3 +1,6 @@
+## 28.01.2016 ##
+Now agar.io server allows only 3 connections from single IP instead of 5.
+
 ## 14.01.2016 ##
 Added support for the debug line (added by [henopied](https://github.com/henopied))
 Code changes:
