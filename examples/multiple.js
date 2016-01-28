@@ -131,9 +131,7 @@ ExampleBot.prototype = {
 var bots = {
     'Alpha'  : null,
     'Bravo'  : null,
-    'Charlie': null,
-    'Delta'  : null,
-    'Echo'   : null
+    'Charlie': null
 };
 
 //searching party for bots in EU-London
