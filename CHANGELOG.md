@@ -1,3 +1,8 @@
+## 16.02.2016 ##
+Now agar.io sends random "virtual" size map as protection from bots.
+New sizes are refreshing in `client.on.mapSizeLoad` event.
+When you re-spawning you should delete old balls from memory because their coordinates will be invalid. Not adding this to client's code because it can be changed by agar any time.
+
 ## 28.01.2016 ##
 Now agar.io server allows only 3 connections from single IP instead of 5.
 
