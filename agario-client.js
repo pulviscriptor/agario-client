@@ -136,6 +136,9 @@ Client.prototype = {
 
     onMessage: function(e) {
         var packet    = new Packet(e);
+        if(!packet.length) {
+            return this.onPacketError(packet, new Error('Empty packet received'));
+        }
         var packet_id = packet.readUInt8();
         var processor = this.processors[packet_id];
         if(!processor) return this.log('[warning] unknown packet ID(' + packet_id + '): ' + packet.toString());
