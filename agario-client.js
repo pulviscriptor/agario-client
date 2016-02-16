@@ -84,6 +84,12 @@ Client.prototype = {
         var buf = new Buffer(5);
         buf.writeUInt8(254, 0);
         buf.writeUInt32LE(5, 1);
+
+        if(this.ws.readyState !== WebSocket.OPEN) { //`ws` bug https://github.com/websockets/ws/issues/669 `Crash 2`
+            this.onPacketError(new Packet(buf), new Error('ws bug #669:crash2 detected, `onopen` called with not established connection'));
+            return;
+        }
+
         this.send(buf);
 
         buf = new Buffer(5);
