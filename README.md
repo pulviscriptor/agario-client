@@ -76,7 +76,7 @@ In this list `on.eventName(param1, param2)` means you need to do `client.on('eve
 - `on.scoreUpdate(old_score, new_score)` personal score updated
 - `on.leaderBoardUpdate(old_array, new_array)` leaders update in FFA mode. Array of leader's `Ball`'s IDs (one ID per leader)
 - `on.teamsScoresUpdate(old_scores, new_scores)` array of teams scores update in teams mode
-- `on.mapSizeLoad(min_x, min_y, max_x, max_y)` map size update (after connect)
+- `on.mapSizeLoad(min_x, min_y, max_x, max_y)` map size update (as update 16.02.2016 this called then new virtual size of map received)
 - `on.reset()` when we delete all `Balls` and stop timers (connection lost?)
 - `on.winner(ball_id)` somebody won and server going for restart
 - `on.ballAction(ball_id, coordinate_x, coordinate_y, size, is_virus, nick)` some action about some `Ball`
