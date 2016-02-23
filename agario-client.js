@@ -458,6 +458,11 @@ Client.prototype = {
             // If you need that server support, you may create issue https://github.com/pulviscriptor/agario-client/issues
         },
 
+        '103': function() {
+            // Processor for that packet is missing in official client but @SzAmmi reporting that he receives it
+            // https://github.com/pulviscriptor/agario-client/issues/94
+        },
+
         '240': function(client, packet) {
             packet.offset += 4;
             var packet_id = packet.readUInt8();
