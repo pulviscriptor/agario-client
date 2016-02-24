@@ -56,7 +56,7 @@ Client.prototype = {
             this.log('connecting...');
         }
 
-        this.emit('connecting');
+        this.emitEvent('connecting');
     },
 
     disconnect: function() {
@@ -115,14 +115,14 @@ Client.prototype = {
             this.send(buf);
         }
 
-        client.emit('connected');
+        client.emitEvent('connected');
     },
 
     onError: function(e) {
         if(this.debug >= 1)
             this.log('connection error: ' + e);
 
-        this.emit('connectionError', e);
+        this.emitEvent('connectionError', e);
         this.reset();
     },
 
@@ -130,7 +130,7 @@ Client.prototype = {
         if(this.debug >= 1)
             this.log('disconnected');
 
-        this.emit('disconnect');
+        this.emitEvent('disconnect');
         this.reset();
     },
 
@@ -148,7 +148,7 @@ Client.prototype = {
         if(this.debug >= 5)
             this.log('dump: ' + packet.toString());
 
-        this.emit('message', packet);
+        this.emitEvent('message', packet);
 
         try {
             processor(this, packet);
@@ -162,7 +162,7 @@ Client.prototype = {
     onPacketError: function(packet, err) {
         var crash = true;
 
-        this.emit('packetError', packet, err, function() {
+        this.emitEvent('packetError', packet, err, function() {
             crash = false;
         });
 
@@ -196,7 +196,7 @@ Client.prototype = {
         this.spawn_attempt     = 0;
 
         for(var k in this.balls) if(this.balls.hasOwnProperty(k)) this.balls[k].destroy({'reason':'reset'});
-        this.emit('reset');
+        this.emitEvent('reset');
     },
 
     detsroyInactive: function() {
@@ -237,7 +237,7 @@ Client.prototype = {
                 client.balls[eater_id].update();
                 if(client.balls[eaten_id]) client.balls[eaten_id].destroy({'reason':'eaten', 'by':eater_id});
 
-                client.emit('somebodyAteSomething', eater_id, eaten_id);
+                client.emitEvent('somebodyAteSomething', eater_id, eaten_id);
             }
 
 
@@ -302,7 +302,7 @@ Client.prototype = {
                 if(client.debug >= 5)
                     client.log('action: ball_id=' + ball_id + ' coordinate_x=' + coordinate_x + ' coordinate_y=' + coordinate_y + ' size=' + size + ' is_virus=' + is_virus + ' nick=' + nick);
 
-                client.emit('ballAction', ball_id, coordinate_x, coordinate_y, size, is_virus, nick);
+                client.emitEvent('ballAction', ball_id, coordinate_x, coordinate_y, size, is_virus, nick);
             }
 
             var balls_on_screen_count = packet.readUInt32LE();
@@ -316,7 +316,7 @@ Client.prototype = {
                 ball.update();
                 if(ball.mine) {
                     ball.destroy({reason: 'merge'});
-                    client.emit('merge', ball.id);
+                    client.emitEvent('merge', ball.id);
                 }else{
                     ball.disappear();
                 }
@@ -332,7 +332,7 @@ Client.prototype = {
             if(client.debug >= 4)
                 client.log('spectate FOV update: x=' + x + ' y=' + y + ' zoom=' + zoom);
 
-            client.emit('spectateFieldUpdate', x, y, zoom);
+            client.emitEvent('spectateFieldUpdate', x, y, zoom);
         },
 
         '20': function() {
@@ -347,7 +347,7 @@ Client.prototype = {
 
             if (client.debug >= 4)
                 client.log('debug line drawn from x=' + line_x + ' y=' + line_y);
-            client.emit('debugLine', line_x, line_y);
+            client.emitEvent('debugLine', line_x, line_y);
         },
 
         //new ID of your ball (when you join or press space)
@@ -369,7 +369,7 @@ Client.prototype = {
                 client.spawn_interval_id = 0;
             }
 
-            client.emit('myNewBall', ball_id);
+            client.emitEvent('myNewBall', ball_id);
         },
 
         //leaderboard update in FFA mode
@@ -400,7 +400,7 @@ Client.prototype = {
             if(client.debug >= 3)
                 client.log('leaders update: ' + JSON.stringify(users));
 
-            client.emit('leaderBoardUpdate', old_leaders, users);
+            client.emitEvent('leaderBoardUpdate', old_leaders, users);
         },
 
         //teams scored update in teams mode
@@ -420,7 +420,7 @@ Client.prototype = {
 
             client.teams_scores = teams_scores;
 
-            client.emit('teamsScoresUpdate', old_scores, teams_scores);
+            client.emitEvent('teamsScoresUpdate', old_scores, teams_scores);
         },
 
         //map size load
@@ -433,7 +433,7 @@ Client.prototype = {
             if(client.debug >= 2)
                 client.log('map size: ' + [min_x, min_y, max_x, max_y].join(','));
 
-            client.emit('mapSizeLoad', min_x, min_y, max_x, max_y);
+            client.emitEvent('mapSizeLoad', min_x, min_y, max_x, max_y);
         },
 
         //another unknown backet
@@ -449,7 +449,7 @@ Client.prototype = {
             if(client.debug >= 2)
                 client.log('experience update: ' + [level, curernt_exp, need_exp].join(','));
 
-            client.emit('experienceUpdate', level, curernt_exp, need_exp);
+            client.emitEvent('experienceUpdate', level, curernt_exp, need_exp);
         },
 
         '102': function() {
@@ -476,7 +476,7 @@ Client.prototype = {
             if(client.debug >= 1)
                 client.log(client.balls[client.leaders[0]] + ' WON THE GAME! Server going for restart');
 
-            client.emit('winner', client.leaders[0]);
+            client.emitEvent('winner', client.leaders[0]);
         }
     },
 
@@ -492,7 +492,7 @@ Client.prototype = {
 
         if (this.score == new_score) return;
         this.score = new_score;
-        this.emit('scoreUpdate', old_score, new_score);
+        this.emitEvent('scoreUpdate', old_score, new_score);
 
         if(this.debug >= 2)
             this.log('score: ' + new_score);
@@ -501,6 +501,19 @@ Client.prototype = {
 
     log: function(msg) {
         console.log(this.client_name + ': ' + msg);
+    },
+
+    // Fix https://github.com/pulviscriptor/agario-client/issues/95
+    emitEvent: function() {
+        var args = [];
+        for(var i=0;i<arguments.length;i++) args.push(arguments[i]);
+        try {
+            this.emit.apply(this, args);
+        } catch(e) {
+            process.nextTick(function() {
+                throw e;
+            });
+        }
     },
 
     //functions that you can call to control your balls
@@ -659,12 +672,12 @@ Ball.prototype = {
         var mine_ball_index = this.client.my_balls.indexOf(this.id);
         if(mine_ball_index > -1) {
             this.client.my_balls.splice(mine_ball_index, 1);
-            this.client.emit('mineBallDestroy', this.id, reason);
-            if(!this.client.my_balls.length) this.client.emit('lostMyBalls');
+            this.client.emitEvent('mineBallDestroy', this.id, reason);
+            if(!this.client.my_balls.length) this.client.emitEvent('lostMyBalls');
         }
 
-        this.emit('destroy', reason);
-        this.client.emit('ballDestroy', this.id, reason);
+        this.emitEvent('destroy', reason);
+        this.client.emitEvent('ballDestroy', this.id, reason);
     },
 
     setCords: function(new_x, new_y) {
@@ -675,8 +688,8 @@ Ball.prototype = {
         this.y    = new_y;
 
         if(!old_x && !old_y) return;
-        this.emit('move', old_x, old_y, new_x, new_y);
-        this.client.emit('ballMove', this.id, old_x, old_y, new_x, new_y);
+        this.emitEvent('move', old_x, old_y, new_x, new_y);
+        this.client.emitEvent('ballMove', this.id, old_x, old_y, new_x, new_y);
     },
 
     setSize: function(new_size) {
@@ -686,8 +699,8 @@ Ball.prototype = {
         this.mass    = parseInt(Math.pow(new_size/10, 2));
 
         if(!old_size) return;
-        this.emit('resize', old_size, new_size);
-        this.client.emit('ballResize', this.id, old_size, new_size);
+        this.emitEvent('resize', old_size, new_size);
+        this.client.emitEvent('ballResize', this.id, old_size, new_size);
         if(this.mine) this.client.updateScore();
     },
 
@@ -696,23 +709,23 @@ Ball.prototype = {
         var old_name = this.name;
         this.name    = name;
 
-        this.emit('rename', old_name, name);
-        this.client.emit('ballRename', this.id, old_name, name);
+        this.emitEvent('rename', old_name, name);
+        this.client.emitEvent('ballRename', this.id, old_name, name);
     },
 
     update: function() {
         var old_time     = this.last_update;
         this.last_update = (+new Date);
 
-        this.emit('update', old_time, this.last_update);
-        this.client.emit('ballUpdate', this.id, old_time, this.last_update);
+        this.emitEvent('update', old_time, this.last_update);
+        this.client.emitEvent('ballUpdate', this.id, old_time, this.last_update);
     },
 
     appear: function() {
         if(this.visible) return;
         this.visible = true;
-        this.emit('appear');
-        this.client.emit('ballAppear', this.id);
+        this.emitEvent('appear');
+        this.client.emitEvent('ballAppear', this.id);
 
         if(this.mine) this.client.updateScore();
     },
@@ -720,13 +733,26 @@ Ball.prototype = {
     disappear: function() {
         if(!this.visible) return;
         this.visible = false;
-        this.emit('disappear');
-        this.client.emit('ballDisppear', this.id);
+        this.emitEvent('disappear');
+        this.client.emitEvent('ballDisppear', this.id);
     },
 
     toString: function() {
         if(this.name) return this.id + '(' + this.name + ')';
         return this.id.toString();
+    },
+
+    // Fix https://github.com/pulviscriptor/agario-client/issues/95
+    emitEvent: function() {
+        var args = [];
+        for(var i=0;i<arguments.length;i++) args.push(arguments[i]);
+        try {
+            this.emit.apply(this, args);
+        } catch(e) {
+            process.nextTick(function() {
+                throw e;
+            });
+        }
     }
 };
 
