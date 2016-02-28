@@ -335,6 +335,10 @@ Client.prototype = {
             client.emitEvent('spectateFieldUpdate', x, y, zoom);
         },
 
+        '18': function() {
+            for(var k in this.balls) if(this.balls.hasOwnProperty(k)) this.balls[k].destroy({'reason':'server-forced'});
+        },
+
         '20': function() {
             //i dont know what this is
             //in original code it clears our balls array, but i never saw this packet
