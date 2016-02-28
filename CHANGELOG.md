@@ -1,3 +1,10 @@
+## 28.02.2016 ##
+Protocol changes:
+- New packet ID `18` that commands to delete all known balls from memory.
+
+Code changes:
+- New destroy ball reason `server-forced` when server commands to delete all balls.
+
 ## 16.02.2016 ##
 Now agar.io sends random "virtual" size map as protection from bots.
 New sizes are refreshing in `client.on.mapSizeLoad` event.
