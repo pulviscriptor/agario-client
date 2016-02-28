@@ -195,6 +195,7 @@ If you want record/repeat or watch in real time what your client doing through w
 - `{'reason': 'inactive'}` when we didn't saw `Ball` for `client.inactive_destroy` ms
 - `{'reason': 'eaten', 'by': ball_id}` when `Ball` got eaten
 - `{'reason': 'merge'}` when our `Ball` merges with our other `Ball`
+- `{'reason': 'server-forced'}` when server commands to delete all balls
 
 ## Auth token ##
 To login into your account you need to request token. You can check example in `examples/auth_token.js` 
