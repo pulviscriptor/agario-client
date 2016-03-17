@@ -467,6 +467,11 @@ Client.prototype = {
             // https://github.com/pulviscriptor/agario-client/issues/94
         },
 
+        //server forces client to logout
+        '104': function(client, packet) {
+            client.emitEvent('logoutRequest');
+        },
+
         '240': function(client, packet) {
             packet.offset += 4;
             var packet_id = packet.readUInt8();
