@@ -1,3 +1,10 @@
+## 17.03.2016 ##
+Protocol changes:
+- New packet ID `104` that forces client to call `window.logout()` to logout from account
+
+Code changes:
+- New event `client.on.logoutRequest` for logout packet ID `104`
+
 ## 28.02.2016 ##
 Protocol changes:
 - New packet ID `18` that commands to delete all known balls from memory.
