@@ -94,6 +94,7 @@ In this list `on.eventName(param1, param2)` means you need to do `client.on('eve
 - `on.experienceUpdate(level, current_exp, need_exp)` experience information update (if logined with [auth token](#auth-token))
 - `on.packetError(packet, err, preventCrash)` unable to parse packet. It can mean that agar changed protocol or [issue #46](https://github.com/pulviscriptor/agario-client/issues/46#issuecomment-169764771). <b>By default client will crash.</b> But if you sure this is not protocol change and it don't need [new issue](https://github.com/pulviscriptor/agario-client/issues/) then you need to call `preventCrash()` before callback execution ends. I highly <b>recommend to disconnect</b> `client` if this error happens.
 - `on.debugLine(line_x, line_y)` the server sometimes sends a line for the client to render from your ball to the point though don't expect to see it.
+- `on.logoutRequest()` server forces client to call `window.logout()`
 
 # Ball API #
 `var ball = client.balls[ball_id];` *ball_id* is number that you can get from events
