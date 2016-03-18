@@ -1,3 +1,7 @@
+## 18.03.2016 ##
+Protocol changes:
+- Initial key (pakect ID 255) changed key from 2200049715 to 154669603
+
 ## 17.03.2016 ##
 Protocol changes:
 - New packet ID `104` that forces client to call `window.logout()` to logout from account
