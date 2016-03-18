@@ -2,7 +2,7 @@ var http = require('http');
 var dns = require('dns');
 
 var servers = {
-    init_key: 2200049715, //used in initial packet id 255 and POST requests, hardcoded in client
+    init_key: 154669603, //used in initial packet id 255 and POST requests, hardcoded in client
 
     resolveDomainName: function(domain, post_opt, cb) {
         dns.lookup(domain, function (err, address) {
