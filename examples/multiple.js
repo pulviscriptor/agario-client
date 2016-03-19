@@ -51,7 +51,7 @@ ExampleBot.prototype = {
             bot.log('My new ball ' + ball_id);
         });
 
-        bot.client.once('leaderBoardUpdate', function(old_highlights, highlights, old_names, names) {
+        bot.client.on('leaderBoardUpdate', function(old_highlights, highlights, old_names, names) {
             bot.log('Leaders on server: ' + names.join(', '));
         });
 

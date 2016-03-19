@@ -76,7 +76,7 @@ AgarioClient.servers.getFFAServer(get_server_opt, function(srv) {
     //Create new agent for client
     client.agent = createAgent();
 
-    client.once('leaderBoardUpdate', function(old_highlights, highlights, old_names, names) {
+    client.on('leaderBoardUpdate', function(old_highlights, highlights, old_names, names) {
         client.log('Leaders on server: ' + names.join(', '));
         console.log('[SUCCESS!] Example succesfully connected to server through SOCKS server and received data. Example is over.');
         client.disconnect();

@@ -43,7 +43,7 @@ client.on('friendAdded', function(friend_id) { //on friendEaten event
 });
 //end of adding custom properties/events example
 
-client.once('leaderBoardUpdate', function(old_highlights, highlights, old_names, names) { //when we receive leaders list. Fire only once
+client.on('leaderBoardUpdate', function(old_highlights, highlights, old_names, names) { //when we receive leaders list.
     client.log('leaders on server: ' + names.join(', '));
 });
 
