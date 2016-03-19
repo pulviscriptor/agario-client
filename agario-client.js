@@ -378,11 +378,12 @@ Client.prototype = {
 
         //leaderboard update in FFA mode
         '49': function(client, packet) {
-            var users = [];
+            var highlights = [];
+            var names = [];
             var count = packet.readUInt32LE();
 
             for(var i=0;i<count;i++) {
-                var id = packet.readUInt32LE();
+                var highlight = packet.readUInt32LE();
 
                 var name = '';
                 while(1) {
@@ -391,20 +392,23 @@ Client.prototype = {
                     name += String.fromCharCode(char);
                 }
 
-                users.push(id);
-                var ball = client.balls[id] || new Ball(client, id);
-                if(name) ball.setName(name);
-                ball.update();
+                highlights.push(highlight);
+                names.push(name);
             }
 
-            if(JSON.stringify(client.leaders) == JSON.stringify(users)) return;
-            var old_leaders = client.leaders;
-            client.leaders  = users;
+            if(JSON.stringify(client.leaderHighlights) == JSON.stringify(highlights) &&
+                JSON.stringify(client.leaderNames) == JSON.stringify(names)) {
+                return;
+            }
+            var old_highlights = client.leaderHighlights;
+            client.leaderHighlights = highlights;
+            var old_leaderNames = client.leaderNames;
+            client.leaderNames = names;
 
             if(client.debug >= 3)
-                client.log('leaders update: ' + JSON.stringify(users));
+                client.log('leaders update: ' + JSON.stringify(highlights) + ',' + JSON.stringify(names));
 
-            client.emitEvent('leaderBoardUpdate', old_leaders, users);
+            client.emitEvent('leaderBoardUpdate', old_highlights, highlights, old_leaderNames, names);
         },
 
         //teams scored update in teams mode
