@@ -1,3 +1,11 @@
+## 19.03.2016 ##
+Code changes:
+- Event `client.on.leaderBoardUpdate` arguments changed from 
+ `old_leaders_ids, new_leaders_ids` 
+ to 
+ `old_highlights, new_highlights, old_names, new_names` 
+ as fix for changed packet ID 49 (fixed by [kosak](https://github.com/kosak))
+
 ## 18.03.2016 ##
 Protocol changes:
 - Initial key (pakect ID 255) changed key from 2200049715 to 154669603
