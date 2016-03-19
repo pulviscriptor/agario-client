@@ -43,12 +43,8 @@ client.on('friendAdded', function(friend_id) { //on friendEaten event
 });
 //end of adding custom properties/events example
 
-client.once('leaderBoardUpdate', function(old, leaders) { //when we receive leaders list. Fire only once
-    var name_array = leaders.map(function(ball_id) { //converting leader's IDs to leader's names
-        return client.balls[ball_id].name || 'unnamed'
-    });
-
-    client.log('leaders on server: ' + name_array.join(', '));
+client.on('leaderBoardUpdate', function(old_highlights, highlights, old_names, names) { //when we receive leaders list.
+    client.log('leaders on server: ' + names.join(', '));
 });
 
 client.on('mineBallDestroy', function(ball_id, reason) { //when my ball destroyed

@@ -51,12 +51,8 @@ ExampleBot.prototype = {
             bot.log('My new ball ' + ball_id);
         });
 
-        bot.client.once('leaderBoardUpdate', function(old, leaders) {
-            var name_array = leaders.map(function(ball_id) {
-                return bot.client.balls[ball_id].name || 'unnamed'
-            });
-
-            bot.log('Leaders on server: ' + name_array.join(', '));
+        bot.client.on('leaderBoardUpdate', function(old_highlights, highlights, old_names, names) {
+            bot.log('Leaders on server: ' + names.join(', '));
         });
 
         bot.client.on('somebodyAteSomething', function(eater_ball, eaten_ball) {
