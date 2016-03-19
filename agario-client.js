@@ -79,7 +79,7 @@ Client.prototype = {
         if(this.debug >= 1)
             this.log('connected to server');
 
-        this.inactive_interval = setInterval(this.detsroyInactive.bind(this), this.inactive_check);
+        this.inactive_interval = setInterval(this.destroyInactive.bind(this), this.inactive_check);
 
         var buf = new Buffer(5);
         buf.writeUInt8(254, 0);
@@ -199,7 +199,7 @@ Client.prototype = {
         this.emitEvent('reset');
     },
 
-    detsroyInactive: function() {
+    destroyInactive: function() {
         var time = (+new Date);
 
         if(this.debug >= 3)
