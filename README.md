@@ -74,7 +74,7 @@ In this list `on.eventName(param1, param2)` means you need to do `client.on('eve
 - `on.myNewBall(ball_id)` my new `Ball` created (spawn/split/explode...)
 - `on.somebodyAteSomething(eater_id, eaten_id)` somebody ate something
 - `on.scoreUpdate(old_score, new_score)` personal score updated
-- `on.leaderBoardUpdate(old_array, new_array)` leaders update in FFA mode. Array of leader's `Ball`'s IDs (one ID per leader)
+- `on.leaderBoardUpdate(old_highlights, new_highlights, old_names, new_names)` leaders update in FFA mode. `names` is array of nicknames of leaders and `highlights` is array of numbers `0` or `1` corresponded to names where `1` means nickname should be highlighted in leader board (for example your nickname)
 - `on.teamsScoresUpdate(old_scores, new_scores)` array of teams scores update in teams mode
 - `on.mapSizeLoad(min_x, min_y, max_x, max_y)` map size update (as update 16.02.2016 this called then new virtual size of map received)
 - `on.reset()` when we delete all `Balls` and stop timers (connection lost?)
