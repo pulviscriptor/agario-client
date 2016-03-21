@@ -466,9 +466,10 @@ Client.prototype = {
             // https://github.com/pulviscriptor/agario-client/issues/78
         },
 
-        '103': function() {
+        '103': function(client) {
             // Processor for that packet is missing in official client but @SzAmmi reporting that he receives it
             // https://github.com/pulviscriptor/agario-client/issues/94
+            client.emit('gotLogin');
         },
 
         //server forces client to logout
