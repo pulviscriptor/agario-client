@@ -1,3 +1,6 @@
+## 21.03.2016 ##
+- Event `client.on.getLogin` added
+
 ## 19.03.2016 ##
 Code changes:
 - Event `client.on.leaderBoardUpdate` arguments changed from 
