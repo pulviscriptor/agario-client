@@ -34,7 +34,6 @@ Properties that you can change:
 - `client.server` address that was used in `client.connect()` call
 - `client.key` key that was used in `client.connect()` call
 - `client.auth_token` token to login. See how to get token in [additional info](#auth-token).
-- `client.auth_provider` provider to login. **1** for facebook, **2** for google. **Default: 1**
 - `client.agent` agent to use for connection. Check [additional info](#socksproxy-support).
 - `client.local_address` local interface to bind to for network connections (IP address of interface)
 - `client.headers` object with headers for WebSocket connection. **Default: {'Origin':'http://agar.io'}**
@@ -212,7 +211,6 @@ Here is list of properties of `account`:
 - **account.xs** - set to cookie "xs" from http://www.facebook.com/
 - **account.agent** - agent for connection. Tests shows that you can request token from any IP and then use it on any IP so you don't need SOCKS/Proxy.
 - **account.debug** - set **1** to show warnings, otherwise **0**. **Default: 1**
-- **account.token_provider** - will contain **1** for facebook, **2** for google. But currently there is no token requesters for google. `requestFBToken()` will set it to **1**
 - **account.token_expire** - contains timestamp in milliseconds when token will expire. Tokens are valid for 1-2 hours. If `(+new Date)>account.token_expire` then you need to request new token and use it in new connection to agar.
 
 Then you call 
