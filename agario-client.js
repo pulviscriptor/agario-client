@@ -106,11 +106,13 @@ Client.prototype = {
             this.send(buf);
         }
         if(this.auth_token) {
-            buf = new Buffer(2 + this.auth_token.length);
-            buf.writeUInt8(82, 0);
-            buf.writeUInt8(this.auth_provider, 1);
-            for (i=1;i<=this.auth_token.length;++i) {
-                buf.writeUInt8(this.auth_token.charCodeAt(i-1), i+1);
+			var bytes = [102, 8, 1, 18, this.auth_token.length + 25, 1, 8, 10, 82, this.auth_token.length + 20, 1, 10, 13, 8, 5, 18, 5, 49, 46, 52, 46, 57, 24, 0, 32, 0, 16, 2, 26, this.auth_token.length, 1];
+            for (var i = 0; i <= this.auth_token.length - 1; i++) {
+				bytes.push(this.auth_token.charCodeAt(i));
+			}
+			buf = new Buffer(bytes.length);
+            for (var i = 0; i <= bytes.length - 1; i++) {
+				buf.writeUInt8(bytes[i], i);
             }
             this.send(buf);
         }
