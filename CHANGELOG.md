@@ -1,3 +1,11 @@
+## 01.04.2016 ##
+Protocol changes:
+- Agar changed auth packet, check [issue #129](https://github.com/pulviscriptor/agario-client/issues/129)
+
+Code changes due to [PR #130](https://github.com/pulviscriptor/agario-client/pull/130)
+- `client.auth_provider` is not used anymore
+- Google+ tokens support is unknown at the moment
+
 ## 21.03.2016 ##
 - Event `client.on.getLogin` added
 
