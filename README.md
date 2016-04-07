@@ -37,7 +37,7 @@ Properties that you can change:
 - `client.agent` agent to use for connection. Check [additional info](#socksproxy-support).
 - `client.local_address` local interface to bind to for network connections (IP address of interface)
 - `client.headers` object with headers for WebSocket connection. **Default: {'Origin':'http://agar.io'}**
-- `client.inactive_destroy` time in ms for how long ball will live in memory after his last known action (if player exit from game or ball eaten outside our field of view, we will not know it since server sends action only about field that you see. Original code `destroy()` `Ball` when he `disappear` from field of view. You can do that in `client.on('ballDisppear')` if you want it for some reason). **Default: 5\*60\*1000** (5 minutes)
+- `client.inactive_destroy` time in ms for how long ball will live in memory after his last known action (if player exit from game or ball eaten outside our field of view, we will not know it since server sends action only about field that you see. Original code `destroy()` `Ball` when he `disappear` from field of view. You can do that in `client.on('ballDisappear')` if you want it for some reason). **Default: 5\*60\*1000** (5 minutes)
 - `client.inactive_check` time in ms for time interval that search and destroy inactive `Balls`. **Default: 10\*1000** (10 seconds)
 - `client.spawn_attempts` how much we need try spawn before disconnect (made for unstable spawn on official servers). **Default: 25**
 - `client.spawn_interval` time in ms between spawn attempts. **Default: 200**
@@ -80,7 +80,7 @@ In this list `on.eventName(param1, param2)` means you need to do `client.on('eve
 - `on.winner(ball_id)` somebody won and server going for restart
 - `on.ballAction(ball_id, coordinate_x, coordinate_y, size, is_virus, nick)` some action about some `Ball`
 - `on.ballAppear(ball_id)` `Ball` appear on "screen" (field of view)
-- `on.ballDisppear(ball_id)` `Ball` disappear from "screen" (field of view)
+- `on.ballDisappear(ball_id)` `Ball` disappear from "screen" (field of view)
 - `on.ballDestroy(ball_id, reason)` `Ball` deleted (check [reasons](#ball-destroy-reasons-list) at the bottom of this document)
 - `on.mineBallDestroy(ball_id, reason)` mine (your) `Ball` deleted (check reasons at the bottom of this document)
 - `on.lostMyBalls()` all mine `Balls` destroyed/eaten
