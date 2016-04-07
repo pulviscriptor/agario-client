@@ -314,13 +314,13 @@ Client.prototype = {
                 ball_id = packet.readUInt32LE();
 
                 ball = client.balls[ball_id] || new Ball(client, ball_id);
-                ball.update_tick = client.tick_counter;
-                ball.update();
                 if(ball.mine) {
                     ball.destroy({reason: 'merge'});
                     client.emitEvent('merge', ball.id);
                 }else{
                     ball.disappear();
+                    ball.update_tick = client.tick_counter;
+                    ball.update();
                 }
             }
         },
