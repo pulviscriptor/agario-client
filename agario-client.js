@@ -750,7 +750,8 @@ Ball.prototype = {
         if(!this.visible) return;
         this.visible = false;
         this.emitEvent('disappear');
-        this.client.emitEvent('ballDisppear', this.id);
+        this.client.emitEvent('ballDisppear', this.id); //typo https://github.com/pulviscriptor/agario-client/pull/144
+        this.client.emitEvent('ballDisappear', this.id);
     },
 
     toString: function() {
