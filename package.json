@@ -4,7 +4,7 @@
   "description": "Node.js agar.io client implementation",
   "main": "agario-client.js",
   "dependencies": {
-    "ws": "^1.0.1"
+    "ws": "^1.1.0"
   },
   "devDependencies": {},
   "files": [
