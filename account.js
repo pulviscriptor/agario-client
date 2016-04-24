@@ -47,10 +47,11 @@ Account.prototype.requestFBToken = function(cb) {
     var datr = this.datr;
     var xs = this.xs;
 
-    //Some users don't decode their cookies, so let's try doing it here
-    if(c_user && c_user.indexOf('%')) c_user = decodeURIComponent(c_user);
-    if(datr && datr.indexOf('%')) datr = decodeURIComponent(datr);
-    if(xs && xs.indexOf('%')) xs = decodeURIComponent(xs);
+    //Some users don't decode their cookies, so let's try do it here
+    var find_hex = /\%[0-9A-F]{2}/i; //Trying to resolve issue #158, using RegEx to find if the string really contains encoded data
+    if(c_user && c_user.match(find_hex)) c_user = decodeURIComponent(c_user);
+    if(datr && datr.match(find_hex)) datr = decodeURIComponent(datr);
+    if(xs && xs.match(find_hex)) xs = decodeURIComponent(xs);
 
     var cookies = 'c_user=' + encodeURIComponent(c_user) + ';' +
         'datr=' + encodeURIComponent(datr) + ';' +
