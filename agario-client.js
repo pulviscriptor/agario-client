@@ -5,14 +5,14 @@ var Account      = require('./account.js');
 var EventEmitter = require('events').EventEmitter;
 
 function Client(client_name) {
-    //you can change this values
+    //you can change these values
     this.client_name      = client_name; //name used for log
-    this.debug            = 1;           //debug level, 0-5 (5 will output extremely lot of data)
+    this.debug            = 1;           //debug level, 0-5 (5 will output extremely lots of data)
     this.inactive_destroy = 5*60*1000;   //time in ms when to destroy inactive balls
     this.inactive_check   = 10*1000;     //time in ms when to search inactive balls
     this.spawn_interval   = 200;         //time in ms for respawn interval. 0 to disable (if your custom server don't have spawn problems)
     this.spawn_attempts   = 25;          //how much attempts to spawn before give up (official servers do have unstable spawn problems)
-    this.agent            = null;        //agent for connection. Check additional info in readme
+    this.agent            = null;        //agent for connection. Check additional info in README.md
     this.local_address    = null;        //local interface to bind to for network connections (IP address of interface)
     this.headers          = {            //headers for WebSocket connection.
         'Origin': 'http://agar.io'
@@ -27,7 +27,7 @@ function Client(client_name) {
     this.score             = 0;    //my score
     this.leaders           = [];   //IDs of leaders in FFA mode
     this.teams_scores      = [];   //scores of teams in Teams mode
-    this.auth_token        = '';   //auth token. Check README.md how to get it
+    this.auth_token        = '';   //auth token. Check README.md for how to get it
     this.auth_provider     = 1;    //auth provider. 1 = facebook, 2 = google
     this.spawn_attempt     = 0;    //attempt to spawn
     this.spawn_interval_id = 0;    //ID of setInterval()
@@ -159,7 +159,7 @@ Client.prototype = {
         }
     },
 
-    // Had to do this because sometimes somehow packets get moving by 1 byte
+    // Had to do this because sometimes packets somehow get moving by 1 byte
     // https://github.com/pulviscriptor/agario-client/issues/46#issuecomment-169764771
     onPacketError: function(packet, err) {
         var crash = true;
@@ -242,7 +242,6 @@ Client.prototype = {
                 client.emitEvent('somebodyAteSomething', eater_id, eaten_id);
             }
 
-
             //reading actions of balls
             while(1) {
                 var is_virus = false;
@@ -268,14 +267,14 @@ Client.prototype = {
 
                 var opt = packet.readUInt8();
                 is_virus = !!(opt & 1);
-                var something_1 = !!(opt & 16); //todo what is this?
+                var something_1 = !!(opt & 16); //TODO what is this?
 
                 //reserved for future use?
                 if (opt & 2) {
                     packet.offset += packet.readUInt32LE();
                 }
                 if (opt & 4) {
-                    var something_2 = ''; //todo something related to premium skins
+                    var something_2 = ''; //TODO something related to premium skins
                     while(1) {
                         var char = packet.readUInt8();
                         if(char == 0) break;
@@ -310,14 +309,14 @@ Client.prototype = {
             var balls_on_screen_count = packet.readUInt32LE();
 
             //disappear events
-            for(i=0;i<balls_on_screen_count;i++) {
+            for (i=0;i<balls_on_screen_count;i++) {
                 ball_id = packet.readUInt32LE();
 
                 ball = client.balls[ball_id] || new Ball(client, ball_id);
-                if(ball.mine) {
+                if (ball.mine) {
                     ball.destroy({reason: 'merge'});
                     client.emitEvent('merge', ball.id);
-                }else{
+                } else {
                     ball.disappear();
                     ball.update_tick = client.tick_counter;
                     ball.update();
@@ -342,7 +341,7 @@ Client.prototype = {
         },
 
         '20': function() {
-            //i dont know what this is
+            //i don't know what this is
             //in original code it clears our balls array, but i never saw this packet
         },
 
@@ -402,10 +401,11 @@ Client.prototype = {
                 JSON.stringify(client.leaderNames) == JSON.stringify(names)) {
                 return;
             }
-            var old_highlights = client.leaderHighlights;
-            client.leaderHighlights = highlights;
+			
+            var old_highlights  = client.leaderHighlights; 
             var old_leaderNames = client.leaderNames;
-            client.leaderNames = names;
+			client.leaderHighlights = highlights;
+            client.leaderNames      = names;
 
             if(client.debug >= 3)
                 client.log('leaders update: ' + JSON.stringify(highlights) + ',' + JSON.stringify(names));
@@ -446,7 +446,7 @@ Client.prototype = {
             client.emitEvent('mapSizeLoad', min_x, min_y, max_x, max_y);
         },
 
-        //another unknown backet
+        //another unknown packet
         '72': function() {
             //packet is sent by server but not used in original code
         },
@@ -464,12 +464,12 @@ Client.prototype = {
 
         '102': function() {
             // This packet used for some shop server wss://web-live-v3-0.agario.miniclippt.com/ws
-            // There is some "reserved" code for it in "account.js" you can check that. But it is not used since this server is useless for client
+            // There is some "reserved" code for it in "account.js" that you can check. But it is not used since this server is useless for client
             // https://github.com/pulviscriptor/agario-client/issues/78
         },
 
         '103': function(client) {
-            // Processor for that packet is missing in official client but @SzAmmi reporting that he receives it
+            // Processor for that packet is missing in official client but @SzAmmi reports that he receives it
             // https://github.com/pulviscriptor/agario-client/issues/94
             client.emit('gotLogin');
         },
@@ -603,9 +603,9 @@ Client.prototype = {
         }
 
         var buf = new Buffer([18]);
-        this.send(buf);
+		this.send(buf);
         var buf = new Buffer([19]);
-        this.send(buf);
+		this.send(buf);
 
         return true;
     },
