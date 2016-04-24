@@ -1,4 +1,4 @@
-//this is example of API usage
+//this is an example of API usage
 var http = require('http');
 var AgarioClient = require('../agario-client.js'); //Use next line in your scripts
 //var AgarioClient = require('agario-client'); //Use this in your scripts
@@ -7,7 +7,7 @@ var region = 'EU-London'; //server region to request
 var client = new AgarioClient('worker'); //create new client and call it "worker" (not nickname)
 var interval_id = 0; //here we will store setInterval's ID
 
-client.debug = 1; //setting debug to 1 (avaialble 0-5)
+client.debug = 1; //setting debug to 1 (available 0-5)
 client.auth_token = ''; //you can put here your auth token to authorize client. Check in README.md how to get it
 
 //here adding custom properties/events example shown
@@ -20,13 +20,13 @@ AgarioClient.prototype.addFriend = function(ball_id) { //adding client.addFriend
     client.emit('friendAdded', ball_id); //emit friendAdded event
 };
 
-AgarioClient.Ball.prototype.isMyFriend = function() { //adding ball.isMyFriend() funtion
+AgarioClient.Ball.prototype.isMyFriend = function() { //adding ball.isMyFriend() function
     return this.is_friend == true; //if ball is_friend is true, then true will be returned
 };
 
-client.on('ballAppear', function(ball_id) { //when we somebody
+client.on('ballAppear', function(ball_id) { //when we meet somebody
     var ball = client.balls[ball_id];
-    if(ball.mine) return; //this is mine ball
+    if(ball.mine) return; //this is my ball
     if(ball.isMyFriend()) return; //this ball is already a friend
     if(ball.name == 'agario-client') { //if ball have name 'agario-client'
         client.addFriend(ball_id); //add it to friends
@@ -100,7 +100,7 @@ function recalculateTarget() { //this is all our example logic
     var my_ball = client.balls[ client.my_balls[0] ]; //we get our first ball. We don't care if there more then one, its just example.
     if(!my_ball) return; //if our ball not spawned yet then we abort. We will come back here in 100ms later
 
-    for(var ball_id in client.balls) { //we go true all balls we know about
+    for(var ball_id in client.balls) { //we go through all balls we know about
         var ball = client.balls[ball_id];
         if(ball.virus) continue; //if ball is a virus (green non edible thing) then we skip it
         if(!ball.visible) continue; //if ball is not on our screen (field of view) then we skip it
@@ -129,4 +129,3 @@ AgarioClient.servers.getFFAServer({region: region}, function(srv) { //requesting
     console.log('Connecting to ' + srv.server + ' with key ' + srv.key);
     client.connect('ws://' + srv.server, srv.key); //do not forget to add ws://
 });
-
