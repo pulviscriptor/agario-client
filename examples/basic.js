@@ -100,7 +100,7 @@ function recalculateTarget() { //this is all our example logic
     var my_ball = client.balls[ client.my_balls[0] ]; //we get our first ball. We don't care if there more then one, its just example.
     if(!my_ball) return; //if our ball not spawned yet then we abort. We will come back here in 100ms later
 
-    for(var ball_id in client.balls) { //we go true all balls we know about
+    for(var ball_id in client.balls) { //we go through all balls we know about
         var ball = client.balls[ball_id];
         if(ball.virus) continue; //if ball is a virus (green non edible thing) then we skip it
         if(!ball.visible) continue; //if ball is not on our screen (field of view) then we skip it
