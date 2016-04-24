@@ -4,7 +4,7 @@ var WebSocket    = require('ws');
 
 var agar_client_id = '677505792353827'; //hardcoded in client
 
-function Account(name) { //todo doc vars
+function Account(name) { //TODO doc vars
     this.name           = name; //debug name
     this.token          = null; //token after requestFBToken()
     this.token_expire   = 0;    //timestamp after requestFBToken()
@@ -14,7 +14,7 @@ function Account(name) { //todo doc vars
     this.xs             = null; //cookie from www.facebook.com
     this.agent          = null; //connection agent
     this.debug          = 1;
-    this.server         = 'wss://web-live-v3-0.agario.miniclippt.com/ws'; //todo doc
+    this.server         = 'wss://web-live-v3-0.agario.miniclippt.com/ws'; //TODO doc
 
     this.ws    = null;
 }
@@ -22,7 +22,7 @@ function Account(name) { //todo doc vars
 Account.prototype.log = function(text) {
     if(this.name) {
         console.log('Account(' + this.name + '): ' + text);
-    }else{
+    } else {
         console.log('Account: ' + text);
     }
 };
@@ -109,9 +109,9 @@ module.exports = Account;
 
 
 
-//Next code is reserved for future use. Just in case.
+//The code below is reserved for future usage, just in case.
 /*
-Account.prototype.connect = function() { //todo doc, event
+Account.prototype.connect = function() { //TODO doc, event
     if(this.ws && this.ws.readyState != WebSocket.CLOSED) {
         if(this.debug >= 1 && this.ws.readyState == WebSocket.CONNECTING)
             this.log('[warning] connect() called while connecting, ignoring');
@@ -149,34 +149,33 @@ Account.prototype.connect = function() { //todo doc, event
     return true;
 };
 
-Account.prototype.onConnect = function() { //todo doc, event
+Account.prototype.onConnect = function() { //TODO doc, event
     if(this.debug >= 1)
         this.log('Connected');
 };
 
-Account.prototype.onMessage = function() { //todo doc, event
+Account.prototype.onMessage = function() { //TODO doc, event
     if(this.debug >= 3)
         this.log('Received packet');
 };
 
-Account.prototype.onDisconnect = function() { //todo doc, event
+Account.prototype.onDisconnect = function() { //TODO doc, event
     if(this.debug >= 1)
         this.log('Disconnected');
 };
 
-Account.prototype.onError = function(e) { //todo doc, event
+Account.prototype.onError = function(e) { //TODO doc, event
     // http://www.w3.org/TR/2011/WD-websockets-20110419/
     // if(this.ws.readyState == WebSocket.CLOSING) {
     if(this.debug >= 1)
         this.log('Connection error: ' + e);
 };
 
-//todo debug level check before log
+//TODO debug level check before log
 
 */
 
-
-//for future investigations
+//For future investigations
 /*initial packet:
 {
     "device": {
