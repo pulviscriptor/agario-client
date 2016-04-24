@@ -1,12 +1,16 @@
 //This is example of connection to agar.io's server through SOCKS4/SOCKS5 server
 
 if(process.argv.length < 5) {
-    console.log('Please launch this script like');
-    console.log(' node ./examples/socks.js SOCKS_VERSION SOCKS_IP SOCKS_PORT');
-    console.log('SOCKS_IP - IP of SOCKS server');
-    console.log('SOCKS_PORT - port of SOCKS server');
-    console.log('SOCKS_VERSION - SOCKS server version. 4/4a/5. You can use "4" for "4a"');
-    console.log('*This script uses `socks` lib and this is params used by lib');
+	var warning = [
+		'Please launch this script like',
+		' node ./examples/socks.js SOCKS_VERSION SOCKS_IP SOCKS_PORT',
+		'SOCKS_IP      - IP of SOCKS server',
+		'SOCKS_PORT    - port of SOCKS server',
+		'SOCKS_VERSION - SOCKS server version. 4/4a/5. You can use "4" for "4a"',
+		'*This script uses `socks` lib and this is params used by lib',
+	];
+	
+	for (var line in warning) console.log( warning[line] );
     process.exit(0);
 }
 console.log('Example will use SOCKS server ' + process.argv[3] + ':' + process.argv[4] + ' version ' + process.argv[2]);
@@ -18,11 +22,15 @@ console.log('Example will use SOCKS server ' + process.argv[3] + ':' + process.a
 var Socks;
 try {
     Socks = require('socks');
-}catch(e){
-    console.log('Failed to load `socks` lib. Install it in examples path using:');
-    console.log('  mkdir ./node_modules/examples/node_modules');
-    console.log('  npm install socks --prefix ./node_modules/agario-client/examples');
-    console.log('  node ./node_modules/agario-client/examples/socks.js');
+} catch(e) {
+	var warning = [
+		'Failed to load `socks` lib. Install it in examples path using:',
+		'  mkdir ./node_modules/examples/node_modules',
+		'  npm install socks --prefix ./node_modules/agario-client/examples',
+		'  node ./node_modules/agario-client/examples/socks.js'
+	];
+	
+	for (var line in warning) console.log( warning[line] );
     process.exit(0);
 }
 
