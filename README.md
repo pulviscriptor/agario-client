@@ -1,6 +1,12 @@
 # agario-client #
 Node.js client for [agar.io](http://agar.io) with API.
 
+# Outdated! #
+Agar developers made completely new code for game. Now code runs inside virtual machine that I can not reverse-engineer due to lack of knowledge and experience. 
+Unfortunately its time to say goodbye to `agario-client`. 
+Initial idea of `agario-client` was for me to learn websockets, binary protocols, reverse-engineering, github and have fun overall. I believe that I achieved all that. 
+Thanks to all, it was great time!
+
 ## Instructions ##
 - Install [Node.js](https://nodejs.org/)
 - Install client using `npm install agario-client` (ignore `python` errors)
