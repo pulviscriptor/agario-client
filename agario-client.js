@@ -181,8 +181,11 @@ Client.prototype = {
 
         if(this.debug >= 5)
             this.log('dump: ' + (new Packet(buf).toString()));
-
-        this.ws.send(buf);
+        try{
+            this.ws.send(buf);
+        }catch(e){
+            this.onError(e);
+        }
     },
 
     reset: function() {
